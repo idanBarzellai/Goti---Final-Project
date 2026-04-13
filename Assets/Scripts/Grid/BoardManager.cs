@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class BoardManager : MonoBehaviour
 {
+
     [Header("Level")]
     [SerializeField] private LevelData currentLevelData;
 
@@ -17,6 +19,8 @@ public class BoardManager : MonoBehaviour
 
     public int Width { get; private set; }
     public int Height { get; private set; }
+
+    public event Action OnBoardStateChanged;
 
     private void Start()
     {
@@ -109,13 +113,11 @@ public class BoardManager : MonoBehaviour
         OnBoardChanged();
     }
 
-    private void OnBoardChanged()
-    {
-        Debug.Log("Board changed.");
-        // Later:
-        // GameManager / LaserControlManager will listen here
-        // If auto-fire ON => simulate laser
-    }
+   private void OnBoardChanged()
+{
+    Debug.Log("Board changed.");
+    OnBoardStateChanged?.Invoke();
+}
 
     public BoardPiece GetPieceAt(Vector2Int gridPosition)
     {
