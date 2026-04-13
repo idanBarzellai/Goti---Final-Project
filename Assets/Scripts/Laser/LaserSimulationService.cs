@@ -55,10 +55,15 @@ public class LaserSimulationService
             BoardPiece hitPiece = boardManager.GetPieceAt(nextCell);
 
             if (hitPiece == null)
-            {
-                currentCell = nextCell;
-                continue;
-            }
+{
+    currentCell = nextCell;
+    continue;
+}
+
+if (!result.hitPieces.Contains(hitPiece))
+{
+    result.hitPieces.Add(hitPiece);
+}
 
             switch (hitPiece.PieceType)
             {

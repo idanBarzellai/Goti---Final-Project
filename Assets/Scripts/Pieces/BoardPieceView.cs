@@ -51,7 +51,7 @@ public class BoardPieceView : MonoBehaviour
                 break;
         }
 
-        if (boardPiece.IsFixed && boardPiece.PieceType != PieceType.Entry && boardPiece.PieceType != PieceType.Target)
+        if (!boardPiece.CanMove && boardPiece.PieceType != PieceType.Entry && boardPiece.PieceType != PieceType.Target)
         {
             spriteRenderer.color *= fixedOverlayTint;
         }

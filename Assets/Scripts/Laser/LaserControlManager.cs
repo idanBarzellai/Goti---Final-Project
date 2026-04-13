@@ -22,21 +22,27 @@ public class LaserControlManager : MonoBehaviour
         laserSimulationService = new LaserSimulationService(boardManager);
 
         boardManager.OnBoardStateChanged += HandleBoardStateChanged;
+    boardManager.OnBoardLoaded += HandleBoardLoaded;
 
-        if (simulateOnStart)
-        {
-            SimulateLaser();
-        }
-    }
-
-    private void OnDestroy()
+    if (simulateOnStart)
     {
-        if (boardManager != null)
-        {
-            boardManager.OnBoardStateChanged -= HandleBoardStateChanged;
-        }
+        SimulateLaser();
+    }
     }
 
+ private void OnDestroy()
+{
+    if (boardManager != null)
+    {
+        boardManager.OnBoardStateChanged -= HandleBoardStateChanged;
+        boardManager.OnBoardLoaded -= HandleBoardLoaded;
+    }
+}
+
+private void HandleBoardLoaded()
+{
+    SimulateLaser();
+}
     private void HandleBoardStateChanged()
     {
         // For now, always simulate on board change.

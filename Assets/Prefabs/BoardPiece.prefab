@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8954494626110524000}
   - component: {fileID: 8317166481937512918}
   - component: {fileID: 521965182126988124}
+  - component: {fileID: 8793475577467496708}
   - component: {fileID: 6028946773028801974}
   m_Layer: 0
   m_Name: BoardPiece
@@ -152,6 +153,19 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.16, y: 0.16}
   m_EdgeRadius: 0
+--- !u!114 &8793475577467496708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640469420428220093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c769ab99ffb410c4d9ae93935987d4d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoardPieceDragHandler
+  inventoryDropArea: {fileID: 0}
 --- !u!114 &6028946773028801974
 MonoBehaviour:
   m_ObjectHideFlags: 0

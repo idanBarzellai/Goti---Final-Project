@@ -265,6 +265,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -390,6 +391,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56666c5a40171f54783dd416a44f42bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.Physics2DRaycaster
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
 --- !u!1 &588900707
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,6 +548,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 890927729}
+  - component: {fileID: 890927730}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -553,6 +571,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &890927730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 890927728}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 595dbec185f884c4080f3bc78ad83be3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  levels:
+  - {fileID: 11400000, guid: e27650e3beec2e94a90f032622bf6e73, type: 2}
+  startingLevelIndex: 0
+  boardManager: {fileID: 1078828742}
+  inventoryBarUI: {fileID: 1731529470}
 --- !u!1 &1078828740
 GameObject:
   m_ObjectHideFlags: 0
@@ -597,7 +632,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbe1dea1432579d45ba61036af3e5275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BoardManager
-  currentLevelData: {fileID: 11400000, guid: e27650e3beec2e94a90f032622bf6e73, type: 2}
   boardRoot: {fileID: 499237849}
   cellPrefab: {fileID: 8331488516930498019, guid: 5bd53a5125bfe374c8238d66753f5efd, type: 3}
   piecePrefab: {fileID: 8954494626110524000, guid: 73ab9dd4522a4e94486ea92e0d88f42b, type: 3}
@@ -799,6 +833,54 @@ LineRenderer:
   m_UseWorldSpace: 1
   m_Loop: 0
   m_ApplyActiveColorSpace: 1
+--- !u!1 &1448824989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1448824991}
+  - component: {fileID: 1448824990}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1448824990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448824989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b927eceb641eae24eba7012043e53470, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  boardManager: {fileID: 1078828742}
+  laserControlManager: {fileID: 588900708}
+  inventoryBarUI: {fileID: 1731529470}
+  levelManager: {fileID: 890927730}
+--- !u!4 &1448824991
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1448824989}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -171.08354, y: 775.763, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1470554484
 GameObject:
   m_ObjectHideFlags: 0
@@ -1008,7 +1090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cf1a5f2b38cc714d9b4eac5478ab8da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryBarUI
-  currentLevelData: {fileID: 11400000, guid: e27650e3beec2e94a90f032622bf6e73, type: 2}
+  inventoryDropArea: {fileID: 1731529465}
   inventoryContainer: {fileID: 1731529465}
   inventoryPiecePrefab: {fileID: 2975895903058916080, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
   boardManager: {fileID: 1078828742}
@@ -1025,3 +1107,4 @@ SceneRoots:
   - {fileID: 394435536}
   - {fileID: 1470554487}
   - {fileID: 588900709}
+  - {fileID: 1448824991}

@@ -7,6 +7,5 @@ public class PieceData
     public PieceType pieceType;
     public Vector2Int gridPosition;
     public Direction direction;
-    public bool isFixed;
     public bool isRequired;
 }

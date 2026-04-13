@@ -3,35 +3,40 @@ using UnityEngine;
 
 public class InventoryBarUI : MonoBehaviour
 {
-    [SerializeField] private LevelData currentLevelData;
+[SerializeField] private RectTransform inventoryDropArea;
+public RectTransform InventoryDropArea => inventoryDropArea;
     [SerializeField] private Transform inventoryContainer;
     [SerializeField] private DraggableInventoryPiece inventoryPiecePrefab;
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Canvas canvas;
 
+
     private readonly List<DraggableInventoryPiece> spawnedInventoryPieces = new List<DraggableInventoryPiece>();
 
-    private void Start()
-    {
-        BuildInventory();
-    }
-
-    public void BuildInventory()
+    public void LoadInventory(LevelData levelData)
     {
         ClearInventory();
 
-        if (currentLevelData == null)
+        if (levelData == null)
         {
-            Debug.LogError("InventoryBarUI: No LevelData assigned.");
+            Debug.LogError("InventoryBarUI: No LevelData provided.");
             return;
         }
 
-        foreach (PieceData pieceData in currentLevelData.inventoryPieces)
+        if (levelData.inventoryPieces == null)
+            return;
+
+        foreach (PieceData pieceData in levelData.inventoryPieces)
         {
-            DraggableInventoryPiece item = Instantiate(inventoryPiecePrefab, inventoryContainer);
-            item.Initialize(pieceData, boardManager, canvas, this);
-            spawnedInventoryPieces.Add(item);
+            AddInventoryPiece(pieceData);
         }
+    }
+
+    public void AddInventoryPiece(PieceData pieceData)
+    {
+        DraggableInventoryPiece item = Instantiate(inventoryPiecePrefab, inventoryContainer);
+        item.Initialize(pieceData, boardManager, canvas, this);
+        spawnedInventoryPieces.Add(item);
     }
 
     public void ConsumeInventoryPiece(DraggableInventoryPiece piece)

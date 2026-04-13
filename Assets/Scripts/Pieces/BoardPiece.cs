@@ -5,8 +5,11 @@ public class BoardPiece : MonoBehaviour
     public PieceType PieceType { get; private set; }
     public Vector2Int GridPosition { get; private set; }
     public Direction Direction { get; private set; }
-    public bool IsFixed { get; private set; }
     public bool IsRequired { get; private set; }
+
+    public bool CanMove { get; private set; }
+    public bool CanRotate { get; private set; }
+    public bool CanReturnToInventory { get; private set; }
 
     private BoardManager boardManager;
 
@@ -14,15 +17,21 @@ public class BoardPiece : MonoBehaviour
         PieceType pieceType,
         Vector2Int gridPosition,
         Direction direction,
-        bool isFixed,
         bool isRequired,
+        bool canMove,
+        bool canRotate,
+        bool canReturnToInventory,
         BoardManager owningBoardManager)
     {
         PieceType = pieceType;
         GridPosition = gridPosition;
         Direction = direction;
-        IsFixed = isFixed;
         IsRequired = isRequired;
+
+        CanMove = canMove;
+        CanRotate = canRotate;
+        CanReturnToInventory = canReturnToInventory;
+
         boardManager = owningBoardManager;
 
         RefreshVisualRotation();
@@ -33,20 +42,9 @@ public class BoardPiece : MonoBehaviour
         GridPosition = newGridPosition;
     }
 
-    public bool CanRotate()
-    {
-        if (IsFixed)
-            return false;
-
-        if (PieceType == PieceType.Entry || PieceType == PieceType.Target)
-            return false;
-
-        return true;
-    }
-
     public void RotateClockwise()
     {
-        if (!CanRotate())
+        if (!CanRotate)
             return;
 
         Direction = PieceRotationUtility.RotateClockwise(Direction);
@@ -58,11 +56,8 @@ public class BoardPiece : MonoBehaviour
         transform.localRotation = Quaternion.Euler(0f, 0f, PieceRotationUtility.ToZRotation(Direction));
     }
 
-    private void OnMouseDown()
+    public BoardManager GetBoardManager()
     {
-        if (boardManager == null)
-            return;
-
-        boardManager.HandlePieceClicked(this);
+        return boardManager;
     }
 }
