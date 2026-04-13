@@ -22,10 +22,10 @@ public class BoardManager : MonoBehaviour
 
     public event Action OnBoardStateChanged;
 
-    private void Start()
-    {
-        LoadLevel(currentLevelData);
-    }
+   private void Awake()
+{
+    LoadLevel(currentLevelData);
+}
 
     public void LoadLevel(LevelData levelData)
     {
@@ -82,23 +82,25 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void SpawnPiece(PieceData pieceData)
-    {
-        BoardPiece piece = Instantiate(piecePrefab, boardRoot);
-        piece.transform.localPosition = GridToLocalPosition(pieceData.gridPosition);
-        piece.name = $"{pieceData.pieceType}_{pieceData.gridPosition.x}_{pieceData.gridPosition.y}";
+public BoardPiece SpawnPiece(PieceData pieceData)
+{
+    BoardPiece piece = Instantiate(piecePrefab, boardRoot);
+    piece.transform.localPosition = GridToLocalPosition(pieceData.gridPosition);
+    piece.name = $"{pieceData.pieceType}_{pieceData.gridPosition.x}_{pieceData.gridPosition.y}";
 
-        piece.Initialize(
-            pieceData.pieceType,
-            pieceData.gridPosition,
-            pieceData.direction,
-            pieceData.isFixed,
-            pieceData.isRequired,
-            this
-        );
+    piece.Initialize(
+        pieceData.pieceType,
+        pieceData.gridPosition,
+        pieceData.direction,
+        pieceData.isFixed,
+        pieceData.isRequired,
+        this
+    );
 
-        boardPieces[pieceData.gridPosition.x, pieceData.gridPosition.y] = piece;
-    }
+    boardPieces[pieceData.gridPosition.x, pieceData.gridPosition.y] = piece;
+
+    return piece;
+}
 
     public void HandlePieceClicked(BoardPiece clickedPiece)
     {
@@ -113,7 +115,7 @@ public class BoardManager : MonoBehaviour
         OnBoardChanged();
     }
 
-   private void OnBoardChanged()
+private void OnBoardChanged()
 {
     Debug.Log("Board changed.");
     OnBoardStateChanged?.Invoke();
@@ -157,4 +159,91 @@ public class BoardManager : MonoBehaviour
             Destroy(boardRoot.GetChild(i).gameObject);
         }
     }
+
+    public BoardPiece FindEntryPiece()
+{
+    for (int x = 0; x < Width; x++)
+    {
+        for (int y = 0; y < Height; y++)
+        {
+            BoardPiece piece = boardPieces[x, y];
+            if (piece != null && piece.PieceType == PieceType.Entry)
+                return piece;
+        }
+    }
+
+    return null;
+}
+
+public IEnumerable<BoardPiece> GetAllPieces()
+{
+    for (int x = 0; x < Width; x++)
+    {
+        for (int y = 0; y < Height; y++)
+        {
+            if (boardPieces[x, y] != null)
+                yield return boardPieces[x, y];
+        }
+    }
+}
+public bool IsCellEmpty(Vector2Int gridPosition)
+{
+    if (!IsInsideBounds(gridPosition))
+        return false;
+
+    return boardPieces[gridPosition.x, gridPosition.y] == null;
+}
+
+public bool TryPlaceNewPieceFromData(PieceData pieceData, Vector2Int targetGridPosition)
+{
+    if (pieceData == null)
+        return false;
+
+    if (!IsInsideBounds(targetGridPosition))
+        return false;
+
+    if (!IsCellEmpty(targetGridPosition))
+        return false;
+
+    PieceData placedData = new PieceData
+    {
+        pieceType = pieceData.pieceType,
+        gridPosition = targetGridPosition,
+        direction = pieceData.direction,
+        isFixed = false,
+        isRequired = pieceData.isRequired
+    };
+
+    SpawnPiece(placedData);
+    OnBoardChanged();
+    return true;
+}
+
+public bool TryGetGridPositionFromWorld(Vector3 worldPosition, out Vector2Int gridPosition)
+{
+    Vector3 localPosition = boardRoot.InverseTransformPoint(worldPosition);
+
+    float offsetX = -(Width - 1) * cellSize * 0.5f;
+    float offsetY = -(Height - 1) * cellSize * 0.5f;
+
+    float rawX = (localPosition.x - offsetX) / cellSize;
+    float rawY = (localPosition.y - offsetY) / cellSize;
+
+    int x = Mathf.RoundToInt(rawX);
+    int y = Mathf.RoundToInt(rawY);
+
+    gridPosition = new Vector2Int(x, y);
+
+    if (!IsInsideBounds(gridPosition))
+        return false;
+
+    Vector3 snappedLocal = GridToLocalPosition(gridPosition);
+    float distance = Vector2.Distance(
+        new Vector2(localPosition.x, localPosition.y),
+        new Vector2(snappedLocal.x, snappedLocal.y)
+    );
+
+    float maxSnapDistance = cellSize * 0.45f;
+    return distance <= maxSnapDistance;
+}
 }

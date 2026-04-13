@@ -20,18 +20,29 @@ MonoBehaviour:
     direction: 1
     isFixed: 1
     isRequired: 0
-  - pieceType: 4
-    gridPosition: {x: 2, y: 2}
-    direction: 0
-    isFixed: 0
-    isRequired: 1
   - pieceType: 2
     gridPosition: {x: 4, y: 4}
     direction: 0
     isFixed: 1
     isRequired: 0
-  - pieceType: 3
-    gridPosition: {x: 3, y: 2}
+  inventoryPieces:
+  - pieceType: 4
+    gridPosition: {x: 0, y: 0}
     direction: 0
-    isFixed: 1
-    isRequired: 0
+    isFixed: 0
+    isRequired: 1
+  - pieceType: 3
+    gridPosition: {x: 0, y: 0}
+    direction: 0
+    isFixed: 0
+    isRequired: 1
+  - pieceType: 4
+    gridPosition: {x: 0, y: 0}
+    direction: 0
+    isFixed: 0
+    isRequired: 1
+  - pieceType: 4
+    gridPosition: {x: 0, y: 0}
+    direction: 0
+    isFixed: 0
+    isRequired: 1
