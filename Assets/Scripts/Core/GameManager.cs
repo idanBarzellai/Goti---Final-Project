@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private InventoryBarUI inventoryBarUI;
     [SerializeField] private LevelManager levelManager;
 
+[SerializeField] private LevelTimerManager levelTimerManager;
+
     public static GameManager Instance { get; private set; }
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
 
@@ -26,18 +28,29 @@ public class GameManager : MonoBehaviour
     {
         if (boardManager != null)
             boardManager.OnBoardStateChanged += HandleBoardStateChanged;
+
+            if (levelTimerManager != null)
+    levelTimerManager.OnTimerFinished += HandleTimerFinished;
     }
 
     private void OnDestroy()
     {
         if (boardManager != null)
             boardManager.OnBoardStateChanged -= HandleBoardStateChanged;
+
+            if (levelTimerManager != null)
+    levelTimerManager.OnTimerFinished -= HandleTimerFinished;
     }
 
     private void HandleBoardStateChanged()
     {
         CheckSolved();
     }
+
+    private void HandleTimerFinished()
+{
+    Debug.Log("SUNRISE - LEVEL FAILED");
+}
 
    public void ReturnPieceToInventory(BoardPiece piece)
 {
