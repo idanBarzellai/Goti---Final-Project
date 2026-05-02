@@ -16,6 +16,7 @@ public class BoardPieceView : MonoBehaviour
     [SerializeField] private Color blockColor = Color.gray;
     [SerializeField] private Color reflectColor = Color.cyan;
     [SerializeField] private Color fixedOverlayTint = new Color(0.8f, 0.8f, 0.8f, 1f);
+    [SerializeField] private MoonShadowCaster moonShadowCaster;
 
     private BoardPiece boardPiece;
 
@@ -29,8 +30,15 @@ public class BoardPieceView : MonoBehaviour
 
     private void Start()
     {
+        moonShadowCaster = FindAnyObjectByType<MoonShadowCaster>();
         Refresh();
     }
+
+
+private void LateUpdate()
+{
+    RefreshShadow();
+}
 
     public void Refresh()
     {
@@ -71,8 +79,18 @@ public class BoardPieceView : MonoBehaviour
 
         shadowRenderer.sprite = spriteRenderer.sprite;
         shadowRenderer.color = shadowColor;
-        shadowRenderer.transform.localPosition = shadowLocalOffset;
-        shadowRenderer.transform.localRotation = Quaternion.identity;
+        if (moonShadowCaster != null)
+if (moonShadowCaster != null)
+{
+    shadowRenderer.transform.localPosition = moonShadowCaster.GetShadowOffset();
+    shadowRenderer.color = moonShadowCaster.GetShadowColor();
+}
+else
+{
+    shadowRenderer.transform.localPosition = shadowLocalOffset;
+    shadowRenderer.color = shadowColor;
+}
+shadowRenderer.transform.localRotation = Quaternion.identity;
         shadowRenderer.transform.localScale = Vector3.one;
     }
 }

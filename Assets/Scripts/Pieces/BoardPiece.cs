@@ -10,6 +10,7 @@ public class BoardPiece : MonoBehaviour
     public bool CanMove { get; private set; }
     public bool CanRotate { get; private set; }
     public bool CanReturnToInventory { get; private set; }
+    [SerializeField] private Transform visualRoot;
 
     private BoardManager boardManager;
 
@@ -51,10 +52,17 @@ public class BoardPiece : MonoBehaviour
         RefreshVisualRotation();
     }
 
-    public void RefreshVisualRotation()
-    {
-        transform.localRotation = Quaternion.Euler(0f, 0f, PieceRotationUtility.ToZRotation(Direction));
-    }
+   public void RefreshVisualRotation()
+{
+    if (visualRoot == null)
+        return;
+
+    visualRoot.localRotation = Quaternion.Euler(
+        0f,
+        0f,
+        PieceRotationUtility.ToZRotation(Direction)
+    );
+}
 
     public BoardManager GetBoardManager()
     {
