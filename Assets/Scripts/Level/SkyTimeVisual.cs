@@ -19,6 +19,9 @@ public class SkyTimeVisual : MonoBehaviour
         float t = levelTimerManager.Progress01;
 
         skyImage.color = EvaluateSkyColor(t);
+
+        float pulse = Mathf.Sin(Time.time * 0.5f) * 0.02f;
+skyImage.color += new Color(pulse, pulse, pulse, 0f);
     }
 
     private Color EvaluateSkyColor(float t)

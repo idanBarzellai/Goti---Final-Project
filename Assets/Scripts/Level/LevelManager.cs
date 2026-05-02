@@ -13,9 +13,19 @@ public class LevelManager : MonoBehaviour
     public int CurrentLevelIndex { get; private set; }
 
     private void Start()
-    {
-        LoadLevelByIndex(startingLevelIndex);
-    }
+{
+    LoadLevelByIndex(SceneFlowManager.SelectedLevelIndex);
+}
+
+public bool HasNextLevel()
+{
+    return levels != null && CurrentLevelIndex + 1 < levels.Length;
+}
+
+public int LevelCount()
+{
+    return levels == null ? 0 : levels.Length;
+}
 
     public void LoadLevelByIndex(int levelIndex)
     {

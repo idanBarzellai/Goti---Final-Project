@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using UnityEngine;
 
@@ -12,6 +13,10 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance { get; private set; }
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
+
+    public event Action OnLevelSolved;
+
+private bool levelSolved;   
 
     private void Awake()
     {
@@ -94,39 +99,48 @@ public class GameManager : MonoBehaviour
     return RectTransformUtility.RectangleContainsScreenPoint(inventoryArea, screenPosition, uiCamera);
 }
 
-    public bool CheckSolved()
-    {
-        if (boardManager == null || laserControlManager == null)
-            return false;
-
-        LaserSimulationResult result = laserControlManager.LastResult;
-        if (result == null || !result.didHitAnyTarget)
-            return false;
-
-        BoardPiece[] requiredPieces = boardManager
-            .GetAllPieces()
-            .Where(p => p != null && p.IsRequired)
-            .ToArray();
-
-        foreach (BoardPiece requiredPiece in requiredPieces)
+   public bool CheckSolved()
 {
-    if (!result.hitPieces.Contains(requiredPiece))
+    if (levelSolved)
+        return true;
+
+    if (boardManager == null || laserControlManager == null)
         return false;
+
+    LaserSimulationResult result = laserControlManager.LastResult;
+    if (result == null || !result.didHitAnyTarget)
+        return false;
+
+    BoardPiece[] requiredPieces = boardManager
+        .GetAllPieces()
+        .Where(p => p != null && p.IsRequired)
+        .ToArray();
+
+    foreach (BoardPiece requiredPiece in requiredPieces)
+    {
+        if (!result.hitPieces.Contains(requiredPiece))
+            return false;
+    }
+
+    levelSolved = true;
+    Debug.Log("LEVEL SOLVED");
+    OnLevelSolved?.Invoke();
+
+    return true;
 }
 
-        Debug.Log("LEVEL SOLVED");
-        return true;
-    }
-
     public void LoadNextLevel()
-    {
-        if (levelManager != null)
-            levelManager.LoadNextLevel();
-    }
+{
+    levelSolved = false;
 
+    if (levelManager != null)
+        levelManager.LoadNextLevel();
+}
     public void ReloadLevel()
-    {
-        if (levelManager != null)
-            levelManager.ReloadCurrentLevel();
-    }
+{
+    levelSolved = false;
+
+    if (levelManager != null)
+        levelManager.ReloadCurrentLevel();
+}
 }
