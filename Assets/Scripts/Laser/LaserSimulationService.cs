@@ -71,16 +71,15 @@ if (!result.hitPieces.Contains(hitPiece))
                     result.wasBlocked = true;
                     return result;
 
-                case PieceType.Target:
-                    if (!result.hitTargets.Contains(hitPiece))
-                    {
-                        result.hitTargets.Add(hitPiece);
-                    }
+               case PieceType.Target:
+    if (!result.hitTargets.Contains(hitPiece))
+    {
+        result.hitTargets.Add(hitPiece);
+    }
 
-                    result.didHitAnyTarget = true;
+    result.didHitAnyTarget = true;
 
-                    currentCell = nextCell;
-                    continue;
+    return result;
 
                 case PieceType.Reflect:
                     if (LaserReflectionUtility.TryReflect(currentDirection, hitPiece.Direction, out Direction reflectedDirection))

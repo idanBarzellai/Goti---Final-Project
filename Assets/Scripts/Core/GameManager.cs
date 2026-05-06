@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LevelManager levelManager;
 
 [SerializeField] private LevelTimerManager levelTimerManager;
+[SerializeField] private GameWinPanelUI gameWinPanelUI;
+
 
     public static GameManager Instance { get; private set; }
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
@@ -54,7 +56,7 @@ private bool levelSolved;
 
     private void HandleTimerFinished()
 {
-    Debug.Log("SUNRISE - LEVEL FAILED");
+    gameWinPanelUI?.ShowFailed();
 }
 
    public void ReturnPieceToInventory(BoardPiece piece)

@@ -1,74 +1,125 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    public static LevelManager Instance { get; private set; }
+
     [SerializeField] private LevelData[] levels;
     [SerializeField] private int startingLevelIndex = 0;
+    [SerializeField] private string gameplaySceneName = "GameScene";
 
-    [Header("Targets")]
-    [SerializeField] private BoardManager boardManager;
-    [SerializeField] private InventoryBarUI inventoryBarUI;
+    private BoardManager boardManager;
+    private InventoryBarUI inventoryBarUI;
 
     public LevelData CurrentLevel { get; private set; }
     public int CurrentLevelIndex { get; private set; }
+    public int LevelCount => levels != null ? levels.Length : 0;
 
-    private void Start()
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        CurrentLevelIndex = startingLevelIndex;
+
+        if (levels != null && levels.Length > 0)
+            CurrentLevel = levels[CurrentLevelIndex];
+    }
+
+    public void RegisterGameplaySceneReferences(
+        BoardManager boardManager,
+        InventoryBarUI inventoryBarUI)
+    {
+        this.boardManager = boardManager;
+        this.inventoryBarUI = inventoryBarUI;
+
+        ReloadCurrentLevel();
+    }
+
+   public void SelectLevelAndLoadGame(int levelIndex)
 {
-    LoadLevelByIndex(SceneFlowManager.SelectedLevelIndex);
-}
+    if (!IsValidLevelIndex(levelIndex))
+        return;
 
-public bool HasNextLevel()
-{
-    return levels != null && CurrentLevelIndex + 1 < levels.Length;
-}
+    CurrentLevelIndex = levelIndex;
+    CurrentLevel = levels[levelIndex];
 
-public int LevelCount()
-{
-    return levels == null ? 0 : levels.Length;
+    SceneManager.LoadScene(gameplaySceneName);
 }
-
     public void LoadLevelByIndex(int levelIndex)
+    {
+        if (!IsValidLevelIndex(levelIndex))
+            return;
+
+        CurrentLevelIndex = levelIndex;
+        CurrentLevel = levels[levelIndex];
+
+        LoadCurrentLevelIntoScene();
+    }
+
+    public void ReloadCurrentLevel()
+    {
+        if (!IsValidLevelIndex(CurrentLevelIndex))
+            return;
+
+        CurrentLevel = levels[CurrentLevelIndex];
+        LoadCurrentLevelIntoScene();
+    }
+
+  public void LoadNextLevel()
+{
+    int nextIndex = CurrentLevelIndex + 1;
+
+    if (!IsValidLevelIndex(nextIndex))
+    {
+        SceneFlowManager.GoToMainMenu();
+        return;
+    }
+
+    CurrentLevelIndex = nextIndex;
+    CurrentLevel = levels[CurrentLevelIndex];
+
+    LoadCurrentLevelIntoScene();
+}
+
+    private void LoadCurrentLevelIntoScene()
+    {
+        if (CurrentLevel == null)
+            return;
+
+        if (boardManager != null)
+            boardManager.LoadBoard(CurrentLevel);
+
+        if (inventoryBarUI != null)
+            inventoryBarUI.LoadInventory(CurrentLevel);
+    }
+
+    public bool HasNextLevel()
+{
+    return CurrentLevelIndex + 1 < LevelCount;
+}
+
+    private bool IsValidLevelIndex(int levelIndex)
     {
         if (levels == null || levels.Length == 0)
         {
             Debug.LogError("LevelManager: No levels assigned.");
-            return;
+            return false;
         }
 
         if (levelIndex < 0 || levelIndex >= levels.Length)
         {
             Debug.LogError($"LevelManager: Invalid level index {levelIndex}");
-            return;
+            return false;
         }
 
-        CurrentLevelIndex = levelIndex;
-        CurrentLevel = levels[levelIndex];
-
-        if (boardManager != null)
-        {
-            boardManager.LoadBoard(CurrentLevel);
-        }
-
-        if (inventoryBarUI != null)
-        {
-            inventoryBarUI.LoadInventory(CurrentLevel);
-        }
-    }
-
-    public void ReloadCurrentLevel()
-    {
-        LoadLevelByIndex(CurrentLevelIndex);
-    }
-
-    public void LoadNextLevel()
-    {
-        int nextIndex = CurrentLevelIndex + 1;
-        if (nextIndex >= levels.Length)
-        {
-            Debug.Log("No more levels.");
-            return;
-        }
-
-        LoadLevelByIndex(nextIndex);
+        return true;
     }
 }

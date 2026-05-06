@@ -17,7 +17,7 @@ public class BoardPieceView : MonoBehaviour
     [SerializeField] private Color reflectColor = Color.cyan;
     [SerializeField] private Color fixedOverlayTint = new Color(0.8f, 0.8f, 0.8f, 1f);
     [SerializeField] private MoonShadowCaster moonShadowCaster;
-
+[SerializeField] private PieceSpriteLibrary spriteLibrary;
     private BoardPiece boardPiece;
 
     private void Awake()
@@ -40,38 +40,29 @@ private void LateUpdate()
     RefreshShadow();
 }
 
-    public void Refresh()
+public void Refresh()
+{
+    if (boardPiece == null || spriteRenderer == null)
+        return;
+
+    if (spriteLibrary != null)
     {
-        if (boardPiece == null || spriteRenderer == null)
-            return;
-
-        switch (boardPiece.PieceType)
-        {
-            case PieceType.Entry:
-                spriteRenderer.color = entryColor;
-                break;
-            case PieceType.Target:
-                spriteRenderer.color = targetColor;
-                break;
-            case PieceType.Block:
-                spriteRenderer.color = blockColor;
-                break;
-            case PieceType.Reflect:
-                spriteRenderer.color = reflectColor;
-                break;
-            default:
-                spriteRenderer.color = Color.white;
-                break;
-        }
-
-        if (!boardPiece.CanMove && boardPiece.PieceType != PieceType.Entry && boardPiece.PieceType != PieceType.Target)
-        {
-            spriteRenderer.color *= fixedOverlayTint;
-        }
-
-        RefreshShadow();
+        Sprite sprite = spriteLibrary.GetSprite(boardPiece.PieceType);
+        if (sprite != null)
+            spriteRenderer.sprite = sprite;
     }
 
+    spriteRenderer.color = Color.white;
+
+    if (!boardPiece.CanMove &&
+        boardPiece.PieceType != PieceType.Entry &&
+        boardPiece.PieceType != PieceType.Target)
+    {
+        spriteRenderer.color *= fixedOverlayTint;
+    }
+
+    RefreshShadow();
+}
     private void RefreshShadow()
     {
         if (shadowRenderer == null || spriteRenderer == null)

@@ -84,7 +84,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.0049649477, y: 0.006950915}
   m_SpriteTilingProperty:
     border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
     pivot: {x: 0.5, y: 0.5}
@@ -94,7 +94,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 0.896796, y: 0.8332448}
   m_EdgeRadius: 0
 --- !u!114 &8793475577467496708
 MonoBehaviour:
@@ -129,6 +129,8 @@ MonoBehaviour:
   blockColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   reflectColor: {r: 0, g: 1, b: 1, a: 1}
   fixedOverlayTint: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+  moonShadowCaster: {fileID: 0}
+  spriteLibrary: {fileID: 11400000, guid: 7ecee7a419bcb27479a1fcce6beb5ebe, type: 2}
 --- !u!1 &5851681548946572911
 GameObject:
   m_ObjectHideFlags: 0
@@ -210,7 +212,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: a5f4612d93cff1e4391bd5db19a26448, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

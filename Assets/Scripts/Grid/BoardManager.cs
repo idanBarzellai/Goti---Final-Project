@@ -8,7 +8,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private Transform boardRoot;
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private BoardPiece piecePrefab;
-    [SerializeField] private float cellSize = 1.2f;
+    [SerializeField] private float cellSize = 0.9f;
 
     private BoardPiece[,] boardPieces;
     private GameObject[,] boardCells;
@@ -292,13 +292,16 @@ if (piece == null || !piece.CanMove)
     }
 
     private void ClearBoard()
+{
+    if (boardRoot != null)
     {
-        if (boardRoot == null)
-            return;
-
         for (int i = boardRoot.childCount - 1; i >= 0; i--)
         {
             Destroy(boardRoot.GetChild(i).gameObject);
         }
     }
+
+    boardPieces = null;
+    boardCells = null;
+}
 }

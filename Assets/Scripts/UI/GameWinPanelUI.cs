@@ -16,7 +16,7 @@ public class GameWinPanelUI : MonoBehaviour
         Hide();
 
         if (GameManager.Instance != null)
-            GameManager.Instance.OnLevelSolved += Show;
+            GameManager.Instance.OnLevelSolved += ShowWin;
 
         if (nextLevelButton != null)
             nextLevelButton.onClick.AddListener(NextLevel);
@@ -34,17 +34,34 @@ public class GameWinPanelUI : MonoBehaviour
     private void OnDestroy()
     {
         if (GameManager.Instance != null)
-            GameManager.Instance.OnLevelSolved -= Show;
+            GameManager.Instance.OnLevelSolved -= ShowWin;
     }
 
-    private void Show()
+
+
+public void ShowFailed()
+{
+    if (winPanel != null)
+        winPanel.SetActive(true);
+
+    if (nextLevelButton != null)
+        nextLevelButton.gameObject.SetActive(false);
+}
+
+public void ShowWin()
+{
+    if (winPanel != null)
+        winPanel.SetActive(true);
+
+    if (nextLevelButton != null)
     {
-        if (winPanel != null)
-            winPanel.SetActive(true);
+        bool hasNextLevel =
+            LevelManager.Instance != null &&
+            LevelManager.Instance.HasNextLevel();
 
-        if (nextLevelButton != null && levelManager != null)
-            nextLevelButton.gameObject.SetActive(levelManager.HasNextLevel());
+        nextLevelButton.gameObject.SetActive(hasNextLevel);
     }
+}
 
     private void Hide()
     {
@@ -56,15 +73,15 @@ public class GameWinPanelUI : MonoBehaviour
     {
         Hide();
 
-        if (GameManager.Instance != null)
-            GameManager.Instance.LoadNextLevel();
+        if (LevelManager.Instance != null)
+            LevelManager.Instance.LoadNextLevel();
     }
 
     private void Restart()
     {
         Hide();
 
-        if (GameManager.Instance != null)
-            GameManager.Instance.ReloadLevel();
+        if (LevelManager.Instance != null)
+            LevelManager.Instance.ReloadCurrentLevel();
     }
 }

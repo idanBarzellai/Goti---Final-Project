@@ -102,3 +102,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DraggableInventoryPiece
   iconImage: {fileID: 5613663728679680151}
+  spriteLibrary: {fileID: 11400000, guid: 7ecee7a419bcb27479a1fcce6beb5ebe, type: 2}

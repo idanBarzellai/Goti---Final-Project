@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class DraggableInventoryPiece : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private Image iconImage;
-
+[SerializeField] private PieceSpriteLibrary spriteLibrary;
     private PieceData pieceData;
     private BoardManager boardManager;
     private Canvas canvas;
@@ -76,28 +76,18 @@ worldDropPosition.z = 0f;
         rectTransform.anchoredPosition = originalAnchoredPosition;
     }
 
-    private void RefreshVisual()
-    {
-        if (iconImage == null || pieceData == null)
-            return;
+   private void RefreshVisual()
+{
+    if (iconImage == null || pieceData == null)
+        return;
 
-        switch (pieceData.pieceType)
-        {
-            case PieceType.Entry:
-                iconImage.color = Color.green;
-                break;
-            case PieceType.Target:
-                iconImage.color = Color.red;
-                break;
-            case PieceType.Block:
-                iconImage.color = Color.gray;
-                break;
-            case PieceType.Reflect:
-                iconImage.color = Color.cyan;
-                break;
-            default:
-                iconImage.color = Color.white;
-                break;
-        }
+    if (spriteLibrary != null)
+    {
+        Sprite sprite = spriteLibrary.GetSprite(pieceData.pieceType);
+        if (sprite != null)
+            iconImage.sprite = sprite;
     }
+
+    iconImage.color = Color.white;
+}
 }

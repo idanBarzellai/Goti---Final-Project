@@ -17,6 +17,12 @@ public class LevelButtonUI : MonoBehaviour
             label.text = $"Level {levelIndex + 1}";
 
         if (button != null)
-            button.onClick.AddListener(() => SceneFlowManager.StartLevel(levelIndex));
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() =>
+            {
+                LevelManager.Instance.SelectLevelAndLoadGame(this.levelIndex);
+            });
+        }
     }
 }
