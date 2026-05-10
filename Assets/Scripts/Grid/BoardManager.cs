@@ -78,7 +78,7 @@ public class BoardManager : MonoBehaviour
             continue;
         }
 
-        SpawnPiece(pieceData, false, false, false);
+SpawnPiece(pieceData, false, pieceData.canRotate, false);
     }
 }
 
@@ -192,12 +192,13 @@ if (piece == null || !piece.CanMove)
         return false;
 
     PieceData placedData = new PieceData
-    {
-        pieceType = pieceData.pieceType,
-        gridPosition = targetGridPosition,
-        direction = pieceData.direction,
-        isRequired = pieceData.isRequired
-    };
+{
+    pieceType = pieceData.pieceType,
+    gridPosition = targetGridPosition,
+    direction = Direction.Up,
+    isRequired = pieceData.isRequired,
+    canRotate = true
+};
 
     SpawnPiece(placedData, true, true, true);
     OnBoardChanged();

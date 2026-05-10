@@ -1540,7 +1540,7 @@ MonoBehaviour:
   levels:
   - {fileID: 11400000, guid: e27650e3beec2e94a90f032622bf6e73, type: 2}
   - {fileID: 11400000, guid: 741b0715f50d3f749b4035008545ad39, type: 2}
-  - {fileID: 11400000, guid: 31f24a3ca5a5d5b419a12f38988067cd, type: 2}
+  startingLevelIndex: 0
   gameplaySceneName: GameScene
 --- !u!1 &1648363605
 GameObject:

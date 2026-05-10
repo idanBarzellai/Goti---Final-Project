@@ -60,38 +60,23 @@ public class GameManager : MonoBehaviour
     laserTriesUI?.SetTries(triesRemaining, maxTries);
 }
 
-    public void FireLaserButtonClicked()
+public void FireLaserButtonClicked()
 {
     Debug.Log("Fire button clicked");
 
     if (levelEnded)
-    {
-        Debug.Log("Fire blocked: level already ended");
         return;
-    }
 
     if (laserControlManager == null)
-    {
-        Debug.LogError("Fire blocked: laserControlManager is null");
         return;
-    }
 
     if (triesRemaining <= 0)
-    {
-        Debug.Log("Fire blocked: no tries remaining");
         return;
-    }
-
-    triesRemaining--;
-    laserTriesUI?.SetTries(triesRemaining);
 
     LaserSimulationResult result = laserControlManager.FireLaser();
 
     if (result == null)
-    {
-        Debug.LogError("Laser result is null");
         return;
-    }
 
     bool solved = CheckSolved(result);
 
@@ -100,6 +85,9 @@ public class GameManager : MonoBehaviour
         HandleLevelSolved();
         return;
     }
+
+    triesRemaining--;
+    laserTriesUI?.SetTries(triesRemaining);
 
     if (triesRemaining <= 0)
     {
@@ -170,7 +158,7 @@ public class GameManager : MonoBehaviour
 
         if (boardManager.TryRemovePieceToInventory(piece))
         {
-            inventoryBarUI.AddInventoryPiece(returnedData);
+    inventoryBarUI.RestoreUsedPiece(piece);
         }
     }
 

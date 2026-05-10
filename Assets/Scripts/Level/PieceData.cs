@@ -8,4 +8,5 @@ public class PieceData
     public Vector2Int gridPosition;
     public Direction direction;
     public bool isRequired;
+    public bool canRotate;
 }

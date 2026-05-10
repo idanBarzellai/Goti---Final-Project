@@ -19,6 +19,8 @@ public class BoardPieceView : MonoBehaviour
     [SerializeField] private MoonShadowCaster moonShadowCaster;
 [SerializeField] private PieceSpriteLibrary spriteLibrary;
     private BoardPiece boardPiece;
+    [Header("Rotation Indicator")]
+[SerializeField] private GameObject rotateIndicator;
 
     private void Awake()
     {
@@ -60,6 +62,9 @@ public void Refresh()
     {
         spriteRenderer.color *= fixedOverlayTint;
     }
+
+    if (rotateIndicator != null)
+    rotateIndicator.SetActive(boardPiece.CanRotate);
 
     RefreshShadow();
 }

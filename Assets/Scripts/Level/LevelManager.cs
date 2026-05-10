@@ -6,7 +6,6 @@ public class LevelManager : MonoBehaviour
     public static LevelManager Instance { get; private set; }
 
     [SerializeField] private LevelData[] levels;
-    [SerializeField] private int startingLevelIndex = 0;
     [SerializeField] private string gameplaySceneName = "GameScene";
 
     private BoardManager boardManager;

@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class InventoryBarUI : MonoBehaviour
 {
-[SerializeField] private RectTransform inventoryDropArea;
-public RectTransform InventoryDropArea => inventoryDropArea;
+    [SerializeField] private RectTransform inventoryDropArea;
+    public RectTransform InventoryDropArea => inventoryDropArea;
+
     [SerializeField] private Transform inventoryContainer;
     [SerializeField] private DraggableInventoryPiece inventoryPiecePrefab;
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private Canvas canvas;
-
 
     private readonly List<DraggableInventoryPiece> spawnedInventoryPieces = new List<DraggableInventoryPiece>();
 
@@ -44,8 +44,24 @@ public RectTransform InventoryDropArea => inventoryDropArea;
         if (piece == null)
             return;
 
-        spawnedInventoryPieces.Remove(piece);
-        Destroy(piece.gameObject);
+        piece.MarkUsedOnBoard();
+    }
+
+    public void RestoreUsedPiece(BoardPiece boardPiece)
+    {
+        if (boardPiece == null)
+            return;
+
+        foreach (DraggableInventoryPiece inventoryPiece in spawnedInventoryPieces)
+        {
+            if (inventoryPiece != null && inventoryPiece.MatchesPiece(boardPiece))
+            {
+                inventoryPiece.MarkAvailable();
+                return;
+            }
+        }
+
+        Debug.LogWarning($"InventoryBarUI: Could not restore inventory piece for {boardPiece.PieceType}");
     }
 
     private void ClearInventory()
