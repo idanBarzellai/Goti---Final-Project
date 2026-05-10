@@ -81,16 +81,55 @@ if (!result.hitPieces.Contains(hitPiece))
 
     return result;
 
-                case PieceType.Reflect:
-                    if (LaserReflectionUtility.TryReflect(currentDirection, hitPiece.Direction, out Direction reflectedDirection))
-                    {
-                        currentCell = nextCell;
-                        currentDirection = reflectedDirection;
-                        continue;
-                    }
+               case PieceType.Mirror:
+    if (LaserReflectionUtility.TryReflect(currentDirection, hitPiece.Direction, out Direction mirrorDirection))
+    {
+        currentCell = nextCell;
+        currentDirection = mirrorDirection;
+        continue;
+    }
 
-                    result.wasBlocked = true;
-                    return result;
+    result.wasBlocked = true;
+    return result;
+
+case PieceType.Reflect:
+    if (TryTriangleReflect(hitPiece.Direction, currentDirection, out Direction triangleReflectDirection))
+    {
+        currentCell = nextCell;
+        currentDirection = triangleReflectDirection;
+        continue;
+    }
+
+    result.wasBlocked = true;
+    return result;
+
+case PieceType.Checkpoint:
+    if (IsCheckpointPassAllowed(hitPiece.Direction, currentDirection))
+    {
+        currentCell = nextCell;
+        continue;
+    }
+
+    result.wasBlocked = true;
+    return result;
+
+case PieceType.Portal:
+    if (currentDirection != hitPiece.Direction)
+    {
+        result.wasBlocked = true;
+        return result;
+    }
+
+    BoardPiece pairedPortal = FindPairedPortal(hitPiece);
+
+    if (pairedPortal == null)
+    {
+        result.wasBlocked = true;
+        return result;
+    }
+
+    currentCell = pairedPortal.GridPosition;
+    continue;
 
                 case PieceType.Entry:
                     currentCell = nextCell;
@@ -105,4 +144,59 @@ if (!result.hitPieces.Contains(hitPiece))
         result.detectedLoop = true;
         return result;
     }
+
+    private BoardPiece FindPairedPortal(BoardPiece currentPortal)
+{
+    if (currentPortal == null)
+        return null;
+
+    foreach (BoardPiece piece in boardManager.GetAllPieces())
+    {
+        if (piece == null)
+            continue;
+
+        if (piece == currentPortal)
+            continue;
+
+        if (piece.PieceType != PieceType.Portal)
+            continue;
+
+        if (piece.PortalPairId == currentPortal.PortalPairId)
+            return piece;
+    }
+
+    return null;
+}
+
+private bool IsCheckpointPassAllowed(Direction checkpointDirection, Direction incomingDirection)
+{
+    bool checkpointIsVertical =
+        checkpointDirection == Direction.Up ||
+        checkpointDirection == Direction.Down;
+
+    bool beamIsVertical =
+        incomingDirection == Direction.Up ||
+        incomingDirection == Direction.Down;
+
+    return checkpointIsVertical == beamIsVertical;
+}
+
+private bool TryTriangleReflect(
+    Direction reflectorDirection,
+    Direction incomingDirection,
+    out Direction reflectedDirection)
+{
+    // Only allow laser to hit the reflective/front side.
+    if (incomingDirection != reflectorDirection)
+    {
+        reflectedDirection = incomingDirection;
+        return false;
+    }
+
+    return LaserReflectionUtility.TryReflect(
+        incomingDirection,
+        reflectorDirection,
+        out reflectedDirection
+    );
+}
 }

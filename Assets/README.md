@@ -23,8 +23,10 @@ Player:
 3. Some pieces are fixed on the board
 4. Additional pieces begin in inventory tray
 5. Player drags, places, moves, returns, and rotates pieces
-6. Laser simulates
-7. If beam satisfies puzzle goals -> level solved
+6. Player presses Fire
+7. Laser simulates
+8. Failed attempts consume a laser try
+9. Puzzle is solved or failed
 
 ----------------------------------
 
@@ -47,16 +49,19 @@ Interaction:
 - Inventory -> board drag
 - Board piece move
 - Board piece return to inventory
-- Rotate movable pieces
-- Laser updates after board changes
+- Rotate allowed pieces
+- Manual laser fire button
+- Rotatable pieces display interaction indicators
+- Inventory pieces remain visible while used on board
 
 Win:
 - Laser reaches target
 - All required pieces are hit by beam
 
 Fail:
-- No fail state.
-- Player remains in puzzle until solved.
+- Timer reaches sunrise
+OR
+- Player runs out of laser tries
 
 ----------------------------------
 
@@ -80,8 +85,9 @@ BoardManager
 - board changed events
 
 LaserControlManager
-- triggers simulation
-- listens to board changes
+- manual laser firing
+- laser clearing
+- stores latest simulation result
 
 LaserSimulationService
 - pure beam logic
@@ -149,7 +155,7 @@ CanRotate
 CanReturnToInventory
 
 Placed pieces:
-false false false
+Configured per level
 
 Inventory placed pieces:
 true true true
@@ -204,6 +210,33 @@ Supports:
 - impact effects later
 
 Beam visuals should stay independent from simulation.
+
+----------------------------------
+
+## Interaction Readability
+
+Rotatable pieces display animated interaction indicators.
+
+Inventory pieces:
+- remain visible while placed on board
+- fade while currently in use
+- restore when returned to inventory
+
+This improves puzzle readability and board state clarity.
+
+----------------------------------
+
+## Puzzle Pressure Systems
+
+Current lose systems:
+
+1. Sunrise timer
+2. Limited laser tries
+
+Laser tries are represented visually as life icons.
+
+Incorrect laser activations consume tries.
+Successful solutions do not consume tries.
 
 ----------------------------------
 
@@ -282,6 +315,6 @@ Requires:
 
 ## Author
 
-Lior Tzabari
+Idan Barzzellai
 Master's Final Project
 Game Design

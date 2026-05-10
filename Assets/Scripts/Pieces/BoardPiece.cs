@@ -6,6 +6,7 @@ public class BoardPiece : MonoBehaviour
     public Vector2Int GridPosition { get; private set; }
     public Direction Direction { get; private set; }
     public bool IsRequired { get; private set; }
+    public int PortalPairId { get; private set; }
 
     public bool CanMove { get; private set; }
     public bool CanRotate { get; private set; }
@@ -14,29 +15,31 @@ public class BoardPiece : MonoBehaviour
 
     private BoardManager boardManager;
 
-    public void Initialize(
-        PieceType pieceType,
-        Vector2Int gridPosition,
-        Direction direction,
-        bool isRequired,
-        bool canMove,
-        bool canRotate,
-        bool canReturnToInventory,
-        BoardManager owningBoardManager)
-    {
-        PieceType = pieceType;
-        GridPosition = gridPosition;
-        Direction = direction;
-        IsRequired = isRequired;
+   public void Initialize(
+    PieceType pieceType,
+    Vector2Int gridPosition,
+    Direction direction,
+    bool isRequired,
+    bool canMove,
+    bool canRotate,
+    bool canReturnToInventory,
+    BoardManager owningBoardManager,
+    int portalPairId = 0)
+{
+    PieceType = pieceType;
+    GridPosition = gridPosition;
+    Direction = direction;
+    IsRequired = isRequired;
+    PortalPairId = portalPairId;
 
-        CanMove = canMove;
-        CanRotate = canRotate;
-        CanReturnToInventory = canReturnToInventory;
+    CanMove = canMove;
+    CanRotate = canRotate;
+    CanReturnToInventory = canReturnToInventory;
 
-        boardManager = owningBoardManager;
+    boardManager = owningBoardManager;
 
-        RefreshVisualRotation();
-    }
+    RefreshVisualRotation();
+}
 
     public void SetGridPosition(Vector2Int newGridPosition)
     {

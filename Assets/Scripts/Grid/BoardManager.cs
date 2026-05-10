@@ -92,16 +92,17 @@ SpawnPiece(pieceData, false, pieceData.canRotate, false);
     piece.transform.localPosition = GridToLocalPosition(pieceData.gridPosition);
     piece.name = $"{pieceData.pieceType}_{pieceData.gridPosition.x}_{pieceData.gridPosition.y}";
 
-    piece.Initialize(
-        pieceData.pieceType,
-        pieceData.gridPosition,
-        pieceData.direction,
-        pieceData.isRequired,
-        canMove,
-        canRotate,
-        canReturnToInventory,
-        this
-    );
+   piece.Initialize(
+    pieceData.pieceType,
+    pieceData.gridPosition,
+    pieceData.direction,
+    pieceData.isRequired,
+    canMove,
+    canRotate,
+    canReturnToInventory,
+    this,
+    pieceData.portalPairId
+);
 
     boardPieces[pieceData.gridPosition.x, pieceData.gridPosition.y] = piece;
 
@@ -197,7 +198,8 @@ if (piece == null || !piece.CanMove)
     gridPosition = targetGridPosition,
     direction = Direction.Up,
     isRequired = pieceData.isRequired,
-    canRotate = true
+    canRotate = true,
+    portalPairId = pieceData.portalPairId
 };
 
     SpawnPiece(placedData, true, true, true);
