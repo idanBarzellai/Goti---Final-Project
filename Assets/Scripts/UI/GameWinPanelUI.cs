@@ -63,7 +63,7 @@ public void ShowWin()
     }
 }
 
-    private void Hide()
+    public void Hide()
     {
         if (winPanel != null)
             winPanel.SetActive(false);
@@ -73,15 +73,15 @@ public void ShowWin()
     {
         Hide();
 
-        if (LevelManager.Instance != null)
-            LevelManager.Instance.LoadNextLevel();
+        if (GameManager.Instance != null)
+            GameManager.Instance.LoadNextLevel();
     }
 
     private void Restart()
     {
         Hide();
 
-        if (LevelManager.Instance != null)
-            LevelManager.Instance.ReloadCurrentLevel();
+        if (GameManager.Instance != null)
+            GameManager.Instance.ReloadLevel();
     }
 }

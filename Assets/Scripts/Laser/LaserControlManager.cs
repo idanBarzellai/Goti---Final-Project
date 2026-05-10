@@ -1,36 +1,35 @@
+using System;
 using UnityEngine;
 
 public class LaserControlManager : MonoBehaviour
 {
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private LaserView laserView;
-    [SerializeField] private bool simulateOnStart = true;
 
     private LaserSimulationService laserSimulationService;
     private LaserSimulationResult lastResult;
 
     public LaserSimulationResult LastResult => lastResult;
 
+    public event Action<LaserSimulationResult> OnLaserFired;
+
     private void Start()
+{
+    if (boardManager == null)
     {
-        if (boardManager == null)
-        {
-            Debug.LogError("LaserControlManager: BoardManager reference is missing.");
-            return;
-        }
+        Debug.LogError("LaserControlManager: BoardManager reference is missing.");
+        return;
+    }
 
-        laserSimulationService = new LaserSimulationService(boardManager);
+    laserSimulationService = new LaserSimulationService(boardManager);
 
-        boardManager.OnBoardStateChanged += HandleBoardStateChanged;
+    boardManager.OnBoardStateChanged += HandleBoardStateChanged;
     boardManager.OnBoardLoaded += HandleBoardLoaded;
 
-    if (simulateOnStart)
-    {
-        SimulateLaser();
-    }
-    }
+    ClearLaser();
+}
 
- private void OnDestroy()
+private void OnDestroy()
 {
     if (boardManager != null)
     {
@@ -39,30 +38,39 @@ public class LaserControlManager : MonoBehaviour
     }
 }
 
+private void HandleBoardStateChanged()
+{
+    ClearLaser();
+}
+
 private void HandleBoardLoaded()
 {
-    SimulateLaser();
+    ClearLaser();
 }
-    private void HandleBoardStateChanged()
-    {
-        // For now, always simulate on board change.
-        // Later this will depend on auto-fire mode.
-        SimulateLaser();
-    }
 
-    public void SimulateLaser()
+    public LaserSimulationResult FireLaser()
     {
         if (laserSimulationService == null)
-            return;
+            return null;
 
         lastResult = laserSimulationService.Simulate();
 
         if (laserView != null)
-        {
             laserView.Render(lastResult);
-        }
 
         DebugLogResult(lastResult);
+
+        OnLaserFired?.Invoke(lastResult);
+
+        return lastResult;
+    }
+
+    public void ClearLaser()
+    {
+        lastResult = null;
+
+        if (laserView != null)
+            laserView.Clear();
     }
 
     private void DebugLogResult(LaserSimulationResult result)

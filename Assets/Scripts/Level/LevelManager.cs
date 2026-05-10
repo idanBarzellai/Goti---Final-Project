@@ -16,23 +16,22 @@ public class LevelManager : MonoBehaviour
     public int CurrentLevelIndex { get; private set; }
     public int LevelCount => levels != null ? levels.Length : 0;
 
-    private void Awake()
+private void Awake()
+{
+    if (Instance != null && Instance != this)
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        CurrentLevelIndex = startingLevelIndex;
-
-        if (levels != null && levels.Length > 0)
-            CurrentLevel = levels[CurrentLevelIndex];
+        Destroy(gameObject);
+        return;
     }
 
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+
+    CurrentLevelIndex = SceneFlowManager.SelectedLevelIndex;
+
+    if (levels != null && levels.Length > 0)
+        CurrentLevel = levels[CurrentLevelIndex];
+}
     public void RegisterGameplaySceneReferences(
         BoardManager boardManager,
         InventoryBarUI inventoryBarUI)
@@ -73,7 +72,7 @@ public class LevelManager : MonoBehaviour
         LoadCurrentLevelIntoScene();
     }
 
-  public void LoadNextLevel()
+public void LoadNextLevel()
 {
     int nextIndex = CurrentLevelIndex + 1;
 

@@ -9,16 +9,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private InventoryBarUI inventoryBarUI;
     [SerializeField] private LevelManager levelManager;
 
-[SerializeField] private LevelTimerManager levelTimerManager;
-[SerializeField] private GameWinPanelUI gameWinPanelUI;
-
+    [Header("Lose / Win UI")]
+    [SerializeField] private LevelTimerManager levelTimerManager;
+    [SerializeField] private GameWinPanelUI gameWinPanelUI;
+    [SerializeField] private LaserTriesUI laserTriesUI;
 
     public static GameManager Instance { get; private set; }
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
 
     public event Action OnLevelSolved;
 
-private bool levelSolved;   
+    private bool levelEnded;
+    private int triesRemaining;
 
     private void Awake()
     {
@@ -33,116 +35,224 @@ private bool levelSolved;
 
     private void Start()
     {
-        if (boardManager != null)
-            boardManager.OnBoardStateChanged += HandleBoardStateChanged;
+        if (levelTimerManager != null)
+            levelTimerManager.OnTimerFinished += HandleTimerFinished;
 
-            if (levelTimerManager != null)
-    levelTimerManager.OnTimerFinished += HandleTimerFinished;
+        InitializeTriesFromCurrentLevel();
     }
 
     private void OnDestroy()
     {
-        if (boardManager != null)
-            boardManager.OnBoardStateChanged -= HandleBoardStateChanged;
-
-            if (levelTimerManager != null)
-    levelTimerManager.OnTimerFinished -= HandleTimerFinished;
+        if (levelTimerManager != null)
+            levelTimerManager.OnTimerFinished -= HandleTimerFinished;
     }
 
-    private void HandleBoardStateChanged()
+   private void InitializeTriesFromCurrentLevel()
+{
+    int maxTries = 3;
+
+    LevelManager activeLevelManager = ActiveLevelManager;
+
+    if (activeLevelManager != null && activeLevelManager.CurrentLevel != null)
+        maxTries = Mathf.Max(1, activeLevelManager.CurrentLevel.maxLaserTries);
+
+    triesRemaining = maxTries;
+    laserTriesUI?.SetTries(triesRemaining, maxTries);
+}
+
+    public void FireLaserButtonClicked()
+{
+    Debug.Log("Fire button clicked");
+
+    if (levelEnded)
     {
-        CheckSolved();
+        Debug.Log("Fire blocked: level already ended");
+        return;
+    }
+
+    if (laserControlManager == null)
+    {
+        Debug.LogError("Fire blocked: laserControlManager is null");
+        return;
+    }
+
+    if (triesRemaining <= 0)
+    {
+        Debug.Log("Fire blocked: no tries remaining");
+        return;
+    }
+
+    triesRemaining--;
+    laserTriesUI?.SetTries(triesRemaining);
+
+    LaserSimulationResult result = laserControlManager.FireLaser();
+
+    if (result == null)
+    {
+        Debug.LogError("Laser result is null");
+        return;
+    }
+
+    bool solved = CheckSolved(result);
+
+    if (solved)
+    {
+        HandleLevelSolved();
+        return;
+    }
+
+    if (triesRemaining <= 0)
+    {
+        HandleLose();
+    }
+}
+
+    private bool CheckSolved(LaserSimulationResult result)
+    {
+        if (levelEnded)
+            return false;
+
+        if (result == null || !result.didHitAnyTarget)
+            return false;
+
+        BoardPiece[] requiredPieces = boardManager
+            .GetAllPieces()
+            .Where(p => p != null && p.IsRequired)
+            .ToArray();
+
+        foreach (BoardPiece requiredPiece in requiredPieces)
+        {
+            if (!result.hitPieces.Contains(requiredPiece))
+                return false;
+        }
+
+        return true;
+    }
+
+    private void HandleLevelSolved()
+    {
+        levelEnded = true;
+
+        levelTimerManager?.StopTimer();
+
+        Debug.Log("LEVEL SOLVED");
+        OnLevelSolved?.Invoke();
     }
 
     private void HandleTimerFinished()
-{
-    gameWinPanelUI?.ShowFailed();
-}
-
-   public void ReturnPieceToInventory(BoardPiece piece)
-{
-    if (piece == null || !piece.CanReturnToInventory || inventoryBarUI == null || boardManager == null)
-        return;
-
-    PieceData returnedData = new PieceData
     {
-        pieceType = piece.PieceType,
-        gridPosition = Vector2Int.zero,
-        direction = piece.Direction,
-        isRequired = piece.IsRequired
-    };
+        if (levelEnded)
+            return;
 
-    if (boardManager.TryRemovePieceToInventory(piece))
-    {
-        inventoryBarUI.AddInventoryPiece(returnedData);
+        HandleLose();
     }
-}
 
-   public bool IsInventoryScreenArea(Vector2 screenPosition, RectTransform inventoryArea, Camera eventCamera)
-{
-    if (inventoryArea == null)
-        return false;
-
-    Camera uiCamera = eventCamera;
-
-    Canvas canvas = inventoryArea.GetComponentInParent<Canvas>();
-    if (canvas != null)
+    private void HandleLose()
     {
-        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+        levelEnded = true;
+
+        levelTimerManager?.StopTimer();
+        gameWinPanelUI?.ShowFailed();
+    }
+
+    public void ReturnPieceToInventory(BoardPiece piece)
+    {
+        if (piece == null || !piece.CanReturnToInventory || inventoryBarUI == null || boardManager == null)
+            return;
+
+        PieceData returnedData = new PieceData
         {
-            uiCamera = null;
-        }
-        else if (canvas.worldCamera != null)
+            pieceType = piece.PieceType,
+            gridPosition = Vector2Int.zero,
+            direction = piece.Direction,
+            isRequired = piece.IsRequired
+        };
+
+        if (boardManager.TryRemovePieceToInventory(piece))
         {
-            uiCamera = canvas.worldCamera;
+            inventoryBarUI.AddInventoryPiece(returnedData);
         }
     }
 
-    return RectTransformUtility.RectangleContainsScreenPoint(inventoryArea, screenPosition, uiCamera);
-}
-
-   public bool CheckSolved()
-{
-    if (levelSolved)
-        return true;
-
-    if (boardManager == null || laserControlManager == null)
-        return false;
-
-    LaserSimulationResult result = laserControlManager.LastResult;
-    if (result == null || !result.didHitAnyTarget)
-        return false;
-
-    BoardPiece[] requiredPieces = boardManager
-        .GetAllPieces()
-        .Where(p => p != null && p.IsRequired)
-        .ToArray();
-
-    foreach (BoardPiece requiredPiece in requiredPieces)
+    public bool IsInventoryScreenArea(Vector2 screenPosition, RectTransform inventoryArea, Camera eventCamera)
     {
-        if (!result.hitPieces.Contains(requiredPiece))
+        if (inventoryArea == null)
             return false;
+
+        Camera uiCamera = eventCamera;
+
+        Canvas canvas = inventoryArea.GetComponentInParent<Canvas>();
+        if (canvas != null)
+        {
+            if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                uiCamera = null;
+            }
+            else if (canvas.worldCamera != null)
+            {
+                uiCamera = canvas.worldCamera;
+            }
+        }
+
+        return RectTransformUtility.RectangleContainsScreenPoint(inventoryArea, screenPosition, uiCamera);
     }
 
-    levelSolved = true;
-    Debug.Log("LEVEL SOLVED");
-    OnLevelSolved?.Invoke();
-
-    return true;
-}
-
-    public void LoadNextLevel()
+private LevelManager ActiveLevelManager
 {
-    levelSolved = false;
+    get
+    {
+        if (levelManager != null)
+            return levelManager;
 
-    if (levelManager != null)
-        levelManager.LoadNextLevel();
+        return LevelManager.Instance;
+    }
 }
+
+public void LoadNextLevel()
+{
+    levelEnded = false;
+
+    laserControlManager?.ClearLaser();
+
+    LevelManager activeLevelManager = ActiveLevelManager;
+
+    if (activeLevelManager != null)
+        activeLevelManager.LoadNextLevel();
+    else
+        Debug.LogError("GameManager: No LevelManager found.");
+
+    InitializeTriesFromCurrentLevel();
+
+    if (levelTimerManager != null)
+    {
+        levelTimerManager.ResetTimer();
+        levelTimerManager.StartTimer();
+    }
+
+    gameWinPanelUI?.Hide();
+}
+
     public void ReloadLevel()
 {
-    levelSolved = false;
+    levelEnded = false;
 
-    if (levelManager != null)
-        levelManager.ReloadCurrentLevel();
+    laserControlManager?.ClearLaser();
+
+    LevelManager activeLevelManager = ActiveLevelManager;
+
+    if (activeLevelManager != null)
+        activeLevelManager.ReloadCurrentLevel();
+    else
+        Debug.LogError("GameManager: No LevelManager found.");
+
+    InitializeTriesFromCurrentLevel();
+
+    if (levelTimerManager != null)
+    {
+        levelTimerManager.ResetTimer();
+        levelTimerManager.StartTimer();
+    }
+
+    gameWinPanelUI?.Hide();
 }
 }
