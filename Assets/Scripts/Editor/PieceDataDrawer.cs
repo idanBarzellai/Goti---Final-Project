@@ -58,10 +58,6 @@ public class PieceDataDrawer : PropertyDrawer
         bool isInventoryPiece = property.propertyPath.Contains("inventoryPieces");
         PieceType currentType = (PieceType)pieceType.enumValueIndex;
 
-        bool showRequired =
-            currentType != PieceType.Entry &&
-            currentType != PieceType.Target;
-
         int lines = 1; // foldout
         lines++; // pieceType
 
@@ -70,9 +66,6 @@ public class PieceDataDrawer : PropertyDrawer
 
         if (!isInventoryPiece)
             lines++; // direction
-
-        if (showRequired)
-            lines++; // isRequired
 
         if (!isInventoryPiece)
             lines++; // canRotate

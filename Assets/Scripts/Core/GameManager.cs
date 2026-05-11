@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameWinPanelUI gameWinPanelUI;
     [SerializeField] private LaserTriesUI laserTriesUI;
 
+    [SerializeField] private Button fireButton;
+
     public static GameManager Instance { get; private set; }
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
 
@@ -21,6 +23,13 @@ public class GameManager : MonoBehaviour
 
     private bool levelEnded;
     private int triesRemaining;
+
+    [Header("Laser Character Walk")]
+[SerializeField] private LaserCharacterWalker laserCharacterWalker;
+[SerializeField] private Transform boardRoot;
+[SerializeField] private float characterPathZOffset = -0.25f;
+
+private bool laserSequenceRunning;
 
     private void Awake()
     {
@@ -60,8 +69,17 @@ public class GameManager : MonoBehaviour
     laserTriesUI?.SetTries(triesRemaining, maxTries);
 }
 
+private void SetFireButtonInteractable(bool interactable)
+{
+    if (fireButton != null)
+        fireButton.interactable = interactable;
+}
+
 public void FireLaserButtonClicked()
 {
+    if (laserSequenceRunning)
+    return;
+
     Debug.Log("Fire button clicked");
 
     if (levelEnded)
@@ -72,6 +90,7 @@ public void FireLaserButtonClicked()
 
     if (triesRemaining <= 0)
         return;
+laserCharacterWalker?.Clear();
 
     LaserSimulationResult result = laserControlManager.FireLaser();
 
@@ -80,9 +99,45 @@ public void FireLaserButtonClicked()
 
     bool solved = CheckSolved(result);
 
+laserSequenceRunning = true;
+SetFireButtonInteractable(false);
+
+if (laserCharacterWalker == null || boardRoot == null)
+{
+    laserSequenceRunning = false;
+    SetFireButtonInteractable(true);
+    ResolveLaserResultAfterVisual(result, solved);
+    return;
+}
+
+    var path = BeamPathWorldBuilder.BuildWorldPoints(
+        result,
+        boardManager,
+        boardRoot,
+        characterPathZOffset
+    );
+
+    laserCharacterWalker.WalkPath(
+        path,
+        solved,
+        () =>
+{
+    laserSequenceRunning = false;
+    SetFireButtonInteractable(true);
+
+    ResolveLaserResultAfterVisual(result, solved);
+}
+    );
+}
+private void ResolveLaserResultAfterVisual(LaserSimulationResult result, bool solved)
+{
+    if (levelEnded)
+        return;
+
     if (solved)
     {
         HandleLevelSolved();
+        gameWinPanelUI?.ShowWin(); 
         return;
     }
 
@@ -196,7 +251,11 @@ public void LoadNextLevel()
 {
     levelEnded = false;
 
-    laserControlManager?.ClearLaser();
+    laserSequenceRunning = false;
+SetFireButtonInteractable(true);
+
+    laserCharacterWalker?.Clear();
+laserControlManager?.ClearLaser();
 
     LevelManager activeLevelManager = ActiveLevelManager;
 
@@ -220,7 +279,11 @@ public void LoadNextLevel()
 {
     levelEnded = false;
 
-    laserControlManager?.ClearLaser();
+    laserSequenceRunning = false;
+SetFireButtonInteractable(true);
+
+    laserCharacterWalker?.Clear();
+laserControlManager?.ClearLaser();
 
     LevelManager activeLevelManager = ActiveLevelManager;
 

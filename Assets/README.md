@@ -39,7 +39,10 @@ Pieces:
 - Entry
 - Target
 - Block
-- Reflect
+- Mirror
+- Reflect (triangle reflector)
+- Checkpoint
+- Portal
 
 Piece Sources:
 - placedPieces = fixed puzzle setup
@@ -56,7 +59,8 @@ Interaction:
 
 Win:
 - Laser reaches target
-- All required pieces are hit by beam
+- All placed board pieces are hit by the beam
+- All inventory pieces must be used
 
 Fail:
 - Timer reaches sunrise
@@ -91,15 +95,18 @@ LaserControlManager
 
 LaserSimulationService
 - pure beam logic
+- behavior-driven simulation pipeline
 
 LaserView
 - beam rendering only
 
 InventoryBarUI
 - inventory tray
+- used-piece visual state
 
 BoardPiece
-- piece runtime behavior
+- lightweight runtime piece container
+- stores runtime state only
 
 BoardPieceDragHandler
 - drag pieces on board
@@ -137,12 +144,12 @@ Placed Pieces
 - piece type
 - position
 - direction
-- required
+- rotation permission
+- portal pair id (optional)
 
 Inventory Pieces
 - piece type
-- direction
-- required
+- portal pair id (optional)
 
 ----------------------------------
 
@@ -185,16 +192,51 @@ LaserView
 
 ----------------------------------
 
-## Reflection Rules
+## Piece Behavior Architecture
 
-Current reflect piece uses two mirror states:
+Beam interaction is modular and behavior-driven.
 
-/ mirror
-\ mirror
+Each puzzle piece owns its own beam logic through a dedicated behavior class.
 
-determined by rotation.
+Examples:
+- MirrorBeamBehavior
+- ReflectBeamBehavior
+- PortalBeamBehavior
+- CheckpointBeamBehavior
 
-Can be extended later.
+LaserSimulationService no longer contains a large piece-type switch statement.
+
+Instead:
+- PieceBehaviorRegistry resolves the correct behavior
+- Each behavior returns a BeamInteractionResult
+- Simulation remains deterministic and extensible
+
+This allows adding new puzzle mechanics without modifying simulation core logic.
+
+----------------------------------
+
+## Current Piece Behaviors
+
+Mirror
+- Reflects from both sides
+
+Reflect
+- Triangle reflector
+- Reflects only from diagonal edge
+- Other sides block
+
+Checkpoint
+- Allows beam only through matching axis
+
+Portal
+- Teleports beam to paired portal
+- Only accepts beam from configured entrance direction
+
+Block
+- Stops beam
+
+Target
+- Ends simulation successfully
 
 ----------------------------------
 
@@ -222,7 +264,9 @@ Inventory pieces:
 - fade while currently in use
 - restore when returned to inventory
 
-This improves puzzle readability and board state clarity.
+Dragging creates temporary visual drag ghosts.
+
+This improves readability and board state clarity.
 
 ----------------------------------
 
@@ -240,6 +284,24 @@ Successful solutions do not consume tries.
 
 ----------------------------------
 
+## UI Menu Architecture
+
+Menus inherit from a shared BaseMenuUI class.
+
+Current menus:
+- PauseMenuUI
+- GameWinPanelUI
+
+Shared functionality:
+- panel visibility
+- menu state
+- restart flow
+- main menu navigation
+
+Specialized behavior remains isolated per menu type.
+
+----------------------------------
+
 ## Current Completed Milestones
 
 [x] 5x5 board system
@@ -252,6 +314,17 @@ Successful solutions do not consume tries.
 [x] Return pieces to inventory
 [x] Independent level loading
 [x] Solve checking
+[x] Manual laser fire
+[x] Laser tries system
+[x] Timer lose condition
+[x] Pause menu
+[x] Level progression
+[x] Piece behavior architecture refactor
+[x] Triangle reflect logic
+[x] Portal system
+[x] Checkpoint system
+[x] Rotatable piece indicators
+[x] Persistent inventory slots
 
 ----------------------------------
 
@@ -259,18 +332,14 @@ Successful solutions do not consume tries.
 
 Priority order:
 
-1. Manual fire mode
-2. Auto-fire toggle
-3. Hold-preview mode
-4. Solve UI
-5. Level progression UI
-
-Then:
-
-6. Splitter piece
-7. Portal piece
-8. More puzzle mechanics
-9. Level editor tooling
+1. Auto-fire toggle
+2. Hold-preview mode
+3. Multi-beam simulation
+4. Splitter piece
+5. Beam color mechanics
+6. Better solve/fail presentation
+7. Audio + feedback polish
+8. Level editor tooling
 
 ----------------------------------
 
@@ -293,13 +362,15 @@ Avoid:
 
 ## Adding New Pieces
 
-Every new piece must define:
+Workflow:
 
-1. Beam entry behavior
-2. Beam output behavior
-3. Rotatable?
-4. Movable?
-5. Affects win condition?
+1. Add new PieceType
+2. Create a new PieceBeamBehavior class
+3. Register behavior in PieceBehaviorRegistry
+4. Add sprite to PieceSpriteLibrary
+5. Create levels using the new piece
+
+LaserSimulationService should remain unchanged for most new mechanics.
 
 ----------------------------------
 
@@ -315,6 +386,6 @@ Requires:
 
 ## Author
 
-Idan Barzzellai
+Idan Barzzellai | Danielle Franzes | Maor Astrizki
 Master's Final Project
 Game Design
