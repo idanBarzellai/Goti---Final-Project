@@ -1,19 +1,18 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameWinPanelUI : MonoBehaviour
+public class GameWinPanelUI : BaseMenuUI
 {
-    [SerializeField] private GameObject winPanel;
+    [Header("Win / Lose Buttons")]
+    [SerializeField] private TMP_Text titleText;
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button restartButton;
-    [SerializeField] private Button levelSelectButton;
     [SerializeField] private Button mainMenuButton;
 
-    [SerializeField] private LevelManager levelManager;
-
-    private void Start()
+    protected override void Start()
     {
-        Hide();
+        base.Start();
 
         if (GameManager.Instance != null)
             GameManager.Instance.OnLevelSolved += ShowWin;
@@ -22,13 +21,10 @@ public class GameWinPanelUI : MonoBehaviour
             nextLevelButton.onClick.AddListener(NextLevel);
 
         if (restartButton != null)
-            restartButton.onClick.AddListener(Restart);
-
-        if (levelSelectButton != null)
-            levelSelectButton.onClick.AddListener(SceneFlowManager.GoToMainMenu);
+            restartButton.onClick.AddListener(RestartLevel);
 
         if (mainMenuButton != null)
-            mainMenuButton.onClick.AddListener(SceneFlowManager.GoToMainMenu);
+            mainMenuButton.onClick.AddListener(GoToMainMenu);
     }
 
     private void OnDestroy()
@@ -37,36 +33,30 @@ public class GameWinPanelUI : MonoBehaviour
             GameManager.Instance.OnLevelSolved -= ShowWin;
     }
 
-
-
-public void ShowFailed()
-{
-    if (winPanel != null)
-        winPanel.SetActive(true);
-
-    if (nextLevelButton != null)
-        nextLevelButton.gameObject.SetActive(false);
-}
-
-public void ShowWin()
-{
-    if (winPanel != null)
-        winPanel.SetActive(true);
-
-    if (nextLevelButton != null)
+    public void ShowFailed()
     {
-        bool hasNextLevel =
-            LevelManager.Instance != null &&
-            LevelManager.Instance.HasNextLevel();
+        Show();
 
-        nextLevelButton.gameObject.SetActive(hasNextLevel);
+        if (titleText != null)
+            titleText.text = "Level Failed!";
+        if (nextLevelButton != null)
+            nextLevelButton.gameObject.SetActive(false);
     }
-}
 
-    public void Hide()
+    public void ShowWin()
     {
-        if (winPanel != null)
-            winPanel.SetActive(false);
+        Show();
+
+        if(titleText != null)
+            titleText.text = "Level Solved!";
+        if (nextLevelButton != null)
+        {
+            bool hasNextLevel =
+                LevelManager.Instance != null &&
+                LevelManager.Instance.HasNextLevel();
+
+            nextLevelButton.gameObject.SetActive(hasNextLevel);
+        }
     }
 
     private void NextLevel()
@@ -75,13 +65,5 @@ public void ShowWin()
 
         if (GameManager.Instance != null)
             GameManager.Instance.LoadNextLevel();
-    }
-
-    private void Restart()
-    {
-        Hide();
-
-        if (GameManager.Instance != null)
-            GameManager.Instance.ReloadLevel();
     }
 }

@@ -13,15 +13,11 @@ public class PieceDataDrawer : PropertyDrawer
         SerializedProperty pieceType = property.FindPropertyRelative("pieceType");
         SerializedProperty gridPosition = property.FindPropertyRelative("gridPosition");
         SerializedProperty direction = property.FindPropertyRelative("direction");
-        SerializedProperty isRequired = property.FindPropertyRelative("isRequired");
         SerializedProperty canRotate = property.FindPropertyRelative("canRotate");
 
         bool isInventoryPiece = property.propertyPath.Contains("inventoryPieces");
         PieceType currentType = (PieceType)pieceType.enumValueIndex;
 
-        bool showRequired =
-            currentType != PieceType.Entry &&
-            currentType != PieceType.Target;
 
         EditorGUI.BeginProperty(position, label, property);
 
@@ -42,8 +38,6 @@ public class PieceDataDrawer : PropertyDrawer
             if (!isInventoryPiece)
                 DrawProperty(ref y, position, direction);
 
-            if (showRequired)
-                DrawProperty(ref y, position, isRequired);
 
             if (!isInventoryPiece)
                 DrawProperty(ref y, position, canRotate);

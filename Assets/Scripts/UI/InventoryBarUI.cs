@@ -73,4 +73,15 @@ public class InventoryBarUI : MonoBehaviour
 
         spawnedInventoryPieces.Clear();
     }
+
+    public bool HasUnusedInventoryPieces()
+{
+    foreach (DraggableInventoryPiece inventoryPiece in spawnedInventoryPieces)
+    {
+        if (inventoryPiece != null && !inventoryPiece.isUsedOnBoard)
+            return true;
+    }
+
+    return false;
+}
 }

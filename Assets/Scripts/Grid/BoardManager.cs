@@ -96,7 +96,6 @@ SpawnPiece(pieceData, false, pieceData.canRotate, false);
     pieceData.pieceType,
     pieceData.gridPosition,
     pieceData.direction,
-    pieceData.isRequired,
     canMove,
     canRotate,
     canReturnToInventory,
@@ -197,7 +196,6 @@ if (piece == null || !piece.CanMove)
     pieceType = pieceData.pieceType,
     gridPosition = targetGridPosition,
     direction = Direction.Up,
-    isRequired = pieceData.isRequired,
     canRotate = true,
     portalPairId = pieceData.portalPairId
 };

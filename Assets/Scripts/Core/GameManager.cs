@@ -95,27 +95,31 @@ public void FireLaserButtonClicked()
     }
 }
 
-    private bool CheckSolved(LaserSimulationResult result)
+private bool CheckSolved(LaserSimulationResult result)
+{
+    if (levelEnded)
+        return false;
+
+    if (result == null || !result.didHitAnyTarget)
+        return false;
+
+    if (inventoryBarUI != null && inventoryBarUI.HasUnusedInventoryPieces())
+        return false;
+
+    foreach (BoardPiece piece in boardManager.GetAllPieces())
     {
-        if (levelEnded)
+        if (piece == null)
+            continue;
+
+        if (piece.PieceType == PieceType.Entry)
+            continue;
+
+        if (!result.hitPieces.Contains(piece))
             return false;
-
-        if (result == null || !result.didHitAnyTarget)
-            return false;
-
-        BoardPiece[] requiredPieces = boardManager
-            .GetAllPieces()
-            .Where(p => p != null && p.IsRequired)
-            .ToArray();
-
-        foreach (BoardPiece requiredPiece in requiredPieces)
-        {
-            if (!result.hitPieces.Contains(requiredPiece))
-                return false;
-        }
-
-        return true;
     }
+
+    return true;
+}
 
     private void HandleLevelSolved()
     {
@@ -144,23 +148,15 @@ public void FireLaserButtonClicked()
     }
 
     public void ReturnPieceToInventory(BoardPiece piece)
+{
+    if (piece == null || !piece.CanReturnToInventory || inventoryBarUI == null || boardManager == null)
+        return;
+
+    if (boardManager.TryRemovePieceToInventory(piece))
     {
-        if (piece == null || !piece.CanReturnToInventory || inventoryBarUI == null || boardManager == null)
-            return;
-
-        PieceData returnedData = new PieceData
-        {
-            pieceType = piece.PieceType,
-            gridPosition = Vector2Int.zero,
-            direction = piece.Direction,
-            isRequired = piece.IsRequired
-        };
-
-        if (boardManager.TryRemovePieceToInventory(piece))
-        {
-    inventoryBarUI.RestoreUsedPiece(piece);
-        }
+        inventoryBarUI.RestoreUsedPiece(piece);
     }
+}
 
     public bool IsInventoryScreenArea(Vector2 screenPosition, RectTransform inventoryArea, Camera eventCamera)
     {

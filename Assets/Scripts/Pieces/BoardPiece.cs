@@ -5,7 +5,6 @@ public class BoardPiece : MonoBehaviour
     public PieceType PieceType { get; private set; }
     public Vector2Int GridPosition { get; private set; }
     public Direction Direction { get; private set; }
-    public bool IsRequired { get; private set; }
     public int PortalPairId { get; private set; }
 
     public bool CanMove { get; private set; }
@@ -19,7 +18,6 @@ public class BoardPiece : MonoBehaviour
     PieceType pieceType,
     Vector2Int gridPosition,
     Direction direction,
-    bool isRequired,
     bool canMove,
     bool canRotate,
     bool canReturnToInventory,
@@ -29,7 +27,6 @@ public class BoardPiece : MonoBehaviour
     PieceType = pieceType;
     GridPosition = gridPosition;
     Direction = direction;
-    IsRequired = isRequired;
     PortalPairId = portalPairId;
 
     CanMove = canMove;

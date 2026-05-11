@@ -21,7 +21,7 @@ public class DraggableInventoryPiece : MonoBehaviour, IBeginDragHandler, IDragHa
 
     private RectTransform rectTransform;
 
-    private bool isUsedOnBoard;
+    public bool isUsedOnBoard;
 
     private GameObject dragGhost;
 private RectTransform dragGhostRect;
@@ -123,16 +123,15 @@ private void DestroyDragGhost()
     dragGhostRect = null;
     dragGhostCanvasGroup = null;
 }
-    public bool MatchesPiece(BoardPiece boardPiece)
-    {
-        if (boardPiece == null || pieceData == null)
-            return false;
+   public bool MatchesPiece(BoardPiece boardPiece)
+{
+    if (boardPiece == null || pieceData == null)
+        return false;
 
-        return isUsedOnBoard &&
-               pieceData.pieceType == boardPiece.PieceType &&
-               pieceData.direction == boardPiece.Direction &&
-               pieceData.isRequired == boardPiece.IsRequired;
-    }
+    return isUsedOnBoard &&
+           pieceData.pieceType == boardPiece.PieceType &&
+           pieceData.portalPairId == boardPiece.PortalPairId;
+}
 
     public void MarkUsedOnBoard()
     {
