@@ -93,10 +93,10 @@ if (!result.hitPieces.Contains(hitPiece))
     return result;
 
 case PieceType.Reflect:
-    if (TryTriangleReflect(hitPiece.Direction, currentDirection, out Direction triangleReflectDirection))
+    if (TryTriangleReflect(hitPiece.Direction, currentDirection, out Direction triangleDirection))
     {
         currentCell = nextCell;
-        currentDirection = triangleReflectDirection;
+        currentDirection = triangleDirection;
         continue;
     }
 
@@ -186,17 +186,40 @@ private bool TryTriangleReflect(
     Direction incomingDirection,
     out Direction reflectedDirection)
 {
-    // Only allow laser to hit the reflective/front side.
-    if (incomingDirection != reflectorDirection)
+    Direction localIncoming = RotateToLocal(incomingDirection, reflectorDirection);
+
+    Direction localReflected;
+
+    switch (localIncoming)
     {
-        reflectedDirection = incomingDirection;
-        return false;
+        // Laser came from bottom, so it is moving Up
+        case Direction.Up:
+            localReflected = Direction.Left;
+            break;
+
+        // Laser came from left, so it is moving Right
+        case Direction.Right:
+            localReflected = Direction.Down;
+            break;
+
+        default:
+            reflectedDirection = incomingDirection;
+            return false;
     }
 
-    return LaserReflectionUtility.TryReflect(
-        incomingDirection,
-        reflectorDirection,
-        out reflectedDirection
-    );
+    reflectedDirection = RotateToWorld(localReflected, reflectorDirection);
+    return true;
 }
+
+private Direction RotateToLocal(Direction worldDirection, Direction pieceDirection)
+{
+    return (Direction)(((int)worldDirection - (int)pieceDirection + 4) % 4);
+}
+
+private Direction RotateToWorld(Direction localDirection, Direction pieceDirection)
+{
+    return (Direction)(((int)localDirection + (int)pieceDirection) % 4);
+}
+
+
 }
