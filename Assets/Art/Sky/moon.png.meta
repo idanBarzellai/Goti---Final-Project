@@ -1,13 +1,16 @@
 fileFormatVersion: 2
-guid: e1c2bfd8be1782542ac76b191b4e6d89
+guid: ab4a116e50f6232459adc6b0a33c11c5
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5588244012374682611
-    second: checkpoint_0
+      213: -6999238974132031430
+    second: ChatGPT Image May 12, 2026, 11_27_08 AM_0
   - first:
-      213: 6612178416756646888
-    second: checkpoint_1
+      213: -5394703293400476858
+    second: ChatGPT Image May 12, 2026, 11_27_08 AM_1
+  - first:
+      213: 6773699122526107093
+    second: ChatGPT Image May 12, 2026, 11_27_08 AM_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +57,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1800
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -129,13 +132,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: checkpoint_0
+      name: ChatGPT Image May 12, 2026, 11_27_08 AM_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 0
-        width: 773
-        height: 1024
+        x: 126
+        y: 57
+        width: 792
+        height: 888
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,20 +147,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d041434bda19272b0800000000000000
-      internalID: -5588244012374682611
+      spriteID: a307ac09c35bdde90800000000000000
+      internalID: -6999238974132031430
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: checkpoint_1
+      name: ChatGPT Image May 12, 2026, 11_27_08 AM_1
       rect:
         serializedVersion: 2
-        x: 829
-        y: 1
-        width: 695
-        height: 1023
+        x: 527
+        y: 926
+        width: 24
+        height: 19
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,8 +169,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8e3e84abc3d23cb50800000000000000
-      internalID: 6612178416756646888
+      spriteID: 6431c30efe92225b0800000000000000
+      internalID: -5394703293400476858
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ChatGPT Image May 12, 2026, 11_27_08 AM_2
+      rect:
+        serializedVersion: 2
+        x: 568
+        y: 938
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d53b8d9673010e50800000000000000
+      internalID: 6773699122526107093
       vertices: []
       indices: 
       edges: []
@@ -186,8 +211,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      checkpoint_0: -5588244012374682611
-      checkpoint_1: 6612178416756646888
+      ChatGPT Image May 12, 2026, 11_27_08 AM_0: -6999238974132031430
+      ChatGPT Image May 12, 2026, 11_27_08 AM_1: -5394703293400476858
+      ChatGPT Image May 12, 2026, 11_27_08 AM_2: 6773699122526107093
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

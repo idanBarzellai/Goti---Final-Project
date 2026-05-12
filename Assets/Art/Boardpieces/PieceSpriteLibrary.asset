@@ -12,10 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f287982098488e4abcc12f7a666682f, type: 3}
   m_Name: PieceSpriteLibrary
   m_EditorClassIdentifier: Assembly-CSharp::PieceSpriteLibrary
-  entrySprite: {fileID: 21300000, guid: 14a7ced6ee3ff7b4dbe92b3efdc43262, type: 3}
-  targetSprite: {fileID: 21300000, guid: dc53559aeaae9ef4bafea1569aad2aec, type: 3}
+  entrySprite: {fileID: 21300000, guid: 17793ef1d7e65e840a88bfc7f964852a, type: 3}
+  targetSprite: {fileID: 21300000, guid: e0b4a6ec5ac11aa4d995a6783ff3adbb, type: 3}
   blockSprite: {fileID: 21300000, guid: aa3a47c13a29f124eb63dc88610c4b35, type: 3}
-  mirrorSprite: {fileID: 21300000, guid: 738b9cf0358067d49a9d9133d1c514ed, type: 3}
-  reflectSprite: {fileID: 21300000, guid: 5cf88939b052b4241809397609b56ec8, type: 3}
-  checkpointSprite: {fileID: 21300000, guid: bdfedf0e625a969479cc0849eae6a25c, type: 3}
-  portalSprite: {fileID: 21300000, guid: abb14bf00cee05243b6e6b06594a469e, type: 3}
+  mirrorSprite: {fileID: 21300000, guid: 90232a173c62d1f41923b78d8aa0c6f0, type: 3}
+  reflectSprite: {fileID: 21300000, guid: 4bc3be652f71b7b4bbc17a7fc56a1d98, type: 3}
+  checkpointSprite: {fileID: -5588244012374682611, guid: e1c2bfd8be1782542ac76b191b4e6d89, type: 3}
+  portalSprite: {fileID: 21300000, guid: 406314d77eddb1845b9eaed453634f40, type: 3}
+  entryRotationOffset: 180
+  targetRotationOffset: 180
+  blockRotationOffset: 0
+  mirrorRotationOffset: 0
+  reflectRotationOffset: 90
+  checkpointRotationOffset: 0
+  portalRotationOffset: 0

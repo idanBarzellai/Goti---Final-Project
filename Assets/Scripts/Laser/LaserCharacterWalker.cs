@@ -13,6 +13,9 @@ public class LaserCharacterWalker : MonoBehaviour
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float arriveDistance = 0.02f;
 
+    [Header("Portal")]
+    [SerializeField] private float portalPauseDuration = 0.12f;
+
     [Header("Win Animation Placeholder")]
     [SerializeField] private float winPauseDuration = 0.5f;
 
@@ -26,64 +29,97 @@ public class LaserCharacterWalker : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void WalkPath(List<Vector3> path, bool shouldPlayWinAnimation, Action onComplete)
+    public void WalkPaths(List<List<Vector3>> paths, bool shouldPlayWinAnimation, Action onComplete)
     {
         gameObject.SetActive(true);
+
         if (walkRoutine != null)
             StopCoroutine(walkRoutine);
 
-        walkRoutine = StartCoroutine(WalkRoutine(path, shouldPlayWinAnimation, onComplete));
+        walkRoutine = StartCoroutine(WalkPathsRoutine(paths, shouldPlayWinAnimation, onComplete));
     }
 
-public void Clear()
-{
-    if (walkRoutine != null)
+    public void Clear()
     {
-        StopCoroutine(walkRoutine);
+        if (walkRoutine != null)
+        {
+            StopCoroutine(walkRoutine);
+            walkRoutine = null;
+        }
+
+        StopTrail();
+
+        gameObject.SetActive(false);
+    }
+
+    private IEnumerator WalkPathsRoutine(List<List<Vector3>> paths, bool shouldPlayWinAnimation, Action onComplete)
+    {
+        if (paths == null || paths.Count == 0)
+        {
+            Clear();
+            onComplete?.Invoke();
+            yield break;
+        }
+
+        gameObject.SetActive(true);
+
+        for (int pathIndex = 0; pathIndex < paths.Count; pathIndex++)
+        {
+            List<Vector3> path = paths[pathIndex];
+
+            if (path == null || path.Count == 0)
+                continue;
+
+            bool isAfterPortal = pathIndex > 0;
+
+            if (isAfterPortal)
+            {
+                StopTrail();
+
+                if (characterRenderer != null)
+                    characterRenderer.enabled = false;
+
+                transform.position = path[0];
+
+                yield return new WaitForSeconds(portalPauseDuration);
+
+                if (characterRenderer != null)
+                    characterRenderer.enabled = true;
+
+                yield return null;
+            }
+            else
+            {
+                transform.position = path[0];
+                yield return null;
+            }
+
+            StartTrail();
+
+            for (int i = 1; i < path.Count; i++)
+            {
+                yield return MoveTo(path[i]);
+            }
+
+            StopTrail();
+        }
+
+        if (shouldPlayWinAnimation)
+        {
+            yield return new WaitForSeconds(winPauseDuration);
+        }
+        else
+        {
+            yield return new WaitForSeconds(winPauseDuration);
+            gameObject.SetActive(false);
+        }
+
         walkRoutine = null;
-    }
-
-    if (trailRenderer != null)
-    {
-        trailRenderer.emitting = false;
-        trailRenderer.Clear();
-    }
-
-    gameObject.SetActive(false);
-}
-
-  private IEnumerator WalkRoutine(List<Vector3> path, bool shouldPlayWinAnimation, Action onComplete)
-{
-    if (path == null || path.Count == 0)
-    {
-        Clear();
         onComplete?.Invoke();
-        yield break;
     }
 
-    gameObject.SetActive(true);
-
-    if (trailRenderer != null)
+    private IEnumerator MoveTo(Vector3 target)
     {
-        trailRenderer.emitting = false;
-        trailRenderer.Clear();
-    }
-
-    transform.position = path[0];
-
-    // Wait one frame so Unity fully moves the object before trail starts again
-    yield return null;
-
-    if (trailRenderer != null)
-    {
-        trailRenderer.Clear();
-        trailRenderer.emitting = true;
-    }
-
-    for (int i = 1; i < path.Count; i++)
-    {
-        Vector3 target = path[i];
-
         while (Vector3.Distance(transform.position, target) > arriveDistance)
         {
             transform.position = Vector3.MoveTowards(
@@ -98,19 +134,22 @@ public void Clear()
         transform.position = target;
     }
 
-    if (shouldPlayWinAnimation)
-{
-    yield return new WaitForSeconds(winPauseDuration);
-}
-else
-{
-    // Hide character on failed attempt
-    yield return new WaitForSeconds(winPauseDuration);
-    gameObject.SetActive(false);
-}
+    private void StartTrail()
+    {
+        if (trailRenderer == null)
+            return;
 
-    walkRoutine = null;
-    onComplete?.Invoke();
-}
+        trailRenderer.emitting = false;
+        trailRenderer.Clear();
+        trailRenderer.emitting = true;
+    }
 
+    private void StopTrail()
+    {
+        if (trailRenderer == null)
+            return;
+
+        trailRenderer.emitting = false;
+        trailRenderer.Clear();
+    }
 }

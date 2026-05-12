@@ -16,98 +16,100 @@ public class LaserView : MonoBehaviour
     [SerializeField] private bool useTextureTiling = true;
     [SerializeField] private float textureTilingMultiplier = 1f;
 
+    private readonly List<LineRenderer> activeLineRenderers = new List<LineRenderer>();
+
     private void Awake()
     {
         if (lineRenderer == null)
             lineRenderer = GetComponent<LineRenderer>();
 
-        ApplyVisualSettings();
-    }
-
-    public void ApplyVisualSettings()
-    {
-        if (lineRenderer == null)
-            return;
-
-        lineRenderer.startWidth = lineWidth;
-        lineRenderer.endWidth = lineWidth;
-
-        if (lineMaterial != null)
-        {
-            lineRenderer.material = lineMaterial;
-        }
-
-        lineRenderer.textureMode = useTextureTiling
-            ? LineTextureMode.Tile
-            : LineTextureMode.Stretch;
+        ApplySettings(lineRenderer);
     }
 
     public void Render(LaserSimulationResult result)
     {
+        Clear();
+
         if (lineRenderer == null || boardManager == null || boardRoot == null || result == null)
             return;
 
-        List<Vector3> points = BuildWorldPoints(result.segments);
+        List<List<Vector3>> paths = BuildWorldPointPaths(result.segments);
 
-        lineRenderer.positionCount = points.Count;
-
-        for (int i = 0; i < points.Count; i++)
+        for (int i = 0; i < paths.Count; i++)
         {
-            lineRenderer.SetPosition(i, points[i]);
-        }
+            LineRenderer rendererToUse = i == 0
+                ? lineRenderer
+                : Instantiate(lineRenderer, transform);
 
-        UpdateTextureTiling(points);
+            rendererToUse.gameObject.SetActive(true);
+            ApplySettings(rendererToUse);
+
+            rendererToUse.positionCount = paths[i].Count;
+
+            for (int p = 0; p < paths[i].Count; p++)
+                rendererToUse.SetPosition(p, paths[i][p]);
+
+            activeLineRenderers.Add(rendererToUse);
+        }
     }
 
     public void Clear()
     {
-        if (lineRenderer == null)
-            return;
+        foreach (LineRenderer activeRenderer in activeLineRenderers)
+        {
+            if (activeRenderer == null)
+                continue;
 
-        lineRenderer.positionCount = 0;
+            if (activeRenderer == lineRenderer)
+            {
+                activeRenderer.positionCount = 0;
+            }
+            else
+            {
+                Destroy(activeRenderer.gameObject);
+            }
+        }
+
+        activeLineRenderers.Clear();
+
+        if (lineRenderer != null)
+            lineRenderer.positionCount = 0;
     }
 
-    private List<Vector3> BuildWorldPoints(List<BeamSegment> segments)
+    private List<List<Vector3>> BuildWorldPointPaths(List<BeamSegment> segments)
     {
-        List<Vector3> points = new List<Vector3>();
+        List<List<Vector3>> paths = new List<List<Vector3>>();
+        List<Vector3> currentPath = null;
 
-        if (segments == null || segments.Count == 0)
-            return points;
-
-        for (int i = 0; i < segments.Count; i++)
+        foreach (BeamSegment segment in segments)
         {
-            BeamSegment segment = segments[i];
-
-            Vector3 startPoint = GridCenterToWorld(segment.fromCell);
-            Vector3 endPoint = GridCenterToWorld(segment.toCell);
-
-            if (i == 0)
+            if (currentPath == null || segment.startsNewPath)
             {
-                points.Add(startPoint);
+                currentPath = new List<Vector3>();
+                currentPath.Add(GridCenterToWorld(segment.fromCell));
+                paths.Add(currentPath);
             }
 
-            points.Add(endPoint);
+            currentPath.Add(GridCenterToWorld(segment.toCell));
         }
 
-        return points;
+        return paths;
     }
 
-    private void UpdateTextureTiling(List<Vector3> points)
+    private void ApplySettings(LineRenderer targetRenderer)
     {
-        if (lineRenderer == null || lineRenderer.material == null || points == null || points.Count < 2)
+        if (targetRenderer == null)
             return;
 
-        float totalLength = 0f;
+        targetRenderer.startWidth = lineWidth;
+        targetRenderer.endWidth = lineWidth;
 
-        for (int i = 1; i < points.Count; i++)
-        {
-            totalLength += Vector3.Distance(points[i - 1], points[i]);
-        }
+        if (lineMaterial != null)
+            targetRenderer.material = lineMaterial;
 
-        if (useTextureTiling)
-        {
-            lineRenderer.material.mainTextureScale = new Vector2(totalLength * textureTilingMultiplier, 1f);
-        }
+        targetRenderer.textureMode = useTextureTiling
+            ? LineTextureMode.Tile
+            : LineTextureMode.Stretch;
     }
 
     private Vector3 GridCenterToWorld(Vector2Int gridPosition)

@@ -35,6 +35,7 @@ public class LaserSimulationService
 
         HashSet<string> visitedStates = new HashSet<string>();
 
+bool nextSegmentStartsNewPath = false;
         for (int i = 0; i < maxSteps; i++)
         {
             string stateKey = $"{currentCell.x}_{currentCell.y}_{(int)currentDirection}";
@@ -50,7 +51,8 @@ public class LaserSimulationService
             Vector2Int nextCell =
                 currentCell + PieceRotationUtility.ToVector2Int(currentDirection);
 
-            result.segments.Add(new BeamSegment(currentCell, nextCell));
+result.segments.Add(new BeamSegment(currentCell, nextCell, nextSegmentStartsNewPath));
+nextSegmentStartsNewPath = false;
             result.visitedSteps.Add(new BeamStep(nextCell, currentDirection));
 
             if (!boardManager.IsInsideBounds(nextCell))
@@ -96,12 +98,13 @@ public class LaserSimulationService
                 return result;
             }
 
-            if (interactionResult.teleport)
-            {
-                currentCell = interactionResult.teleportCell;
-                currentDirection = interactionResult.outgoingDirection;
-                continue;
-            }
+           if (interactionResult.teleport)
+{
+    currentCell = interactionResult.teleportCell;
+    currentDirection = interactionResult.outgoingDirection;
+    nextSegmentStartsNewPath = true;
+    continue;
+}
 
             if (interactionResult.shouldStop)
             {

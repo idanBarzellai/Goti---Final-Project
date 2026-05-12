@@ -1,13 +1,22 @@
 fileFormatVersion: 2
-guid: e1c2bfd8be1782542ac76b191b4e6d89
+guid: ef19c500be9247b40a33f1eb913acf86
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5588244012374682611
-    second: checkpoint_0
+      213: -6981827254641702772
+    second: cloud_0
   - first:
-      213: 6612178416756646888
-    second: checkpoint_1
+      213: -2459163954622720782
+    second: cloud_1
+  - first:
+      213: -7977753516566349660
+    second: cloud_2
+  - first:
+      213: -1962646913366674424
+    second: cloud_3
+  - first:
+      213: 969875869550938650
+    second: cloud_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +63,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1800
+  spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -129,12 +138,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: checkpoint_0
+      name: cloud_0
       rect:
         serializedVersion: 2
         x: 11
         y: 0
-        width: 773
+        width: 1494
         height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -144,20 +153,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d041434bda19272b0800000000000000
-      internalID: -5588244012374682611
+      spriteID: c88c0fb6a119b1f90800000000000000
+      internalID: -6981827254641702772
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: checkpoint_1
+      name: cloud_1
       rect:
         serializedVersion: 2
-        x: 829
-        y: 1
-        width: 695
-        height: 1023
+        x: 766
+        y: 758
+        width: 11
+        height: 13
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -166,8 +175,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8e3e84abc3d23cb50800000000000000
-      internalID: 6612178416756646888
+      spriteID: 2f49448996b4fddd0800000000000000
+      internalID: -2459163954622720782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cloud_2
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 432
+        width: 22
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a87073d173594190800000000000000
+      internalID: -7977753516566349660
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cloud_3
+      rect:
+        serializedVersion: 2
+        x: 1231
+        y: 425
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8043345e70743c4e0800000000000000
+      internalID: -1962646913366674424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cloud_4
+      rect:
+        serializedVersion: 2
+        x: 749
+        y: 236
+        width: 29
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1a8ec8f6f0b57d00800000000000000
+      internalID: 969875869550938650
       vertices: []
       indices: 
       edges: []
@@ -186,8 +261,11 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      checkpoint_0: -5588244012374682611
-      checkpoint_1: 6612178416756646888
+      cloud_0: -6981827254641702772
+      cloud_1: -2459163954622720782
+      cloud_2: -7977753516566349660
+      cloud_3: -1962646913366674424
+      cloud_4: 969875869550938650
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

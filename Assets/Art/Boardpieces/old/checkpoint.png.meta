@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: e1c2bfd8be1782542ac76b191b4e6d89
+guid: bdfedf0e625a969479cc0849eae6a25c
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -5588244012374682611
     second: checkpoint_0
-  - first:
-      213: 6612178416756646888
-    second: checkpoint_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1800
+  spritePixelsToUnits: 300
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -132,10 +129,10 @@ TextureImporter:
       name: checkpoint_0
       rect:
         serializedVersion: 2
-        x: 11
-        y: 0
-        width: 773
-        height: 1024
+        x: 1
+        y: 2
+        width: 274
+        height: 251
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -146,28 +143,6 @@ TextureImporter:
       bones: []
       spriteID: d041434bda19272b0800000000000000
       internalID: -5588244012374682611
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: checkpoint_1
-      rect:
-        serializedVersion: 2
-        x: 829
-        y: 1
-        width: 695
-        height: 1023
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 8e3e84abc3d23cb50800000000000000
-      internalID: 6612178416756646888
       vertices: []
       indices: 
       edges: []
@@ -187,7 +162,6 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       checkpoint_0: -5588244012374682611
-      checkpoint_1: 6612178416756646888
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

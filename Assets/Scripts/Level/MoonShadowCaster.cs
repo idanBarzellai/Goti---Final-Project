@@ -4,38 +4,37 @@ public class MoonShadowCaster : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private LevelTimerManager levelTimerManager;
+    [SerializeField] private SkyTimeVisual skyTimeVisual;
 
-    [Header("Shadow Direction")]
-    [SerializeField] private Vector2 nightShadowDirection = new Vector2(1f, -1f);
-    [SerializeField] private Vector2 sunriseShadowDirection = new Vector2(-1f, -0.4f);
-
-    [Header("Shadow Length")]
-    [SerializeField] private float nightShadowDistance = 0.18f;
-    [SerializeField] private float sunriseShadowDistance = 0.35f;
+    [Header("Shadow")]
+    [SerializeField] private float minShadowDistance = 0.12f;
+    [SerializeField] private float maxShadowDistance = 0.38f;
+    [SerializeField] private float shadowZ = 0.05f;
 
     [Header("Shadow Color")]
-    [SerializeField] private Color nightShadowColor = new Color(0f, 0f, 0f, 0.45f);
+    [SerializeField] private Color nightShadowColor = new Color(0f, 0f, 0f, 0.5f);
     [SerializeField] private Color sunriseShadowColor = new Color(0f, 0f, 0f, 0.18f);
 
-    public Vector3 GetShadowOffset()
-    {
-        float progress = GetProgress();
+   public Vector3 GetShadowOffset()
+{
+    float progress = GetProgress();
 
-        Vector2 direction = Vector2.Lerp(
-            nightShadowDirection.normalized,
-            sunriseShadowDirection.normalized,
-            progress
-        );
+    if (skyTimeVisual == null)
+        return new Vector3(0.15f, -0.15f, shadowZ);
 
-        float distance = Mathf.Lerp(
-            nightShadowDistance,
-            sunriseShadowDistance,
-            progress
-        );
+    Vector2 lightPosition = skyTimeVisual.ActiveLightScreenPosition;
 
-        Vector2 offset = direction.normalized * distance;
-        return new Vector3(offset.x, offset.y, 0.05f);
-    }
+    if (lightPosition.sqrMagnitude < 0.001f)
+        lightPosition = new Vector2(0f, 1f);
+
+    Vector2 shadowDirection = -lightPosition.normalized;
+
+    float distance = Mathf.Lerp(maxShadowDistance, minShadowDistance, progress);
+
+    Vector2 offset = shadowDirection * distance;
+
+    return new Vector3(offset.x, offset.y, shadowZ);
+}
 
     public Color GetShadowColor()
     {

@@ -42,6 +42,14 @@ private void LateUpdate()
     RefreshShadow();
 }
 
+public float GetVisualRotationOffset()
+{
+    if (spriteLibrary == null || boardPiece == null)
+        return 0f;
+
+    return spriteLibrary.GetRotationOffset(boardPiece.PieceType);
+}
+
 public void Refresh()
 {
     if (boardPiece == null || spriteRenderer == null)

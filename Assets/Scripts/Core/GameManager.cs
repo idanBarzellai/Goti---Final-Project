@@ -110,15 +110,15 @@ if (laserCharacterWalker == null || boardRoot == null)
     return;
 }
 
-    var path = BeamPathWorldBuilder.BuildWorldPoints(
-        result,
-        boardManager,
-        boardRoot,
-        characterPathZOffset
-    );
+    var paths = BeamPathWorldBuilder.BuildWorldPointPaths(
+    result,
+    boardManager,
+    boardRoot,
+    characterPathZOffset
+);
 
-    laserCharacterWalker.WalkPath(
-        path,
+    laserCharacterWalker.WalkPaths(
+        paths,
         solved,
         () =>
 {
@@ -129,6 +129,8 @@ if (laserCharacterWalker == null || boardRoot == null)
 }
     );
 }
+
+
 private void ResolveLaserResultAfterVisual(LaserSimulationResult result, bool solved)
 {
     if (levelEnded)
