@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour
     [Header("Lose / Win UI")]
     [SerializeField] private LevelTimerManager levelTimerManager;
     [SerializeField] private GameWinPanelUI gameWinPanelUI;
-    [SerializeField] private LaserTriesUI laserTriesUI;
+    // [SerializeField] private LaserTriesUI laserTriesUI;
 
     [SerializeField] private Button fireButton;
 
@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     public event Action OnLevelSolved;
 
     private bool levelEnded;
-    private int triesRemaining;
+    // private int triesRemaining;
 
     [Header("Laser Character Walk")]
 [SerializeField] private LaserCharacterWalker laserCharacterWalker;
@@ -44,35 +44,63 @@ private bool laserSequenceRunning;
 
     private void Start()
     {
-        if (levelTimerManager != null)
-            levelTimerManager.OnTimerFinished += HandleTimerFinished;
+            if (levelTimerManager != null)
+        levelTimerManager.OnTimerFinished += HandleTimerFinished;
 
-        InitializeTriesFromCurrentLevel();
+    if (boardManager != null)
+        boardManager.OnBoardStateChanged += RefreshFireButtonAvailability;
+
+    RefreshFireButtonAvailability();
+
+        // InitializeTriesFromCurrentLevel();
     }
 
-    private void OnDestroy()
-    {
-        if (levelTimerManager != null)
-            levelTimerManager.OnTimerFinished -= HandleTimerFinished;
-    }
-
-   private void InitializeTriesFromCurrentLevel()
+   private void OnDestroy()
 {
-    int maxTries = 3;
+    if (levelTimerManager != null)
+        levelTimerManager.OnTimerFinished -= HandleTimerFinished;
 
-    LevelManager activeLevelManager = ActiveLevelManager;
-
-    if (activeLevelManager != null && activeLevelManager.CurrentLevel != null)
-        maxTries = Mathf.Max(1, activeLevelManager.CurrentLevel.maxLaserTries);
-
-    triesRemaining = maxTries;
-    laserTriesUI?.SetTries(triesRemaining, maxTries);
+    if (boardManager != null)
+        boardManager.OnBoardStateChanged -= RefreshFireButtonAvailability;
 }
+//    private void InitializeTriesFromCurrentLevel()
+// {
+//     int maxTries = 3;
 
+//     LevelManager activeLevelManager = ActiveLevelManager;
+
+//     if (activeLevelManager != null && activeLevelManager.CurrentLevel != null)
+//         maxTries = Mathf.Max(1, activeLevelManager.CurrentLevel.maxLaserTries);
+
+//     triesRemaining = maxTries;
+//     laserTriesUI?.SetTries(triesRemaining, maxTries);
+// }
+private void RefreshFireButtonAvailability()
+{
+    if (fireButton == null)
+        return;
+
+    bool hasUnusedInventoryPieces =
+        inventoryBarUI != null &&
+        inventoryBarUI.HasUnusedInventoryPieces();
+
+    fireButton.interactable =
+        !levelEnded &&
+        !laserSequenceRunning &&
+        !hasUnusedInventoryPieces;
+}
 private void SetFireButtonInteractable(bool interactable)
 {
-    if (fireButton != null)
-        fireButton.interactable = interactable;
+    if (fireButton == null)
+        return;
+
+    if (!interactable)
+    {
+        fireButton.interactable = false;
+        return;
+    }
+
+    RefreshFireButtonAvailability();
 }
 
 public void FireLaserButtonClicked()
@@ -88,8 +116,8 @@ public void FireLaserButtonClicked()
     if (laserControlManager == null)
         return;
 
-    if (triesRemaining <= 0)
-        return;
+    // if (triesRemaining <= 0)
+    //     return;
 laserCharacterWalker?.Clear();
 
     LaserSimulationResult result = laserControlManager.FireLaser();
@@ -143,13 +171,13 @@ private void ResolveLaserResultAfterVisual(LaserSimulationResult result, bool so
         return;
     }
 
-    triesRemaining--;
-    laserTriesUI?.SetTries(triesRemaining);
+    // // triesRemaining--;
+    // laserTriesUI?.SetTries(triesRemaining);
 
-    if (triesRemaining <= 0)
-    {
-        HandleLose();
-    }
+    // if (triesRemaining <= 0)
+    // {
+    //     HandleLose();
+    // }
 }
 
 private bool CheckSolved(LaserSimulationResult result)
@@ -254,7 +282,7 @@ public void LoadNextLevel()
     levelEnded = false;
 
     laserSequenceRunning = false;
-SetFireButtonInteractable(true);
+RefreshFireButtonAvailability();
 
     laserCharacterWalker?.Clear();
 laserControlManager?.ClearLaser();
@@ -266,7 +294,7 @@ laserControlManager?.ClearLaser();
     else
         Debug.LogError("GameManager: No LevelManager found.");
 
-    InitializeTriesFromCurrentLevel();
+    // InitializeTriesFromCurrentLevel();
 
     if (levelTimerManager != null)
     {
@@ -294,7 +322,7 @@ laserControlManager?.ClearLaser();
     else
         Debug.LogError("GameManager: No LevelManager found.");
 
-    InitializeTriesFromCurrentLevel();
+    // InitializeTriesFromCurrentLevel();
 
     if (levelTimerManager != null)
     {
