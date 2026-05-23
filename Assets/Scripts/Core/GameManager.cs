@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     // [SerializeField] private LaserTriesUI laserTriesUI;
 
     [SerializeField] private Button fireButton;
+    [SerializeField] private CanvasGroup fireButtonCanvasGroup;
+[SerializeField] private SimplePopupMessageUI popupMessageUI;
 
     public static GameManager Instance { get; private set; }
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
@@ -75,34 +77,33 @@ private bool laserSequenceRunning;
 //     triesRemaining = maxTries;
 //     laserTriesUI?.SetTries(triesRemaining, maxTries);
 // }
-private void RefreshFireButtonAvailability()
+public void RefreshFireButtonAvailability()
 {
-    if (fireButton == null)
-        return;
-
     bool hasUnusedInventoryPieces =
         inventoryBarUI != null &&
         inventoryBarUI.HasUnusedInventoryPieces();
 
-    fireButton.interactable =
+    bool canFire =
         !levelEnded &&
         !laserSequenceRunning &&
         !hasUnusedInventoryPieces;
+
+    if (fireButton != null)
+        fireButton.interactable = canFire;
+
+    if (fireButtonCanvasGroup != null)
+        fireButtonCanvasGroup.alpha = canFire ? 1f : 0.1f;
 }
 private void SetFireButtonInteractable(bool interactable)
 {
     if (fireButton == null)
         return;
 
-    if (!interactable)
-    {
-        fireButton.interactable = false;
-        return;
-    }
+    fireButton.interactable = interactable;
 
-    RefreshFireButtonAvailability();
+    if (interactable)
+        RefreshFireButtonAvailability();
 }
-
 public void FireLaserButtonClicked()
 {
     if (laserSequenceRunning)
@@ -112,6 +113,16 @@ public void FireLaserButtonClicked()
 
     if (levelEnded)
         return;
+
+        bool hasUnusedInventoryPieces =
+    inventoryBarUI != null &&
+    inventoryBarUI.HasUnusedInventoryPieces();
+
+if (hasUnusedInventoryPieces)
+{
+    popupMessageUI?.ShowMessage("Place all pieces first");
+    return;
+}
 
     if (laserControlManager == null)
         return;
@@ -240,6 +251,7 @@ private bool CheckSolved(LaserSimulationResult result)
     if (boardManager.TryRemovePieceToInventory(piece))
     {
         inventoryBarUI.RestoreUsedPiece(piece);
+        RefreshFireButtonAvailability();
     }
 }
 
