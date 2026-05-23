@@ -12,7 +12,7 @@ public class DraggableInventoryPiece : MonoBehaviour, IBeginDragHandler, IDragHa
 
     [Header("Used Visual")]
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private float usedAlpha = 0.35f;
+    [SerializeField] private float usedAlpha = 0f;
 
     private PieceData pieceData;
     private BoardManager boardManager;
@@ -109,6 +109,9 @@ public void OnEndDrag(PointerEventData eventData)
     if (placedOnBoard)
     {
         MarkUsedOnBoard();
+
+           if (GameManager.Instance != null)
+        GameManager.Instance.RefreshFireButtonAvailability();
     }
 
     DestroyDragGhost();

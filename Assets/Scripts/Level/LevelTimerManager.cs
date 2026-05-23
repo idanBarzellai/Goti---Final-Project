@@ -51,7 +51,7 @@ public class LevelTimerManager : MonoBehaviour
 
     public void StartTimer()
     {
-        isRunning = true;
+        // isRunning = true;
     }
 
     public void StopTimer()

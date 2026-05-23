@@ -14,7 +14,7 @@ public class LaserView : MonoBehaviour
     [SerializeField] private float lineWidth = 0.12f;
     [SerializeField] private Material lineMaterial;
     [SerializeField] private bool useTextureTiling = true;
-    [SerializeField] private float textureTilingMultiplier = 1f;
+    // [SerializeField] private float textureTilingMultiplier = 1f;
 
     private readonly List<LineRenderer> activeLineRenderers = new List<LineRenderer>();
 

@@ -106,7 +106,8 @@ MonoBehaviour:
   spriteLibrary: {fileID: 11400000, guid: 7ecee7a419bcb27479a1fcce6beb5ebe, type: 2}
   rotateIndicator: {fileID: 0}
   canvasGroup: {fileID: 0}
-  usedAlpha: 0.35
+  usedAlpha: 0
+  isUsedOnBoard: 0
 --- !u!1 &8012872428872718767
 GameObject:
   m_ObjectHideFlags: 0
