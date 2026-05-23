@@ -83,13 +83,16 @@ public void RefreshFireButtonAvailability()
         inventoryBarUI != null &&
         inventoryBarUI.HasUnusedInventoryPieces();
 
-    bool canFire =
+    bool canActuallyClick =
         !levelEnded &&
-        !laserSequenceRunning &&
+        !laserSequenceRunning;
+
+    bool canFire =
+        canActuallyClick &&
         !hasUnusedInventoryPieces;
 
     if (fireButton != null)
-        fireButton.interactable = canFire;
+        fireButton.interactable = canActuallyClick;
 
     if (fireButtonCanvasGroup != null)
         fireButtonCanvasGroup.alpha = canFire ? 1f : 0.1f;
@@ -294,7 +297,6 @@ public void LoadNextLevel()
     levelEnded = false;
 
     laserSequenceRunning = false;
-RefreshFireButtonAvailability();
 
     laserCharacterWalker?.Clear();
 laserControlManager?.ClearLaser();
@@ -307,6 +309,8 @@ laserControlManager?.ClearLaser();
         Debug.LogError("GameManager: No LevelManager found.");
 
     // InitializeTriesFromCurrentLevel();
+RefreshFireButtonAvailability();
+
 
     if (levelTimerManager != null)
     {
@@ -322,7 +326,6 @@ laserControlManager?.ClearLaser();
     levelEnded = false;
 
     laserSequenceRunning = false;
-SetFireButtonInteractable(true);
 
     laserCharacterWalker?.Clear();
 laserControlManager?.ClearLaser();
@@ -335,6 +338,8 @@ laserControlManager?.ClearLaser();
         Debug.LogError("GameManager: No LevelManager found.");
 
     // InitializeTriesFromCurrentLevel();
+RefreshFireButtonAvailability();
+
 
     if (levelTimerManager != null)
     {

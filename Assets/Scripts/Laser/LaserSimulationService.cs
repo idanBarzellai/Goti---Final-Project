@@ -100,6 +100,13 @@ nextSegmentStartsNewPath = false;
 
            if (interactionResult.teleport)
 {
+    BoardPiece exitPortal = boardManager.GetPieceAt(interactionResult.teleportCell);
+
+    if (exitPortal != null && !result.hitPieces.Contains(exitPortal))
+    {
+        result.hitPieces.Add(exitPortal);
+    }
+
     currentCell = interactionResult.teleportCell;
     currentDirection = interactionResult.outgoingDirection;
     nextSegmentStartsNewPath = true;

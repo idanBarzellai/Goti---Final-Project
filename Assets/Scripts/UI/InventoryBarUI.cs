@@ -13,31 +13,60 @@ public class InventoryBarUI : MonoBehaviour
 
     private readonly List<DraggableInventoryPiece> spawnedInventoryPieces = new List<DraggableInventoryPiece>();
 
-    public void LoadInventory(LevelData levelData)
+  public void LoadInventory(LevelData levelData)
+{
+    ClearInventory();
+
+    if (levelData == null)
     {
-        ClearInventory();
-
-        if (levelData == null)
-        {
-            Debug.LogError("InventoryBarUI: No LevelData provided.");
-            return;
-        }
-
-        if (levelData.inventoryPieces == null)
-            return;
-
-        foreach (PieceData pieceData in levelData.inventoryPieces)
-        {
-            AddInventoryPiece(pieceData);
-        }
+        Debug.LogError("InventoryBarUI: No LevelData provided.");
+        return;
     }
 
-    public void AddInventoryPiece(PieceData pieceData)
+    if (levelData.inventoryPieces == null)
+        return;
+
+    Dictionary<string, InventoryStack> stacks = new Dictionary<string, InventoryStack>();
+
+    foreach (PieceData pieceData in levelData.inventoryPieces)
     {
-        DraggableInventoryPiece item = Instantiate(inventoryPiecePrefab, inventoryContainer);
-        item.Initialize(pieceData, boardManager, canvas, this);
-        spawnedInventoryPieces.Add(item);
+        string key = GetInventoryKey(pieceData);
+
+        if (!stacks.ContainsKey(key))
+        {
+            stacks[key] = new InventoryStack
+            {
+                pieceData = pieceData,
+                count = 0
+            };
+        }
+
+        stacks[key].count++;
     }
+
+    foreach (InventoryStack stack in stacks.Values)
+    {
+        AddInventoryPiece(stack.pieceData, stack.count);
+    }
+}
+
+private class InventoryStack
+{
+    public PieceData pieceData;
+    public int count;
+}
+
+private string GetInventoryKey(PieceData pieceData)
+{
+    return $"{pieceData.pieceType}_{pieceData.portalPairId}";
+}
+
+   public void AddInventoryPiece(PieceData pieceData, int stackCount = 1)
+{
+    DraggableInventoryPiece item = Instantiate(inventoryPiecePrefab, inventoryContainer);
+    item.Initialize(pieceData, boardManager, canvas, this, stackCount);
+    spawnedInventoryPieces.Add(item);
+}
 
     public void ConsumeInventoryPiece(DraggableInventoryPiece piece)
     {
@@ -74,11 +103,11 @@ public class InventoryBarUI : MonoBehaviour
         spawnedInventoryPieces.Clear();
     }
 
-    public bool HasUnusedInventoryPieces()
+   public bool HasUnusedInventoryPieces()
 {
     foreach (DraggableInventoryPiece inventoryPiece in spawnedInventoryPieces)
     {
-        if (inventoryPiece != null && !inventoryPiece.isUsedOnBoard)
+        if (inventoryPiece != null && inventoryPiece.HasAvailableUses)
             return true;
     }
 

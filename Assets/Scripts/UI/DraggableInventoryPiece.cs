@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -21,32 +22,43 @@ public class DraggableInventoryPiece : MonoBehaviour, IBeginDragHandler, IDragHa
 
     private RectTransform rectTransform;
 
-    public bool isUsedOnBoard;
+    public bool IsFullyUsed => usedCount >= stackCount;
+public bool HasAvailableUses => usedCount < stackCount;
 
     private GameObject dragGhost;
 private RectTransform dragGhostRect;
 private CanvasGroup dragGhostCanvasGroup;
 
-    public void Initialize(PieceData pieceData, BoardManager boardManager, Canvas canvas, InventoryBarUI inventoryBarUI)
-    {
-        this.pieceData = pieceData;
-        this.boardManager = boardManager;
-        this.canvas = canvas;
-        this.inventoryBarUI = inventoryBarUI;
+[SerializeField] private TMP_Text stackCounterText;
 
-        rectTransform = GetComponent<RectTransform>();
+private int stackCount = 1;
+private int usedCount = 0;
 
-        if (canvasGroup == null)
-            canvasGroup = GetComponent<CanvasGroup>();
+    public void Initialize(
+    PieceData pieceData,
+    BoardManager boardManager,
+    Canvas canvas,
+    InventoryBarUI inventoryBarUI,
+    int stackCount = 1)
+{
+    this.pieceData = pieceData;
+    this.boardManager = boardManager;
+    this.canvas = canvas;
+    this.inventoryBarUI = inventoryBarUI;
+    this.stackCount = Mathf.Max(1, stackCount);
+    usedCount = 0;
 
-        if (canvasGroup == null)
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+    rectTransform = GetComponent<RectTransform>();
 
-        isUsedOnBoard = false;
+    if (canvasGroup == null)
+        canvasGroup = GetComponent<CanvasGroup>();
 
-        RefreshVisual();
-        RefreshUsedState();
-    }
+    if (canvasGroup == null)
+        canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+    RefreshVisual();
+    RefreshUsedState();
+}
 
     private void Awake()
     {
@@ -61,8 +73,8 @@ private CanvasGroup dragGhostCanvasGroup;
 
     public void OnBeginDrag(PointerEventData eventData)
 {
-    if (isUsedOnBoard || canvas == null)
-        return;
+    if (IsFullyUsed || canvas == null)
+    return;
 
     dragGhost = Instantiate(gameObject, canvas.transform);
     dragGhost.name = $"{gameObject.name}_DragGhost";
@@ -84,7 +96,7 @@ private CanvasGroup dragGhostCanvasGroup;
 
    public void OnDrag(PointerEventData eventData)
 {
-    if (isUsedOnBoard || dragGhostRect == null || canvas == null)
+    if (IsFullyUsed || dragGhostRect == null || canvas == null)
         return;
 
     dragGhostRect.anchoredPosition += eventData.delta / canvas.scaleFactor;
@@ -92,7 +104,7 @@ private CanvasGroup dragGhostCanvasGroup;
 
 public void OnEndDrag(PointerEventData eventData)
 {
-    if (isUsedOnBoard)
+    if (IsFullyUsed)
         return;
 
     Vector3 screenPoint = eventData.position;
@@ -126,28 +138,26 @@ private void DestroyDragGhost()
     dragGhostRect = null;
     dragGhostCanvasGroup = null;
 }
-   public bool MatchesPiece(BoardPiece boardPiece)
+ public bool MatchesPiece(BoardPiece boardPiece)
 {
     if (boardPiece == null || pieceData == null)
         return false;
 
-    return isUsedOnBoard &&
-           pieceData.pieceType == boardPiece.PieceType &&
-           pieceData.portalPairId == boardPiece.PortalPairId;
+    return pieceData.pieceType == boardPiece.PieceType &&
+           pieceData.portalPairId == boardPiece.PortalPairId &&
+           usedCount > 0;
 }
 
     public void MarkUsedOnBoard()
-    {
-        isUsedOnBoard = true;
-        RefreshUsedState();
-    }
-
-    public void MarkAvailable()
-    {
-        isUsedOnBoard = false;
-        RefreshUsedState();
-    }
-
+{
+    usedCount = Mathf.Clamp(usedCount + 1, 0, stackCount);
+    RefreshUsedState();
+}
+   public void MarkAvailable()
+{
+    usedCount = Mathf.Clamp(usedCount - 1, 0, stackCount);
+    RefreshUsedState();
+}
     private void RefreshVisual()
     {
         if (iconImage == null || pieceData == null)
@@ -166,13 +176,21 @@ private void DestroyDragGhost()
             rotateIndicator.SetActive(true);
     }
 
-    private void RefreshUsedState()
+  private void RefreshUsedState()
+{
+    if (canvasGroup != null)
     {
-        if (canvasGroup == null)
-            return;
-
-        canvasGroup.alpha = isUsedOnBoard ? usedAlpha : 1f;
-        canvasGroup.blocksRaycasts = !isUsedOnBoard;
-        canvasGroup.interactable = !isUsedOnBoard;
+        canvasGroup.alpha = IsFullyUsed ? usedAlpha : 1f;
+        canvasGroup.blocksRaycasts = !IsFullyUsed;
+        canvasGroup.interactable = !IsFullyUsed;
     }
+
+    if (stackCounterText != null)
+    {
+        int remaining = stackCount - usedCount;
+
+stackCounterText.transform.parent.gameObject.SetActive(stackCount > 1);
+        stackCounterText.text = remaining.ToString();
+    }
+}
 }
