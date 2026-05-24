@@ -159,22 +159,38 @@ private void DestroyDragGhost()
     RefreshUsedState();
 }
     private void RefreshVisual()
+{
+    if (iconImage == null || pieceData == null)
+        return;
+
+    if (spriteLibrary != null)
     {
-        if (iconImage == null || pieceData == null)
-            return;
+        Sprite sprite = spriteLibrary.GetSprite(pieceData.pieceType);
+        if (sprite != null)
+            iconImage.sprite = sprite;
 
-        if (spriteLibrary != null)
-        {
-            Sprite sprite = spriteLibrary.GetSprite(pieceData.pieceType);
-            if (sprite != null)
-                iconImage.sprite = sprite;
-        }
+        float rotationOffset = spriteLibrary.GetRotationOffset(pieceData.pieceType);
 
-        iconImage.color = Color.white;
-
-        if (rotateIndicator != null)
-            rotateIndicator.SetActive(true);
+        iconImage.rectTransform.localRotation = Quaternion.Euler(
+            0f,
+            0f,
+            PieceRotationUtility.ToZRotation(pieceData.direction) + rotationOffset
+        );
     }
+    else
+    {
+        iconImage.rectTransform.localRotation = Quaternion.Euler(
+            0f,
+            0f,
+            PieceRotationUtility.ToZRotation(pieceData.direction)
+        );
+    }
+
+    iconImage.color = Color.white;
+
+    if (rotateIndicator != null)
+        rotateIndicator.SetActive(true);
+}
 
   private void RefreshUsedState()
 {

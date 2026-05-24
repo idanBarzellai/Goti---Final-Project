@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 5d1579da6e041164b8c203c21f6f181b
+guid: e1c2bfd8be1782542ac76b191b4e6d89
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 9055570566740064146
-    second: Untitled_Artwork(2) 1_0
+      213: -5588244012374682611
+    second: checkpoint_0
+  - first:
+      213: 6612178416756646888
+    second: checkpoint_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +54,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1300
+  spritePixelsToUnits: 1800
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,13 +129,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Untitled_Artwork(2) 1_0
+      name: checkpoint_0
       rect:
         serializedVersion: 2
-        x: 426
-        y: 425
-        width: 1287
-        height: 1142
+        x: 11
+        y: 0
+        width: 773
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +144,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2973605b379dbad70800000000000000
-      internalID: 9055570566740064146
+      spriteID: d041434bda19272b0800000000000000
+      internalID: -5588244012374682611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: checkpoint_1
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 1
+        width: 695
+        height: 1023
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e3e84abc3d23cb50800000000000000
+      internalID: 6612178416756646888
       vertices: []
       indices: 
       edges: []
@@ -161,7 +186,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Untitled_Artwork(2) 1_0: 9055570566740064146
+      checkpoint_0: -5588244012374682611
+      checkpoint_1: 6612178416756646888
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
