@@ -41,10 +41,16 @@ private void Awake()
         ReloadCurrentLevel();
     }
 
-   public void SelectLevelAndLoadGame(int levelIndex)
+ public void SelectLevelAndLoadGame(int levelIndex)
 {
     if (!IsValidLevelIndex(levelIndex))
         return;
+
+    if (!IsLevelUnlocked(levelIndex))
+    {
+        Debug.Log($"LevelManager: Level {levelIndex + 1} is locked.");
+        return;
+    }
 
     CurrentLevelIndex = levelIndex;
     CurrentLevel = levels[levelIndex];
@@ -120,4 +126,36 @@ public void LoadNextLevel()
 
         return true;
     }
+
+    private const string HighestUnlockedLevelKey = "HighestUnlockedLevel";
+
+public int HighestUnlockedLevelIndex
+{
+    get
+    {
+        int saved = PlayerPrefs.GetInt(HighestUnlockedLevelKey, 0);
+        return Mathf.Clamp(saved, 0, LevelCount - 1);
+    }
+}
+
+public bool IsLevelUnlocked(int levelIndex)
+{
+    return levelIndex <= HighestUnlockedLevelIndex;
+}
+
+public bool IsNextAvailableLevel(int levelIndex)
+{
+    return levelIndex == HighestUnlockedLevelIndex;
+}
+
+public void MarkCurrentLevelSolved()
+{
+    int nextUnlocked = Mathf.Min(CurrentLevelIndex + 1, LevelCount - 1);
+
+    if (nextUnlocked > HighestUnlockedLevelIndex)
+    {
+        PlayerPrefs.SetInt(HighestUnlockedLevelKey, nextUnlocked);
+        PlayerPrefs.Save();
+    }
+}
 }

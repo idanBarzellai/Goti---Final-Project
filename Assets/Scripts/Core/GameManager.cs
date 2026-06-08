@@ -221,14 +221,18 @@ private bool CheckSolved(LaserSimulationResult result)
 }
 
     private void HandleLevelSolved()
-    {
-        levelEnded = true;
+{
+    levelEnded = true;
 
-        levelTimerManager?.StopTimer();
+    levelTimerManager?.StopTimer();
 
-        Debug.Log("LEVEL SOLVED");
-        OnLevelSolved?.Invoke();
-    }
+    LevelManager activeLevelManager = ActiveLevelManager;
+    if (activeLevelManager != null)
+        activeLevelManager.MarkCurrentLevelSolved();
+
+    Debug.Log("LEVEL SOLVED");
+    OnLevelSolved?.Invoke();
+}
 
     private void HandleTimerFinished()
     {

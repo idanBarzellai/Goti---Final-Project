@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 187afc4ba6324944db01c11d085fd99b
+guid: 2348eec650309234fa67abc771f14fc3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 234981268139730731
-    second: tomb 1_0
+      213: 8224577094244186008
+    second: Borad_square_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 1200
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tomb 1_0
+      name: Borad_square_0
       rect:
         serializedVersion: 2
-        x: 98
-        y: 233
-        width: 835
-        height: 983
+        x: 1
+        y: 0
+        width: 829
+        height: 781
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b27e658e732d24300800000000000000
-      internalID: 234981268139730731
+      spriteID: 8973d32aa41932270800000000000000
+      internalID: 8224577094244186008
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      tomb 1_0: 234981268139730731
+      Borad_square_0: 8224577094244186008
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
