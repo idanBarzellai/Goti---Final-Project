@@ -8,7 +8,6 @@ public class MainMenuUI : MonoBehaviour
 
     [SerializeField] private Button startButton;
     [SerializeField] private Button chooseLevelButton;
-    [SerializeField] private Button quitButton;
     [SerializeField] private Button backButton;
 
     private void Start()
@@ -17,7 +16,6 @@ public class MainMenuUI : MonoBehaviour
 
         startButton.onClick.AddListener(() => SceneFlowManager.StartLevel(0));
         chooseLevelButton.onClick.AddListener(ShowLevelSelect);
-        quitButton.onClick.AddListener(SceneFlowManager.QuitGame);
         backButton.onClick.AddListener(ShowMainMenu);
     }
 
