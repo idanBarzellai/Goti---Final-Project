@@ -9,7 +9,7 @@ public class DraggableInventoryPiece : MonoBehaviour, IBeginDragHandler, IDragHa
     [SerializeField] private PieceSpriteLibrary spriteLibrary;
 
     [Header("Rotation Indicator")]
-    [SerializeField] private GameObject rotateIndicator;
+    // [SerializeField] private GameObject rotateIndicator;
 
     [Header("Used Visual")]
     [SerializeField] private CanvasGroup canvasGroup;
@@ -30,6 +30,8 @@ private RectTransform dragGhostRect;
 private CanvasGroup dragGhostCanvasGroup;
 
 [SerializeField] private TMP_Text stackCounterText;
+[SerializeField] private RectTransform stackCounterObject;
+
 
 private int stackCount = 1;
 private int usedCount = 0;
@@ -92,6 +94,11 @@ private int usedCount = 0;
     dragGhostCanvasGroup.blocksRaycasts = false;
 
     dragGhostRect.position = rectTransform.position;
+
+    if (stackCounterObject != null )
+{
+    ghostDrag.stackCounterObject.gameObject.SetActive(false);
+}
 }
 
    public void OnDrag(PointerEventData eventData)
@@ -125,6 +132,11 @@ public void OnEndDrag(PointerEventData eventData)
            if (GameManager.Instance != null)
         GameManager.Instance.RefreshFireButtonAvailability();
     }
+
+//      if (stackCounterObject != null )
+// {
+//     ghostDrag.stackCounterObject.gameObject.SetActive(true);
+// }
 
     DestroyDragGhost();
 }
@@ -188,8 +200,8 @@ private void DestroyDragGhost()
 
     iconImage.color = Color.white;
 
-    if (rotateIndicator != null)
-        rotateIndicator.SetActive(true);
+    // if (rotateIndicator != null)
+    //     rotateIndicator.SetActive(true);
 }
 
   private void RefreshUsedState()

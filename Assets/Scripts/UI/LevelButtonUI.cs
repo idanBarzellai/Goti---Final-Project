@@ -16,7 +16,6 @@ public class LevelButtonUI : MonoBehaviour
 [SerializeField] private bool flipObjectImage;
 
 [SerializeField] private float flippedTextRotation = -4f;
-[SerializeField] private float nextLevelScaleMultiplier = 1.1f;
     private int levelIndex;
 
     public void Initialize(
@@ -33,30 +32,25 @@ if (objectImage != null)
         ? finalLevelSprite
         : normalSprite;
 
-    RectTransform imageRect = objectImage.rectTransform;
+    // RectTransform imageRect = objectImage.rectTransform;
 
-    Vector3 imageScale = Vector3.one;
+    // Vector3 imageScale = Vector3.one;
 
-    // Flip image only
-    imageScale.x = flipObjectImage ? -1f : 1f;
+    // // Flip image only
+    // imageScale.x = flipObjectImage ? -1f : 1f;
 
-    // Grow image only for next level
-    if (isNextAvailableLevel)
-        imageScale *= nextLevelScaleMultiplier;
+    // imageRect.localScale = imageScale;
 
-    imageRect.localScale = imageScale;
-
-    imageRect.localRotation = Quaternion.identity;
 }
 
 if (label != null)
 {
     label.text = $"{levelIndex + 1}";
-    label.rectTransform.localRotation = Quaternion.Euler(
-        0f,
-        0f,
-        flipObjectImage ? flippedTextRotation : flippedTextRotation * -1f
-    );
+    // label.rectTransform.localRotation = Quaternion.Euler(
+    //     0f,
+    //     0f,
+    //     flipObjectImage ? flippedTextRotation : flippedTextRotation * -1f
+    // );
 }
 
     button.onClick.RemoveAllListeners();

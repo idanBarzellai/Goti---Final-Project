@@ -48,7 +48,7 @@ public class GameWinPanelUI : BaseMenuUI
         Show();
 
         if(titleText != null)
-            titleText.text = "Level Solved!";
+            titleText.text = "LEVEL SOLVED!";
         if (nextLevelButton != null)
         {
             bool hasNextLevel =

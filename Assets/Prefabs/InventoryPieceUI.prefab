@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 27.3631, y: 32.4335}
+  m_AnchoredPosition: {x: -7.5, y: -11.4}
+  m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &2903169055923255839
 CanvasRenderer:
@@ -80,7 +80,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0000019073486, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5050022673555972136
@@ -111,17 +111,17 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: 3
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: cbaaaba970d5a484bb135c927414d151, type: 2}
-  m_sharedMaterial: {fileID: 2549258168860292295, guid: cbaaaba970d5a484bb135c927414d151, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5ebe12e51a3032e46a6fa2fbe2d0c5b0, type: 2}
+  m_sharedMaterial: {fileID: -195271025290474034, guid: 5ebe12e51a3032e46a6fa2fbe2d0c5b0, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294506746
+  m_fontColor: {r: 0.9803922, g: 0.9725491, b: 0.9725491, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -138,7 +138,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18.15
+  m_fontSize: 56.9
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -177,7 +177,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 2.5757904, y: 5.000061, z: 2.424286, w: 1.9697266}
+  m_margin: {x: 0.16627502, y: 0.366333, z: 0.01473999, w: -0.0690918}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -217,7 +217,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0000019073486, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7961093559543299219
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5d2e4e45d0430504ca019571707f941c, type: 3}
+  m_Sprite: {fileID: -5250138626768330490, guid: d32ad98d47dd5374b9a7de8bfc590e0e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -297,7 +297,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5761703502075936283
 CanvasRenderer:
@@ -333,10 +333,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DraggableInventoryPiece
   iconImage: {fileID: 4814170278055460898}
   spriteLibrary: {fileID: 11400000, guid: 7ecee7a419bcb27479a1fcce6beb5ebe, type: 2}
-  rotateIndicator: {fileID: 0}
   canvasGroup: {fileID: 0}
   usedAlpha: 0
   stackCounterText: {fileID: 1493792128226766539}
+  stackCounterObject: {fileID: 6986549022903366199}
 --- !u!1 &7963338899870575837
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,10 +369,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5543349214578946288}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7910189883273644456
 CanvasRenderer:
@@ -429,7 +429,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4077509899622070084
 RectTransform:
   m_ObjectHideFlags: 0

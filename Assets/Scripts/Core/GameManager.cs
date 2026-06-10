@@ -210,11 +210,13 @@ private bool CheckSolved(LaserSimulationResult result)
         if (piece == null)
             continue;
 
-        if (piece.PieceType == PieceType.Entry)
-            continue;
+        if (!IsRequiredHitPiece(piece))
+    continue;
 
-        if (!result.hitPieces.Contains(piece))
-            return false;
+if (!result.hitPieces.Contains(piece))
+    return false;
+
+
     }
 
     return true;
@@ -352,5 +354,21 @@ RefreshFireButtonAvailability();
     }
 
     gameWinPanelUI?.Hide();
+}
+
+private bool IsRequiredHitPiece(BoardPiece piece)
+{
+    if (piece == null)
+        return false;
+
+    switch (piece.PieceType)
+    {
+        case PieceType.Entry:
+        case PieceType.Block:
+            return false;
+
+        default:
+            return true;
+    }
 }
 }

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e5ffaf8559f127b4ea91c95793a22748
+guid: 3faacab09ac930f41ad52b03ff22a80d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1300278202108701611
-    second: tomb_green 1_0
+      213: -7784899289141202801
+    second: MainCharacter 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 1200
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tomb_green 1_0
+      name: MainCharacter 1_0
       rect:
         serializedVersion: 2
-        x: 89
-        y: 204
-        width: 891
-        height: 901
+        x: 341
+        y: 195
+        width: 545
+        height: 939
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 55490264ddb74fde0800000000000000
-      internalID: -1300278202108701611
+      spriteID: f803c8ab75b76f390800000000000000
+      internalID: -7784899289141202801
       vertices: []
       indices: 
       edges: []
@@ -151,7 +151,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      tomb_green 1_0: -1300278202108701611
+      MainCharacter 1_0: -7784899289141202801
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
