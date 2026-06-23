@@ -4,6 +4,7 @@ public class GameplaySceneInstaller : MonoBehaviour
 {
     [SerializeField] private BoardManager boardManager;
     [SerializeField] private InventoryBarUI inventoryBarUI;
+    [SerializeField] private LevelTitleUI levelTitleUI;
 
     private void Start()
     {
@@ -15,7 +16,8 @@ public class GameplaySceneInstaller : MonoBehaviour
 
         LevelManager.Instance.RegisterGameplaySceneReferences(
             boardManager,
-            inventoryBarUI
+            inventoryBarUI,
+            levelTitleUI
         );
     }
 }

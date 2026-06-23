@@ -9,6 +9,7 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private BoardPiece piecePrefab;
     [SerializeField] private float cellSize = 0.9f;
+    [SerializeField] private float cellSpacing = 0f;
 
     private BoardPiece[,] boardPieces;
     private GameObject[,] boardCells;
@@ -18,6 +19,8 @@ public class BoardManager : MonoBehaviour
 
     public Transform BoardRoot => boardRoot;
     public float CellSize => cellSize;
+    public float CellSpacing => cellSpacing;
+    public float CellStep => cellSize + cellSpacing;
 
     public event Action OnBoardStateChanged;
     public event Action OnBoardLoaded;
@@ -249,12 +252,13 @@ if (piece == null || !piece.CanMove)
 
     public Vector3 GridToLocalPosition(Vector2Int gridPosition)
     {
-        float offsetX = -(Width - 1) * cellSize * 0.5f;
-        float offsetY = -(Height - 1) * cellSize * 0.5f;
+        float step = CellStep;
+        float offsetX = -(Width - 1) * step * 0.5f;
+        float offsetY = -(Height - 1) * step * 0.5f;
 
         return new Vector3(
-            offsetX + gridPosition.x * cellSize,
-            offsetY + gridPosition.y * cellSize,
+            offsetX + gridPosition.x * step,
+            offsetY + gridPosition.y * step,
             0f
         );
     }
@@ -263,11 +267,12 @@ if (piece == null || !piece.CanMove)
     {
         Vector3 localPosition = boardRoot.InverseTransformPoint(worldPosition);
 
-        float offsetX = -(Width - 1) * cellSize * 0.5f;
-        float offsetY = -(Height - 1) * cellSize * 0.5f;
+        float step = CellStep;
+        float offsetX = -(Width - 1) * step * 0.5f;
+        float offsetY = -(Height - 1) * step * 0.5f;
 
-        float rawX = (localPosition.x - offsetX) / cellSize;
-        float rawY = (localPosition.y - offsetY) / cellSize;
+        float rawX = (localPosition.x - offsetX) / step;
+        float rawY = (localPosition.y - offsetY) / step;
 
         int x = Mathf.RoundToInt(rawX);
         int y = Mathf.RoundToInt(rawY);
@@ -285,6 +290,12 @@ if (piece == null || !piece.CanMove)
 
         float maxSnapDistance = cellSize * 0.45f;
         return distance <= maxSnapDistance;
+    }
+
+    private void OnValidate()
+    {
+        cellSize = Mathf.Max(0.01f, cellSize);
+        cellSpacing = Mathf.Max(0f, cellSpacing);
     }
 
     private void OnBoardChanged()

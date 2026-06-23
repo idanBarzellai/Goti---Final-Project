@@ -10,6 +10,7 @@ public class LevelManager : MonoBehaviour
 
     private BoardManager boardManager;
     private InventoryBarUI inventoryBarUI;
+    private LevelTitleUI levelTitleUI;
 
     public LevelData CurrentLevel { get; private set; }
     public int CurrentLevelIndex { get; private set; }
@@ -33,10 +34,12 @@ private void Awake()
 }
     public void RegisterGameplaySceneReferences(
         BoardManager boardManager,
-        InventoryBarUI inventoryBarUI)
+        InventoryBarUI inventoryBarUI,
+        LevelTitleUI levelTitleUI)
     {
         this.boardManager = boardManager;
         this.inventoryBarUI = inventoryBarUI;
+        this.levelTitleUI = levelTitleUI;
 
         ReloadCurrentLevel();
     }
@@ -103,6 +106,9 @@ public void LoadNextLevel()
 
         if (inventoryBarUI != null)
             inventoryBarUI.LoadInventory(CurrentLevel);
+
+        if (levelTitleUI != null)
+            levelTitleUI.SetLevel(CurrentLevelIndex);
     }
 
     public bool HasNextLevel()
@@ -141,11 +147,6 @@ public int HighestUnlockedLevelIndex
 public bool IsLevelUnlocked(int levelIndex)
 {
     return levelIndex <= HighestUnlockedLevelIndex;
-}
-
-public bool IsNextAvailableLevel(int levelIndex)
-{
-    return levelIndex == HighestUnlockedLevelIndex;
 }
 
 public void MarkCurrentLevelSolved()

@@ -13,42 +13,35 @@ public class LevelSelectUI : MonoBehaviour
     }
 
     private void BuildLevelButtons()
-{
-    if (levelManager == null)
-        levelManager = LevelManager.Instance;
-
-    if (levelManager == null)
-        return;
-
-    int slotCount = levelButtonSlotsContainer.childCount;
-
-    for (int i = 0; i < slotCount; i++)
     {
-        Transform slot = levelButtonSlotsContainer.GetChild(i);
+        if (levelManager == null)
+            levelManager = LevelManager.Instance;
 
-        bool hasLevel = i < levelManager.LevelCount;
-        bool unlocked =
-            hasLevel &&
-            levelManager.IsLevelUnlocked(i);
+        if (levelManager == null)
+            return;
 
-        slot.gameObject.SetActive(unlocked);
+        int slotCount = levelButtonSlotsContainer.childCount;
 
-        if (!unlocked)
-            continue;
-
-        LevelButtonUI button = slot.GetComponentInChildren<LevelButtonUI>(true);
-
-        if (button == null)
+        for (int i = 0; i < slotCount; i++)
         {
-            Debug.LogWarning(
-                $"Missing LevelButtonUI on {slot.name}");
-            continue;
+            Transform slot = levelButtonSlotsContainer.GetChild(i);
+
+            bool hasLevel = i < levelManager.LevelCount;
+            slot.gameObject.SetActive(hasLevel);
+
+            if (!hasLevel)
+                continue;
+
+            LevelButtonUI button = slot.GetComponentInChildren<LevelButtonUI>(true);
+
+            if (button == null)
+            {
+                Debug.LogWarning($"Missing LevelButtonUI on {slot.name}");
+                continue;
+            }
+
+            bool unlocked = levelManager.IsLevelUnlocked(i);
+            button.Initialize(i, unlocked);
         }
-
-        bool isNextAvailable =
-            levelManager.IsNextAvailableLevel(i);
-
-        button.Initialize(i, isNextAvailable);
     }
-}
 }
