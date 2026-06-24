@@ -46,6 +46,7 @@ public class LevelButtonUI : MonoBehaviour
         {
             button.onClick.AddListener(() =>
             {
+                AudioManager.Instance?.PlayButtonClick();
                 LevelManager.Instance.SelectLevelAndLoadGame(levelIndex);
             });
         }

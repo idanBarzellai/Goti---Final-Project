@@ -109,6 +109,7 @@ SpawnPiece(pieceData, false, pieceData.canRotate, false);
     boardPieces[pieceData.gridPosition.x, pieceData.gridPosition.y] = piece;
 
     SetupSpawnedPiece(piece);
+    RefreshCellState(pieceData.gridPosition);
 
     return piece;
 }
@@ -132,6 +133,7 @@ private void SetupSpawnedPiece(BoardPiece piece)
             return;
 
         clickedPiece.RotateClockwise();
+        AudioManager.Instance?.PlayRotatePiece();
         OnBoardChanged();
     }
 
@@ -153,6 +155,8 @@ if (piece == null || !piece.CanMove)
         piece.transform.localPosition = GridToLocalPosition(targetGridPosition);
 
         boardPieces[targetGridPosition.x, targetGridPosition.y] = piece;
+        RefreshCellState(oldPosition);
+        RefreshCellState(targetGridPosition);
 
         OnBoardChanged();
         return true;
@@ -168,6 +172,7 @@ if (piece == null || !piece.CanMove)
         if (IsInsideBounds(pos) && boardPieces[pos.x, pos.y] == piece)
         {
             boardPieces[pos.x, pos.y] = null;
+            RefreshCellState(pos);
         }
 
         Destroy(piece.gameObject);
@@ -302,6 +307,28 @@ if (piece == null || !piece.CanMove)
     {
         OnBoardStateChanged?.Invoke();
     }
+
+private void RefreshCellState(Vector2Int gridPosition)
+{
+    if (!IsInsideBounds(gridPosition) || boardCells == null)
+        return;
+
+    GameObject cell = boardCells[gridPosition.x, gridPosition.y];
+    if (cell == null)
+        return;
+
+    BoardCellView cellView = cell.GetComponent<BoardCellView>();
+    if (cellView == null)
+        return;
+
+    BoardPiece piece = boardPieces != null ? boardPieces[gridPosition.x, gridPosition.y] : null;
+    bool hasFixedUnrotatablePiece =
+        piece != null &&
+        !piece.CanMove &&
+        !piece.CanRotate;
+
+    cellView.SetCantBeRotated(hasFixedUnrotatablePiece);
+}
 
     private void ClearBoard()
 {

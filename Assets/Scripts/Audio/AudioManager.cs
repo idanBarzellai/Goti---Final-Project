@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
+    private const string AudioLibraryResourcePath = "GameAudioLibrary";
+    private const string MutedPlayerPrefsKey = "AudioMuted";
 
     [SerializeField] private GameAudioLibrary audioLibrary;
 
@@ -17,10 +18,20 @@ public class AudioManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float bgmVolume = 0.6f;
     [SerializeField, Range(0f, 1f)] private float sfxVolume = 1f;
 
-    [Header("Piece Hit Sequence")]
-    [SerializeField] private float pieceHitDelay = 0.08f;
+    private bool isMuted;
 
-    private Coroutine pieceHitRoutine;
+    public bool IsMuted => isMuted;
+    public event Action<bool> OnMuteChanged;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Bootstrap()
+    {
+        if (Instance != null)
+            return;
+
+        GameObject audioManagerObject = new GameObject("AudioManager");
+        audioManagerObject.AddComponent<AudioManager>();
+    }
 
     private void Awake()
     {
@@ -33,7 +44,12 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        if (audioLibrary == null)
+            audioLibrary = Resources.Load<GameAudioLibrary>(AudioLibraryResourcePath);
+
+        isMuted = PlayerPrefs.GetInt(MutedPlayerPrefsKey, 0) == 1;
         EnsureAudioSources();
+        ApplyMuteState();
         SceneManager.sceneLoaded += HandleSceneLoaded;
     }
 
@@ -59,10 +75,12 @@ public class AudioManager : MonoBehaviour
         bgmSource.loop = true;
         bgmSource.playOnAwake = false;
         bgmSource.volume = bgmVolume;
+        bgmSource.mute = isMuted;
 
         sfxSource.loop = false;
         sfxSource.playOnAwake = false;
         sfxSource.volume = sfxVolume;
+        sfxSource.mute = isMuted;
     }
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -87,8 +105,15 @@ public class AudioManager : MonoBehaviour
 
     private void PlayBgm(AudioClip clip)
     {
-        if (clip == null || bgmSource == null)
+        if (bgmSource == null)
             return;
+
+        if (clip == null)
+        {
+            bgmSource.Stop();
+            bgmSource.clip = null;
+            return;
+        }
 
         if (bgmSource.clip == clip && bgmSource.isPlaying)
             return;
@@ -96,50 +121,50 @@ public class AudioManager : MonoBehaviour
         bgmSource.clip = clip;
         bgmSource.loop = true;
         bgmSource.volume = bgmVolume;
+        bgmSource.mute = isMuted;
         bgmSource.Play();
     }
 
-    public void PlayButtonClick() => PlaySfx(audioLibrary?.buttonClick);
+    public void PlayButtonClick() => PlaySfx(audioLibrary != null ? audioLibrary.GetButtonClickSound() : null);
     public void PlayWin() => PlaySfx(audioLibrary?.win);
-    public void PlayLose() => PlaySfx(audioLibrary?.lose);
-    public void PlayFireLaser() => PlaySfx(audioLibrary?.fireLaser);
-    public void PlayPlacePiece() => PlaySfx(audioLibrary?.placePiece);
-    public void PlayMovePiece() => PlaySfx(audioLibrary?.movePiece);
-    public void PlayRotatePiece() => PlaySfx(audioLibrary?.rotatePiece);
+    public void PlayLose() => PlaySfx(audioLibrary != null ? audioLibrary.GetLoseSound() : null);
+    public void PlayFireLaser() => PlaySfx(audioLibrary != null ? audioLibrary.GetFireLaserSound() : null);
+    public void PlayPlacePiece() => PlaySfx(audioLibrary != null ? audioLibrary.GetPlacePieceSound() : null);
+    public void PlayRotatePiece() => PlaySfx(audioLibrary != null ? audioLibrary.GetRotatePieceSound() : null);
     public void PlayReturnPiece() => PlaySfx(audioLibrary?.returnPiece);
 
     public void PlaySfx(AudioClip clip)
     {
-        if (clip == null || sfxSource == null)
+        if (isMuted || clip == null || sfxSource == null)
             return;
 
         sfxSource.PlayOneShot(clip, sfxVolume);
     }
 
-    public void PlayPieceHitSequence(List<BoardPiece> hitPieces)
+    public void ToggleMuted()
     {
-        if (hitPieces == null || hitPieces.Count == 0)
+        SetMuted(!isMuted);
+    }
+
+    public void SetMuted(bool muted)
+    {
+        if (isMuted == muted)
             return;
 
-        if (pieceHitRoutine != null)
-            StopCoroutine(pieceHitRoutine);
-
-        pieceHitRoutine = StartCoroutine(PieceHitSequenceRoutine(hitPieces));
+        isMuted = muted;
+        PlayerPrefs.SetInt(MutedPlayerPrefsKey, isMuted ? 1 : 0);
+        PlayerPrefs.Save();
+        ApplyMuteState();
+        OnMuteChanged?.Invoke(isMuted);
     }
 
-    private IEnumerator PieceHitSequenceRoutine(List<BoardPiece> hitPieces)
+    private void ApplyMuteState()
     {
-        foreach (BoardPiece piece in hitPieces)
-        {
-            if (piece == null || audioLibrary == null)
-                continue;
+        if (bgmSource != null)
+            bgmSource.mute = isMuted;
 
-            AudioClip clip = audioLibrary.GetPieceHitSound(piece.PieceType);
-            PlaySfx(clip);
-
-            yield return new WaitForSeconds(pieceHitDelay);
-        }
-
-        pieceHitRoutine = null;
+        if (sfxSource != null)
+            sfxSource.mute = isMuted;
     }
+
 }

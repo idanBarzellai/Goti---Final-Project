@@ -29,6 +29,8 @@ private void ForceHiddenOnStart() => gameObject.SetActive(false);
     public void Toggle()
     {
         Debug.Log("Toggling menu: " + gameObject.name + " | Currently active: " + gameObject.activeSelf);
+        AudioManager.Instance?.PlayButtonClick();
+
         if (!gameObject.activeSelf)
             Show();
         else

@@ -28,9 +28,11 @@ public bool HasAvailableUses => usedCount < stackCount;
     private GameObject dragGhost;
 private RectTransform dragGhostRect;
 private CanvasGroup dragGhostCanvasGroup;
+private bool iconHiddenForDrag;
 
 [SerializeField] private TMP_Text stackCounterText;
 [SerializeField] private RectTransform stackCounterObject;
+private CanvasGroup iconCanvasGroup;
 
 
 private int stackCount = 1;
@@ -58,6 +60,7 @@ private int usedCount = 0;
     if (canvasGroup == null)
         canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
+    EnsureIconCanvasGroup();
     RefreshVisual();
     RefreshUsedState();
 }
@@ -69,8 +72,10 @@ private int usedCount = 0;
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
 
-        if (canvasGroup == null)
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+    if (canvasGroup == null)
+        canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+    EnsureIconCanvasGroup();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -78,27 +83,17 @@ private int usedCount = 0;
     if (IsFullyUsed || canvas == null)
     return;
 
-    dragGhost = Instantiate(gameObject, canvas.transform);
-    dragGhost.name = $"{gameObject.name}_DragGhost";
-
-    DraggableInventoryPiece ghostDrag = dragGhost.GetComponent<DraggableInventoryPiece>();
-    if (ghostDrag != null)
-        Destroy(ghostDrag);
-
-    dragGhostRect = dragGhost.GetComponent<RectTransform>();
-    dragGhostCanvasGroup = dragGhost.GetComponent<CanvasGroup>();
-
-    if (dragGhostCanvasGroup == null)
-        dragGhostCanvasGroup = dragGhost.AddComponent<CanvasGroup>();
+    CreateIconDragGhost();
+    if (dragGhostRect == null || dragGhostCanvasGroup == null)
+        return;
 
     dragGhostCanvasGroup.blocksRaycasts = false;
+    SetBankIconVisible(false);
+    iconHiddenForDrag = true;
 
-    dragGhostRect.position = rectTransform.position;
-
-    if (stackCounterObject != null )
-{
-    ghostDrag.stackCounterObject.gameObject.SetActive(false);
-}
+    dragGhostRect.position = iconImage != null
+        ? iconImage.rectTransform.position
+        : rectTransform.position;
 }
 
    public void OnDrag(PointerEventData eventData)
@@ -127,16 +122,18 @@ public void OnEndDrag(PointerEventData eventData)
 
     if (placedOnBoard)
     {
+        AudioManager.Instance?.PlayPlacePiece();
+        iconHiddenForDrag = false;
         MarkUsedOnBoard();
 
            if (GameManager.Instance != null)
         GameManager.Instance.RefreshFireButtonAvailability();
     }
-
-//      if (stackCounterObject != null )
-// {
-//     ghostDrag.stackCounterObject.gameObject.SetActive(true);
-// }
+    else
+    {
+        iconHiddenForDrag = false;
+        SetBankIconVisible(true);
+    }
 
     DestroyDragGhost();
 }
@@ -208,9 +205,16 @@ private void DestroyDragGhost()
 {
     if (canvasGroup != null)
     {
-        canvasGroup.alpha = IsFullyUsed ? usedAlpha : 1f;
+        canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = !IsFullyUsed;
         canvasGroup.interactable = !IsFullyUsed;
+    }
+
+    if (iconCanvasGroup != null)
+    {
+        iconCanvasGroup.alpha = IsFullyUsed || iconHiddenForDrag ? usedAlpha : 1f;
+        iconCanvasGroup.blocksRaycasts = !IsFullyUsed;
+        iconCanvasGroup.interactable = !IsFullyUsed;
     }
 
     if (stackCounterText != null)
@@ -220,5 +224,63 @@ private void DestroyDragGhost()
 stackCounterText.transform.parent.gameObject.SetActive(stackCount > 1);
         stackCounterText.text = remaining.ToString();
     }
+}
+
+private void SetBankIconVisible(bool visible)
+{
+    EnsureIconCanvasGroup();
+
+    if (iconCanvasGroup == null)
+        return;
+
+    iconCanvasGroup.alpha = visible ? 1f : usedAlpha;
+}
+
+private void EnsureIconCanvasGroup()
+{
+    if (iconImage == null)
+        return;
+
+    if (iconCanvasGroup == null)
+        iconCanvasGroup = iconImage.GetComponent<CanvasGroup>();
+
+    if (iconCanvasGroup == null)
+        iconCanvasGroup = iconImage.gameObject.AddComponent<CanvasGroup>();
+}
+
+private void CreateIconDragGhost()
+{
+    if (iconImage == null)
+        return;
+
+    dragGhost = new GameObject(
+        $"{gameObject.name}_IconDragGhost",
+        typeof(RectTransform),
+        typeof(CanvasRenderer),
+        typeof(Image),
+        typeof(CanvasGroup)
+    );
+
+    dragGhost.transform.SetParent(canvas.transform, false);
+
+    dragGhostRect = dragGhost.GetComponent<RectTransform>();
+    RectTransform sourceRect = iconImage.rectTransform;
+    dragGhostRect.anchorMin = new Vector2(0.5f, 0.5f);
+    dragGhostRect.anchorMax = new Vector2(0.5f, 0.5f);
+    dragGhostRect.pivot = sourceRect.pivot;
+    dragGhostRect.sizeDelta = sourceRect.rect.size;
+    dragGhostRect.localScale = sourceRect.lossyScale;
+    dragGhostRect.localRotation = sourceRect.rotation;
+
+    Image ghostImage = dragGhost.GetComponent<Image>();
+    ghostImage.sprite = iconImage.sprite;
+    ghostImage.color = iconImage.color;
+    ghostImage.type = iconImage.type;
+    ghostImage.preserveAspect = iconImage.preserveAspect;
+    ghostImage.raycastTarget = false;
+
+    dragGhostCanvasGroup = dragGhost.GetComponent<CanvasGroup>();
+    dragGhostCanvasGroup.blocksRaycasts = false;
+    dragGhostCanvasGroup.interactable = false;
 }
 }

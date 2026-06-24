@@ -7,10 +7,40 @@ public class PauseMenuUI : BaseMenuUI
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button mainMenuButton;
+    [SerializeField] private AudioMuteToggleButtonUI muteToggleButton;
+
+    private bool listenersRegistered;
+
+    private void Awake()
+    {
+        if (!enabled)
+            return;
+
+        EnsureMuteToggleButton();
+        RegisterButtonListeners();
+    }
 
     protected override void Start()
     {
         base.Start();
+        RegisterButtonListeners();
+    }
+
+    protected override void OnShown()
+    {
+        EnsureMuteToggleButton();
+        Time.timeScale = 0f;
+    }
+
+    protected override void OnHidden()
+    {
+        Time.timeScale = 1f;
+    }
+
+    private void RegisterButtonListeners()
+    {
+        if (listenersRegistered)
+            return;
 
         if (resumeButton != null)
             resumeButton.onClick.AddListener(Resume);
@@ -19,17 +49,9 @@ public class PauseMenuUI : BaseMenuUI
             restartButton.onClick.AddListener(RestartFromPause);
 
         if (mainMenuButton != null)
-            mainMenuButton.onClick.AddListener(GoToMainMenu);
-    }
+            mainMenuButton.onClick.AddListener(GoToMainMenuFromPause);
 
-    protected override void OnShown()
-    {
-        Time.timeScale = 0f;
-    }
-
-    protected override void OnHidden()
-    {
-        Time.timeScale = 1f;
+        listenersRegistered = true;
     }
 
     private void OnDestroy()
@@ -39,12 +61,28 @@ public class PauseMenuUI : BaseMenuUI
 
     public void Resume()
     {
+        AudioManager.Instance?.PlayButtonClick();
         Hide();
     }
 
     private void RestartFromPause()
     {
+        AudioManager.Instance?.PlayButtonClick();
         Hide();
         RestartLevel();
+    }
+
+    private void GoToMainMenuFromPause()
+    {
+        AudioManager.Instance?.PlayButtonClick();
+        GoToMainMenu();
+    }
+
+    private void EnsureMuteToggleButton()
+    {
+        if (muteToggleButton != null)
+            return;
+
+        muteToggleButton = AudioMuteToggleButtonUI.CreateDefault(transform, "MuteToggleButton");
     }
 }

@@ -130,6 +130,8 @@ if (hasUnusedInventoryPieces)
     if (laserControlManager == null)
         return;
 
+    AudioManager.Instance?.PlayFireLaser();
+
     // if (triesRemaining <= 0)
     //     return;
 laserCharacterWalker?.Clear();
@@ -233,6 +235,7 @@ if (!result.hitPieces.Contains(piece))
         activeLevelManager.MarkCurrentLevelSolved();
 
     Debug.Log("LEVEL SOLVED");
+    AudioManager.Instance?.PlayWin();
     OnLevelSolved?.Invoke();
 }
 
@@ -260,6 +263,7 @@ if (!result.hitPieces.Contains(piece))
     if (boardManager.TryRemovePieceToInventory(piece))
     {
         inventoryBarUI.RestoreUsedPiece(piece);
+        AudioManager.Instance?.PlayReturnPiece();
         RefreshFireButtonAvailability();
     }
 }

@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf6f11e78f90894bba4f90f43c21e77, type: 3}
+  m_Name: GameAudioLibrary
+  m_EditorClassIdentifier: 
+  mainMenuBgm: {fileID: 8300000, guid: b25b3afa14d21a64db27fa3e7b085189, type: 3}
+  gameplayBgm: {fileID: 8300000, guid: fdc3e9ca563ea474f9a8775669e6b66d, type: 3}
+  buttonClick: {fileID: 8300000, guid: fbb1697b6bddda946a9df5c278819bb7, type: 3}
+  buttonClickOptions:
+  - {fileID: 8300000, guid: 4d4bcdf1c58510447a2170561101f7e5, type: 3}
+  - {fileID: 8300000, guid: 6980c764c35204149a48bbf5e005d499, type: 3}
+  - {fileID: 8300000, guid: f87309a870241e1479fad93b6563118f, type: 3}
+  - {fileID: 8300000, guid: bb2bf6f2175d2f14c945da32ee28d4c7, type: 3}
+  win: {fileID: 8300000, guid: f5162551a59f68245ac83b235e3532d5, type: 3}
+  lose: {fileID: 0}
+  loseOptions: []
+  fireLaser: {fileID: 0}
+  fireLaserOptions:
+  - {fileID: 8300000, guid: 23ba0c8f0fecf7145a8fcf5b8a9e1f9a, type: 3}
+  - {fileID: 8300000, guid: 84d3046fc5f170c4bb28cf897400e676, type: 3}
+  - {fileID: 8300000, guid: c7668cf27086a5a4f86f1228a5f8883f, type: 3}
+  - {fileID: 8300000, guid: ce272584425d0b84c87dbd51e16fa43a, type: 3}
+  placePiece: {fileID: 0}
+  placePieceOptions:
+  - {fileID: 8300000, guid: f628634817d88554e8bf90697cbb1bc9, type: 3}
+  - {fileID: 8300000, guid: 17c03969f7e571845b9dfd03d8412efa, type: 3}
+  - {fileID: 8300000, guid: 0da73090e4f346843a6516026f2f3a4c, type: 3}
+  - {fileID: 8300000, guid: a79480c2ae66c194db5614c793b4e879, type: 3}
+  - {fileID: 8300000, guid: 4f21d101ac2651e40b45a07d7147d541, type: 3}
+  rotatePiece: {fileID: 0}
+  rotatePieceOptions:
+  - {fileID: 8300000, guid: 73375093207d74345bc7f29f447bea7d, type: 3}
+  - {fileID: 8300000, guid: 984255e1980693b458a4fc758c2848c7, type: 3}
+  - {fileID: 8300000, guid: be507709f4739a24ab3c4f330ead61e5, type: 3}
+  - {fileID: 8300000, guid: 728955b9e6aebe74aad10ec524af91e4, type: 3}
+  - {fileID: 8300000, guid: f84ab856b3d1f614c9664ab8fad26f20, type: 3}
+  returnPiece: {fileID: 8300000, guid: 972463438ee7fb0438451ca53c9dfd9c, type: 3}

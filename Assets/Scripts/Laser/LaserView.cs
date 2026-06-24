@@ -10,10 +10,12 @@ public class LaserView : MonoBehaviour
     [SerializeField] private Transform boardRoot;
 
     [Header("Visuals")]
-    [SerializeField] private float lineZOffset = -0.1f;
+    [SerializeField] private float lineZOffset = -5f;
     [SerializeField] private float lineWidth = 0.12f;
     [SerializeField] private Material lineMaterial;
     [SerializeField] private bool useTextureTiling = true;
+    [SerializeField] private string sortingLayerName = "Goti";
+    [SerializeField] private int sortingOrder = 1000;
     // [SerializeField] private float textureTilingMultiplier = 1f;
 
     private readonly List<LineRenderer> activeLineRenderers = new List<LineRenderer>();
@@ -103,6 +105,8 @@ public class LaserView : MonoBehaviour
 
         targetRenderer.startWidth = lineWidth;
         targetRenderer.endWidth = lineWidth;
+        targetRenderer.sortingLayerName = sortingLayerName;
+        targetRenderer.sortingOrder = sortingOrder;
 
         if (lineMaterial != null)
             targetRenderer.material = lineMaterial;

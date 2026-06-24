@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5734422237652061197}
   - component: {fileID: 2011007744265576968}
+  - component: {fileID: 4200000001}
   m_Layer: 6
   m_Name: Cell
   m_TagString: Untagged
@@ -91,3 +92,18 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4200000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8331488516930498019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cb9752478944cb9954b7036cb2d2c8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BoardCellView
+  spriteRenderer: {fileID: 2011007744265576968}
+  defaultSprite: {fileID: 21300000, guid: 66164eb5b9287e64592b899590cdf401, type: 3}
+  cantBeRotatedSprite: {fileID: 21300000, guid: e67df4504f356064cae692df1487f956, type: 3}

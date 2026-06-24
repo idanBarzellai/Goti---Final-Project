@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,32 +10,59 @@ public class GameAudioLibrary : ScriptableObject
 
     [Header("General SFX")]
     public AudioClip buttonClick;
+    public List<AudioClip> buttonClickOptions = new List<AudioClip>();
     public AudioClip win;
     public AudioClip lose;
+    public List<AudioClip> loseOptions = new List<AudioClip>();
     public AudioClip fireLaser;
+    public List<AudioClip> fireLaserOptions = new List<AudioClip>();
     public AudioClip placePiece;
-    public AudioClip movePiece;
+    public List<AudioClip> placePieceOptions = new List<AudioClip>();
     public AudioClip rotatePiece;
+    public List<AudioClip> rotatePieceOptions = new List<AudioClip>();
     public AudioClip returnPiece;
 
-    [Header("Piece Hit SFX")]
-    public List<PieceAudioEntry> pieceHitSounds = new List<PieceAudioEntry>();
-
-    public AudioClip GetPieceHitSound(PieceType pieceType)
+    public AudioClip GetButtonClickSound()
     {
-        foreach (PieceAudioEntry entry in pieceHitSounds)
+        return GetRandomClip(buttonClick, buttonClickOptions);
+    }
+
+    public AudioClip GetPlacePieceSound()
+    {
+        return GetRandomClip(placePiece, placePieceOptions);
+    }
+
+    public AudioClip GetRotatePieceSound()
+    {
+        return GetRandomClip(rotatePiece, rotatePieceOptions);
+    }
+
+    public AudioClip GetFireLaserSound()
+    {
+        return GetRandomClip(fireLaser, fireLaserOptions);
+    }
+
+    public AudioClip GetLoseSound()
+    {
+        return GetRandomClip(lose, loseOptions);
+    }
+
+    private AudioClip GetRandomClip(AudioClip defaultClip, List<AudioClip> options)
+    {
+        List<AudioClip> availableClips = new List<AudioClip>();
+
+        if (defaultClip != null)
+            availableClips.Add(defaultClip);
+
+        for (int i = 0; i < options.Count; i++)
         {
-            if (entry.pieceType == pieceType)
-                return entry.clip;
+            if (options[i] != null)
+                availableClips.Add(options[i]);
         }
 
-        return null;
-    }
-}
+        if (availableClips.Count == 0)
+            return null;
 
-[Serializable]
-public class PieceAudioEntry
-{
-    public PieceType pieceType;
-    public AudioClip clip;
+        return availableClips[Random.Range(0, availableClips.Count)];
+    }
 }
