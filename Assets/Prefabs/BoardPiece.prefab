@@ -124,14 +124,14 @@ MonoBehaviour:
   spriteRenderer: {fileID: 7489051468507469914}
   shadowRenderer: {fileID: 7567386515983265339}
   shadowLocalOffset: {x: 0.12, y: -0.12, z: 0.05}
-  shadowColor: {r: 0, g: 0, b: 0, a: 0.45}
-  entryColor: {r: 0, g: 1, b: 0, a: 1}
-  targetColor: {r: 1, g: 0, b: 0, a: 1}
-  blockColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  reflectColor: {r: 0, g: 1, b: 1, a: 1}
-  fixedOverlayTint: {r: 0.8, g: 0.8, b: 0.8, a: 1}
+  shadowColor: {r: 1, g: 1, b: 1, a: 0.45}
+  entryColor: {r: 1, g: 1, b: 1, a: 1}
+  targetColor: {r: 1, g: 1, b: 1, a: 1}
+  blockColor: {r: 1, g: 1, b: 1, a: 1}
+  reflectColor: {r: 1, g: 1, b: 1, a: 1}
+  fixedOverlayTint: {r: 1, g: 1, b: 1, a: 1}
   moonShadowCaster: {fileID: 0}
-  spriteLibrary: {fileID: 11400000, guid: 7ecee7a419bcb27479a1fcce6beb5ebe, type: 2}
+  spriteLibrary: {fileID: 11400000, guid: 7b88e55afb782fd458636208b17fac2b, type: 2}
   rotateIndicator: {fileID: 0}
 --- !u!1 &5851681548946572911
 GameObject:

@@ -105,9 +105,7 @@ public class BoardPieceDragHandler : MonoBehaviour, IBeginDragHandler, IDragHand
             return;
         }
 
-        if (boardPiece.CanRotate && boardManager != null)
-        {
+        if (boardManager != null)
             boardManager.HandlePieceClicked(boardPiece);
-        }
     }
 }

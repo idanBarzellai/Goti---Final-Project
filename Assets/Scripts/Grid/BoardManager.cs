@@ -130,7 +130,10 @@ private void SetupSpawnedPiece(BoardPiece piece)
             return;
 
         if (!clickedPiece.CanRotate)
+        {
+            GameManager.Instance?.ShowPopupMessage("This Cannot Be Rotated");
             return;
+        }
 
         clickedPiece.RotateClockwise();
         AudioManager.Instance?.PlayRotatePiece();
@@ -218,6 +221,69 @@ if (piece == null || !piece.CanMove)
             return null;
 
         return boardPieces[gridPosition.x, gridPosition.y];
+    }
+
+    public bool TryFlickerSolvedInventoryCell(LevelData levelData, float duration)
+    {
+        if (levelData == null ||
+            levelData.solvedLevelConfig == null ||
+            levelData.solvedLevelConfig.pieces == null)
+        {
+            return false;
+        }
+
+        HashSet<Vector2Int> placedPiecePositions = new HashSet<Vector2Int>();
+
+        if (levelData.placedPieces != null)
+        {
+            foreach (PieceData placedPiece in levelData.placedPieces)
+            {
+                if (placedPiece != null)
+                    placedPiecePositions.Add(placedPiece.gridPosition);
+            }
+        }
+
+        List<Vector2Int> hintPositions = new List<Vector2Int>();
+
+        foreach (PieceData solvedPiece in levelData.solvedLevelConfig.pieces)
+        {
+            if (solvedPiece == null)
+                continue;
+
+            Vector2Int hintPosition = solvedPiece.gridPosition;
+
+            if (!IsInsideBounds(hintPosition))
+                continue;
+
+            if (placedPiecePositions.Contains(hintPosition))
+                continue;
+
+            if (!hintPositions.Contains(hintPosition))
+                hintPositions.Add(hintPosition);
+        }
+
+        if (hintPositions.Count == 0)
+            return false;
+
+        Vector2Int selectedPosition = hintPositions[UnityEngine.Random.Range(0, hintPositions.Count)];
+        return TryFlickerCell(selectedPosition, duration);
+    }
+
+    private bool TryFlickerCell(Vector2Int gridPosition, float duration)
+    {
+        if (!IsInsideBounds(gridPosition) || boardCells == null)
+            return false;
+
+        GameObject cell = boardCells[gridPosition.x, gridPosition.y];
+        if (cell == null)
+            return false;
+
+        BoardCellView cellView = cell.GetComponent<BoardCellView>();
+        if (cellView == null)
+            return false;
+
+        cellView.FlickerHint(duration);
+        return true;
     }
 
     public BoardPiece FindEntryPiece()

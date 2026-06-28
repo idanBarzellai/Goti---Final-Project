@@ -7,6 +7,7 @@ public class TargetBeamBehavior : PieceBeamBehavior
         Direction incomingDirection,
         LaserSimulationContext context)
     {
+        // Targets accept laser hits from every side; their rotation is visual only.
         return BeamInteractionResult.Target(incomingDirection);
     }
 }

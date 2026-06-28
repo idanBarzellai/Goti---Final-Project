@@ -14,6 +14,7 @@ public class DraggableInventoryPiece : MonoBehaviour, IBeginDragHandler, IDragHa
     [Header("Used Visual")]
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private float usedAlpha = 0f;
+    [SerializeField] private Color usedIconTint = new Color(0.55f, 0.55f, 0.55f, 0.45f);
 
     private PieceData pieceData;
     private BoardManager boardManager;
@@ -29,6 +30,7 @@ public bool HasAvailableUses => usedCount < stackCount;
 private RectTransform dragGhostRect;
 private CanvasGroup dragGhostCanvasGroup;
 private bool iconHiddenForDrag;
+private bool iconGhostedForDrag;
 
 [SerializeField] private TMP_Text stackCounterText;
 [SerializeField] private RectTransform stackCounterObject;
@@ -88,8 +90,11 @@ private int usedCount = 0;
         return;
 
     dragGhostCanvasGroup.blocksRaycasts = false;
-    SetBankIconVisible(false);
-    iconHiddenForDrag = true;
+
+    bool isDraggingLastUse = stackCount - usedCount <= 1;
+    iconHiddenForDrag = !isDraggingLastUse;
+    iconGhostedForDrag = isDraggingLastUse;
+    RefreshUsedState();
 
     dragGhostRect.position = iconImage != null
         ? iconImage.rectTransform.position
@@ -124,6 +129,7 @@ public void OnEndDrag(PointerEventData eventData)
     {
         AudioManager.Instance?.PlayPlacePiece();
         iconHiddenForDrag = false;
+        iconGhostedForDrag = false;
         MarkUsedOnBoard();
 
            if (GameManager.Instance != null)
@@ -132,7 +138,9 @@ public void OnEndDrag(PointerEventData eventData)
     else
     {
         iconHiddenForDrag = false;
+        iconGhostedForDrag = false;
         SetBankIconVisible(true);
+        RefreshUsedState();
     }
 
     DestroyDragGhost();
@@ -212,16 +220,24 @@ private void DestroyDragGhost()
 
     if (iconCanvasGroup != null)
     {
-        iconCanvasGroup.alpha = IsFullyUsed || iconHiddenForDrag ? usedAlpha : 1f;
+        iconCanvasGroup.alpha = iconHiddenForDrag ? usedAlpha : 1f;
         iconCanvasGroup.blocksRaycasts = !IsFullyUsed;
         iconCanvasGroup.interactable = !IsFullyUsed;
     }
 
+    if (iconImage != null)
+        iconImage.color = IsFullyUsed || iconGhostedForDrag ? usedIconTint : Color.white;
+
     if (stackCounterText != null)
     {
-        int remaining = stackCount - usedCount;
+        int pendingDragUse = iconHiddenForDrag || iconGhostedForDrag ? 1 : 0;
+        int remaining = Mathf.Max(0, stackCount - usedCount - pendingDragUse);
 
-stackCounterText.transform.parent.gameObject.SetActive(stackCount > 1);
+        GameObject counterObject = stackCounterObject != null
+            ? stackCounterObject.gameObject
+            : stackCounterText.transform.parent.gameObject;
+
+        counterObject.SetActive(remaining >= 2);
         stackCounterText.text = remaining.ToString();
     }
 }

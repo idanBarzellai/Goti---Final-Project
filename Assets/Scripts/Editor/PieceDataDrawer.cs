@@ -14,6 +14,7 @@ public class PieceDataDrawer : PropertyDrawer
         SerializedProperty gridPosition = property.FindPropertyRelative("gridPosition");
         SerializedProperty direction = property.FindPropertyRelative("direction");
         SerializedProperty canRotate = property.FindPropertyRelative("canRotate");
+        SerializedProperty portalPairId = property.FindPropertyRelative("portalPairId");
 
         bool isInventoryPiece = property.propertyPath.Contains("inventoryPieces");
         PieceType currentType = (PieceType)pieceType.enumValueIndex;
@@ -42,6 +43,9 @@ public class PieceDataDrawer : PropertyDrawer
             if (!isInventoryPiece)
                 DrawProperty(ref y, position, canRotate);
 
+            if (currentType == PieceType.Portal)
+                DrawProperty(ref y, position, portalPairId);
+
             EditorGUI.indentLevel--;
         }
 
@@ -69,6 +73,9 @@ public class PieceDataDrawer : PropertyDrawer
 
         if (!isInventoryPiece)
             lines++; // canRotate
+
+        if (currentType == PieceType.Portal)
+            lines++; // portalPairId
 
         return lines * (LineHeight + Spacing);
     }

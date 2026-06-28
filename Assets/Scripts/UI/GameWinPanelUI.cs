@@ -85,7 +85,7 @@ public class GameWinPanelUI : BaseMenuUI
         SetWinScreenVisible(false);
 
         if(titleText != null)
-            titleText.text = "LEVEL SOLVED!";
+            titleText.text = "HURRAY!";
         if (nextLevelButton != null)
         {
             showNextLevelButton =

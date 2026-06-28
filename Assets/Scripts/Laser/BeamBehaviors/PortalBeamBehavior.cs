@@ -10,9 +10,6 @@ public class PortalBeamBehavior : PieceBeamBehavior
         if (piece == null || context == null || context.BoardManager == null)
             return BeamInteractionResult.Block(incomingDirection);
 
-        if (incomingDirection != piece.Direction)
-            return BeamInteractionResult.Block(incomingDirection);
-
         BoardPiece pairedPortal = FindPairedPortal(piece, context.BoardManager);
 
         if (pairedPortal == null)

@@ -1,6 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class SolvedLevelConfig
+{
+    [Tooltip("Board pieces in their solved grid positions and final directions.")]
+    public List<PieceData> pieces = new List<PieceData>();
+}
+
 [CreateAssetMenu(fileName = "LevelData", menuName = "LaserPuzzle/Level Data")]
 public class LevelData : ScriptableObject
 {
@@ -15,4 +22,7 @@ public class LevelData : ScriptableObject
 
     [Header("Available in inventory tray")]
     public List<PieceData> inventoryPieces = new List<PieceData>();
+
+    [Header("Solved Level Config")]
+    public SolvedLevelConfig solvedLevelConfig = new SolvedLevelConfig();
 }

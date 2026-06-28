@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 66164eb5b9287e64592b899590cdf401
+guid: dbda06b633e529346a0c06bce84f608f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7841750413799554831
-    second: Board_0
+      213: 6507730556356512695
+    second: MONSTER BANK bg_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -126,13 +126,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Board_0
+      name: MONSTER BANK bg_0
       rect:
         serializedVersion: 2
-        x: 16
-        y: 15
-        width: 168
-        height: 174
+        x: 0
+        y: 0
+        width: 313
+        height: 130
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f0f7bc7347e73dc60800000000000000
-      internalID: 7841750413799554831
+      spriteID: 7bbc599267a105a50800000000000000
+      internalID: 6507730556356512695
       vertices: []
       indices: 
       edges: []
@@ -161,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Board_0: 7841750413799554831
+      MONSTER BANK bg_0: 6507730556356512695
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

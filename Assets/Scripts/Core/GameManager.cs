@@ -18,6 +18,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CanvasGroup fireButtonCanvasGroup;
 [SerializeField] private SimplePopupMessageUI popupMessageUI;
 
+    [Header("Hints")]
+    [SerializeField] private Button hintButton;
+    [SerializeField] private float hintFlickerDuration = 3f;
+
     public static GameManager Instance { get; private set; }
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
 
@@ -46,6 +50,8 @@ private bool laserSequenceRunning;
 
     private void Start()
     {
+    EnsureHintButton();
+
             if (levelTimerManager != null)
         levelTimerManager.OnTimerFinished += HandleTimerFinished;
 
@@ -64,6 +70,9 @@ private bool laserSequenceRunning;
 
     if (boardManager != null)
         boardManager.OnBoardStateChanged -= RefreshFireButtonAvailability;
+
+    if (hintButton != null)
+        hintButton.onClick.RemoveListener(HintButtonClicked);
 }
 //    private void InitializeTriesFromCurrentLevel()
 // {
@@ -96,6 +105,41 @@ public void RefreshFireButtonAvailability()
 
     if (fireButtonCanvasGroup != null)
         fireButtonCanvasGroup.alpha = canFire ? 1f : 0.1f;
+
+    if (hintButton != null)
+        hintButton.interactable = canActuallyClick;
+}
+
+public void HintButtonClicked()
+{
+    if (levelEnded || laserSequenceRunning)
+        return;
+
+    AudioManager.Instance?.PlayButtonClick();
+
+    LevelManager activeLevelManager = ActiveLevelManager;
+    LevelData currentLevel = activeLevelManager != null ? activeLevelManager.CurrentLevel : null;
+
+    bool showedHint =
+        boardManager != null &&
+        boardManager.TryFlickerSolvedInventoryCell(currentLevel, hintFlickerDuration);
+
+    if (!showedHint)
+        popupMessageUI?.ShowMessage("No hint available");
+}
+
+public void ShowPopupMessage(string message)
+{
+    popupMessageUI?.ShowMessage(message);
+}
+
+private void EnsureHintButton()
+{
+    if (hintButton != null)
+    {
+        hintButton.onClick.RemoveListener(HintButtonClicked);
+        hintButton.onClick.AddListener(HintButtonClicked);
+    }
 }
 private void SetFireButtonInteractable(bool interactable)
 {
