@@ -19,12 +19,48 @@ public class SimplePopupMessageUI : MonoBehaviour
 
     public void ShowMessage(string message)
     {
+        ShowMessage(message, visibleDuration);
+    }
+
+    public void ShowMessage(string message, float duration)
+    {
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);
 
-        currentRoutine = StartCoroutine(ShowRoutine(message));
+        currentRoutine = StartCoroutine(ShowRoutine(message, duration));
     }
-private IEnumerator ShowRoutine(string message)
+
+    public void ShowPersistentMessage(string message)
+    {
+        if (currentRoutine != null)
+            StopCoroutine(currentRoutine);
+
+        currentRoutine = StartCoroutine(ShowPersistentRoutine(message));
+    }
+
+    public void HideMessage()
+    {
+        if (currentRoutine != null)
+            StopCoroutine(currentRoutine);
+
+        currentRoutine = null;
+        HideImmediate();
+    }
+
+    private IEnumerator ShowPersistentRoutine(string message)
+    {
+        if (messageText != null)
+            messageText.text = message;
+
+        if (canvasGroup != null)
+        {
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.interactable = false;
+        }
+
+        yield return Fade(0f, 1f);
+    }
+private IEnumerator ShowRoutine(string message, float duration)
 {
     if (messageText != null)
         messageText.text = message;
@@ -37,7 +73,7 @@ private IEnumerator ShowRoutine(string message)
 
     yield return Fade(0f, 1f);
 
-    yield return new WaitForSeconds(visibleDuration);
+    yield return new WaitForSeconds(Mathf.Max(0f, duration));
 
     yield return Fade(1f, 0f);
 }

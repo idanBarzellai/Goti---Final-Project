@@ -54,6 +54,22 @@ public class BoardCellView : MonoBehaviour
         hintRoutine = StartCoroutine(FlickerHintRoutine(duration));
     }
 
+    public void SetHintHighlighted(bool highlighted)
+    {
+        EnsureReferences();
+
+        if (spriteRenderer == null)
+            return;
+
+        if (hintRoutine != null)
+        {
+            StopCoroutine(hintRoutine);
+            hintRoutine = null;
+        }
+
+        spriteRenderer.color = highlighted ? hintColor : defaultColor;
+    }
+
     private IEnumerator FlickerHintRoutine(float duration)
     {
         float elapsed = 0f;

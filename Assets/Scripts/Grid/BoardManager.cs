@@ -24,6 +24,8 @@ public class BoardManager : MonoBehaviour
 
     public event Action OnBoardStateChanged;
     public event Action OnBoardLoaded;
+    public event Action<BoardPiece> OnPiecePlacedFromInventory;
+    public event Action<BoardPiece> OnPieceRotated;
 
     public void LoadBoard(LevelData levelData)
     {
@@ -131,12 +133,13 @@ private void SetupSpawnedPiece(BoardPiece piece)
 
         if (!clickedPiece.CanRotate)
         {
-            GameManager.Instance?.ShowPopupMessage("This Cannot Be Rotated");
+            GameManager.Instance?.ShowPopupMessage("Pieces with black background cannot be rotated");
             return;
         }
 
         clickedPiece.RotateClockwise();
         AudioManager.Instance?.PlayRotatePiece();
+        OnPieceRotated?.Invoke(clickedPiece);
         OnBoardChanged();
     }
 
@@ -211,7 +214,8 @@ if (piece == null || !piece.CanMove)
     portalPairId = pieceData.portalPairId
 };
 
-    SpawnPiece(placedData, true, true, true);
+    BoardPiece placedPiece = SpawnPiece(placedData, true, true, true);
+    OnPiecePlacedFromInventory?.Invoke(placedPiece);
     OnBoardChanged();
     return true;
 }
@@ -269,7 +273,7 @@ if (piece == null || !piece.CanMove)
         return TryFlickerCell(selectedPosition, duration);
     }
 
-    private bool TryFlickerCell(Vector2Int gridPosition, float duration)
+    public bool TryFlickerCell(Vector2Int gridPosition, float duration)
     {
         if (!IsInsideBounds(gridPosition) || boardCells == null)
             return false;
@@ -283,6 +287,23 @@ if (piece == null || !piece.CanMove)
             return false;
 
         cellView.FlickerHint(duration);
+        return true;
+    }
+
+    public bool TrySetCellHintHighlighted(Vector2Int gridPosition, bool highlighted)
+    {
+        if (!IsInsideBounds(gridPosition) || boardCells == null)
+            return false;
+
+        GameObject cell = boardCells[gridPosition.x, gridPosition.y];
+        if (cell == null)
+            return false;
+
+        BoardCellView cellView = cell.GetComponent<BoardCellView>();
+        if (cellView == null)
+            return false;
+
+        cellView.SetHintHighlighted(highlighted);
         return true;
     }
 

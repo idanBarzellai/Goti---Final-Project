@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     public InventoryBarUI InventoryBarUI => inventoryBarUI;
 
     public event Action OnLevelSolved;
+    public event Action OnFireLaserStarted;
+    public event Action<LaserSimulationResult, bool> OnLaserResolved;
 
     private bool levelEnded;
     // private int triesRemaining;
@@ -175,6 +177,7 @@ if (hasUnusedInventoryPieces)
         return;
 
     AudioManager.Instance?.PlayFireLaser();
+    OnFireLaserStarted?.Invoke();
 
     // if (triesRemaining <= 0)
     //     return;
@@ -223,6 +226,8 @@ private void ResolveLaserResultAfterVisual(LaserSimulationResult result, bool so
 {
     if (levelEnded)
         return;
+
+    OnLaserResolved?.Invoke(result, solved);
 
     if (solved)
     {

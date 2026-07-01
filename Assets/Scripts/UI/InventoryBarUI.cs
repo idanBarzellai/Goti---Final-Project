@@ -5,6 +5,21 @@ public class InventoryBarUI : MonoBehaviour
 {
     [SerializeField] private RectTransform inventoryDropArea;
     public RectTransform InventoryDropArea => inventoryDropArea;
+    public RectTransform FirstAvailablePieceRect
+    {
+        get
+        {
+            foreach (DraggableInventoryPiece inventoryPiece in spawnedInventoryPieces)
+            {
+                if (inventoryPiece == null || !inventoryPiece.HasAvailableUses)
+                    continue;
+
+                return inventoryPiece.GetComponent<RectTransform>();
+            }
+
+            return null;
+        }
+    }
 
     [SerializeField] private Transform inventoryContainer;
     [SerializeField] private DraggableInventoryPiece inventoryPiecePrefab;
