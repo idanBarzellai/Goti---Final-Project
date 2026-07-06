@@ -18,7 +18,7 @@ MonoBehaviour:
   - pieceType: 1
     gridPosition: {x: 1, y: 4}
     direction: 2
-    canRotate: 0
+    canRotate: 1
     portalPairId: 0
   - pieceType: 6
     gridPosition: {x: 0, y: 3}

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f287982098488e4abcc12f7a666682f, type: 3}
   m_Name: PieceSpriteLibrary
   m_EditorClassIdentifier: Assembly-CSharp::PieceSpriteLibrary
-  entrySprite: {fileID: -7784899289141202801, guid: 3faacab09ac930f41ad52b03ff22a80d, type: 3}
+  entrySprite: {fileID: 1413058444440499354, guid: 4f3b52d05fe828142a05c7a4c9e259b8, type: 3}
   targetSprite: {fileID: 381891196378272548, guid: 47d33f98de6167e4bbfc411482ec8788, type: 3}
-  blockSprite: {fileID: 21300000, guid: aa3a47c13a29f124eb63dc88610c4b35, type: 3}
+  blockSprite: {fileID: -3811622060508080644, guid: d7ac21d4fc484c0488b9d57d2d2b8ba3, type: 3}
   mirrorSprite: {fileID: -9106275301997704921, guid: 269ec994d84f5754a841bfeaf56e0153, type: 3}
   reflectSprite: {fileID: -3446166696569346806, guid: 36a019c48b82bf1428f3fc25fed343c0, type: 3}
   checkpointSprite: {fileID: 2010040708041431178, guid: 5fa60c37aa783134fba0165eeb4aa32d, type: 3}
