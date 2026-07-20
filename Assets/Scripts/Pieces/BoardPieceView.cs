@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(BoardPiece))]
@@ -19,6 +20,12 @@ public class BoardPieceView : MonoBehaviour
     [SerializeField] private MoonShadowCaster moonShadowCaster;
 [SerializeField] private PieceSpriteLibrary spriteLibrary;
     private BoardPiece boardPiece;
+    private Coroutine idleRoutine;
+    private Coroutine traversalShakeRoutine;
+    private Transform shakeRoot;
+    private Vector3 shakeOrigin;
+    private bool entryAway;
+    private const float AnimationFrameDuration = 0.06f;
     [Header("Rotation Indicator")]
 [SerializeField] private GameObject rotateIndicator;
 
@@ -34,6 +41,76 @@ public class BoardPieceView : MonoBehaviour
     {
         moonShadowCaster = FindAnyObjectByType<MoonShadowCaster>();
         Refresh();
+        StartIdleLoop();
+    }
+
+    public PieceSpriteLibrary SpriteLibrary => spriteLibrary;
+
+    private void StartIdleLoop()
+    {
+        Sprite[] frames = spriteLibrary != null && boardPiece != null ? spriteLibrary.GetIdleFrames(boardPiece.PieceType) : null;
+        if (frames != null && frames.Length > 0)
+        {
+            spriteRenderer.sprite = frames[0];
+            idleRoutine = StartCoroutine(IdleLoop(frames));
+        }
+    }
+
+    private IEnumerator IdleLoop(Sprite[] frames)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(3f, 8f));
+            if (entryAway)
+                continue;
+            foreach (Sprite frame in frames)
+            {
+                if (frame != null) spriteRenderer.sprite = frame;
+                yield return new WaitForSeconds(AnimationFrameDuration);
+            }
+            spriteRenderer.sprite = frames[0];
+        }
+    }
+
+    public void SetEntryAway(bool away)
+    {
+        if (boardPiece == null || boardPiece.PieceType != PieceType.Entry || spriteLibrary == null) return;
+        entryAway = away;
+        Sprite pointSprite = boardPiece.CanRotate ? spriteLibrary.rotatableEntryPointSprite : spriteLibrary.fixedEntryPointSprite;
+        spriteRenderer.sprite = away ? pointSprite : spriteLibrary.GetIdleFrames(PieceType.Entry)?[0];
+    }
+
+    public Quaternion VisualWorldRotation => spriteRenderer != null ? spriteRenderer.transform.rotation : transform.rotation;
+
+    public void StartTraversalShake()
+    {
+        if (traversalShakeRoutine != null || spriteRenderer == null)
+            return;
+
+        shakeRoot = spriteRenderer.transform.parent != null ? spriteRenderer.transform.parent : spriteRenderer.transform;
+        shakeOrigin = shakeRoot.localPosition;
+        traversalShakeRoutine = StartCoroutine(TraversalShakeRoutine());
+    }
+
+    public void StopTraversalShake()
+    {
+        if (traversalShakeRoutine != null)
+        {
+            StopCoroutine(traversalShakeRoutine);
+            traversalShakeRoutine = null;
+        }
+
+        if (shakeRoot != null)
+            shakeRoot.localPosition = shakeOrigin;
+    }
+
+    private IEnumerator TraversalShakeRoutine()
+    {
+        while (true)
+        {
+            shakeRoot.localPosition = shakeOrigin + (Vector3)(Random.insideUnitCircle * 0.035f);
+            yield return new WaitForSeconds(0.045f);
+        }
     }
 
 

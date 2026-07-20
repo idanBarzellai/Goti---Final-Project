@@ -109,3 +109,5 @@ MonoBehaviour:
   cantBeRotatedSprite: {fileID: 21300000, guid: e67df4504f356064cae692df1487f956, type: 3}
   hintColor: {r: 1, g: 0.9471879, b: 0.6933962, a: 1}
   hintFlickerInterval: 0.15
+  traversalColor: {r: 0.28235295, g: 0.9490196, b: 0.25490198, a: 1}
+  traversalColorDuration: 0.4

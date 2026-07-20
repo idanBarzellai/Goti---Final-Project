@@ -566,7 +566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &170305910
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3863,11 +3863,11 @@ PrefabInstance:
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[1]'
       value: 
-      objectReference: {fileID: 11400000, guid: 6519f817553be0e41b7fa5e0ddcd8eab, type: 2}
+      objectReference: {fileID: 11400000, guid: 7b1b0bca4b1fe9c47bf9615eb9535d15, type: 2}
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[2]'
       value: 
-      objectReference: {fileID: 11400000, guid: 741b0715f50d3f749b4035008545ad39, type: 2}
+      objectReference: {fileID: 11400000, guid: e455937c3b9df0847b9f34e77f38ba68, type: 2}
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[3]'
       value: 
@@ -3875,19 +3875,19 @@ PrefabInstance:
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[4]'
       value: 
-      objectReference: {fileID: 11400000, guid: 7b1b0bca4b1fe9c47bf9615eb9535d15, type: 2}
+      objectReference: {fileID: 11400000, guid: c03d62ec69eb3ec4792c9822d10d7982, type: 2}
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[5]'
       value: 
-      objectReference: {fileID: 11400000, guid: e455937c3b9df0847b9f34e77f38ba68, type: 2}
+      objectReference: {fileID: 11400000, guid: 6519f817553be0e41b7fa5e0ddcd8eab, type: 2}
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[6]'
       value: 
-      objectReference: {fileID: 11400000, guid: ef102cc6a1fd6d545a8c7f388baa4f03, type: 2}
+      objectReference: {fileID: 11400000, guid: 741b0715f50d3f749b4035008545ad39, type: 2}
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[7]'
       value: 
-      objectReference: {fileID: 11400000, guid: c03d62ec69eb3ec4792c9822d10d7982, type: 2}
+      objectReference: {fileID: 11400000, guid: ef102cc6a1fd6d545a8c7f388baa4f03, type: 2}
     - target: {fileID: 529627381747036472, guid: c8f04a850b59b4941b3e1248fd1b90b1, type: 3}
       propertyPath: 'levels.Array.data[8]'
       value: 

@@ -43,6 +43,8 @@ public class TutorialOverlayUI : MonoBehaviour
     [SerializeField] private float focusBreathSpeed = 0.55f;
 
     [Header("Hand Cue")]
+    [Tooltip("Replace this with the hand image you want to use in the tutorial.")]
+    [SerializeField] private Sprite handSprite;
     [SerializeField] private Vector2 handSize = new Vector2(96f, 96f);
     [SerializeField] private float handTravelDuration = 1.2f;
     [SerializeField] private float handPauseDuration = 0.25f;
@@ -392,70 +394,19 @@ public class TutorialOverlayUI : MonoBehaviour
         handRect.SetParent(overlayRoot, false);
         handRect.anchorMin = new Vector2(0.5f, 0.5f);
         handRect.anchorMax = new Vector2(0.5f, 0.5f);
-        handRect.pivot = new Vector2(0.25f, 0.8f);
+        handRect.pivot = new Vector2(1f, 1f);
         handRect.sizeDelta = handSize;
 
         Image handImage = handRect.GetComponent<Image>();
-        handImage.sprite = CreateHandSprite();
-        handImage.color = handColor;
+        handImage.sprite = handSprite;
+        handImage.color = handSprite != null ? handColor : Color.white;
         handImage.raycastTarget = false;
 
+        Canvas handCanvas = handRect.gameObject.AddComponent<Canvas>();
+        handCanvas.overrideSorting = true;
+        handCanvas.sortingOrder = canvas != null ? canvas.sortingOrder + 101 : 101;
+
         handRect.gameObject.SetActive(false);
-    }
-
-    private Sprite CreateHandSprite()
-    {
-        Texture2D texture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
-        texture.filterMode = FilterMode.Point;
-
-        Color clear = new Color(0f, 0f, 0f, 0f);
-        Color fill = Color.white;
-
-        for (int y = 0; y < texture.height; y++)
-        {
-            for (int x = 0; x < texture.width; x++)
-                texture.SetPixel(x, y, clear);
-        }
-
-        FillCircle(texture, 30, 17, 13, fill);
-        FillRect(texture, 25, 17, 36, 44, fill);
-        FillRect(texture, 31, 24, 39, 56, fill);
-        FillRect(texture, 40, 24, 47, 49, fill);
-        FillRect(texture, 17, 21, 26, 42, fill);
-        FillRect(texture, 9, 24, 18, 38, fill);
-        FillRect(texture, 23, 8, 42, 22, fill);
-
-        texture.Apply();
-        return Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 64f);
-    }
-
-    private void FillRect(Texture2D texture, int minX, int minY, int maxX, int maxY, Color color)
-    {
-        for (int y = Mathf.Max(0, minY); y <= Mathf.Min(texture.height - 1, maxY); y++)
-        {
-            for (int x = Mathf.Max(0, minX); x <= Mathf.Min(texture.width - 1, maxX); x++)
-                texture.SetPixel(x, y, color);
-        }
-    }
-
-    private void FillCircle(Texture2D texture, int centerX, int centerY, int radius, Color color)
-    {
-        int radiusSquared = radius * radius;
-
-        for (int y = centerY - radius; y <= centerY + radius; y++)
-        {
-            for (int x = centerX - radius; x <= centerX + radius; x++)
-            {
-                if (x < 0 || x >= texture.width || y < 0 || y >= texture.height)
-                    continue;
-
-                int dx = x - centerX;
-                int dy = y - centerY;
-
-                if (dx * dx + dy * dy <= radiusSquared)
-                    texture.SetPixel(x, y, color);
-            }
-        }
     }
 
     private void StartHandCue()

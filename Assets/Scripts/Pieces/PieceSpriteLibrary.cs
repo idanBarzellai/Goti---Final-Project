@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PieceSpriteLibrary", menuName = "LaserPuzzle/Piece Sprite Library")]
 public class PieceSpriteLibrary : ScriptableObject
 {
+    [System.Serializable] public class AnimationSet { public PieceType pieceType; public Sprite[] idleFrames; }
     [Header("Piece Sprites")]
     public Sprite entrySprite;
     public Sprite targetSprite;
@@ -11,6 +12,24 @@ public class PieceSpriteLibrary : ScriptableObject
     public Sprite reflectSprite;
     public Sprite checkpointSprite;
     public Sprite portalSprite;
+    [Header("Animation Frames")]
+    public AnimationSet[] pieceAnimations;
+    public Sprite rotatableEntryPointSprite;
+    public Sprite fixedEntryPointSprite;
+    public Sprite[] rollUpFrames, rollDownFrames, rollLeftFrames, rollRightFrames, winFrames;
+
+    public Sprite[] GetIdleFrames(PieceType type)
+    {
+        if (pieceAnimations != null)
+            foreach (AnimationSet set in pieceAnimations)
+                if (set != null && set.pieceType == type) return set.idleFrames;
+        return null;
+    }
+
+    public Sprite[] GetRollFrames(Direction direction)
+    {
+        switch (direction) { case Direction.Up: return rollUpFrames; case Direction.Down: return rollDownFrames; case Direction.Left: return rollLeftFrames; default: return rollRightFrames; }
+    }
 
     [Header("Visual Rotation Offsets")]
     public float entryRotationOffset;

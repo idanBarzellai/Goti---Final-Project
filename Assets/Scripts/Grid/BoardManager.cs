@@ -307,6 +307,46 @@ if (piece == null || !piece.CanMove)
         return true;
     }
 
+    public bool TryPlayCellTraversal(Vector2Int gridPosition)
+    {
+        if (!IsInsideBounds(gridPosition) || boardCells == null)
+            return false;
+
+        BoardCellView cellView = boardCells[gridPosition.x, gridPosition.y]?.GetComponent<BoardCellView>();
+        if (cellView == null)
+            return false;
+
+        cellView.PlayTraversalAnimation();
+        return true;
+    }
+
+    public void ResetCellTraversalAnimations()
+    {
+        if (boardCells == null)
+            return;
+
+        for (int x = 0; x < Width; x++)
+        {
+            for (int y = 0; y < Height; y++)
+                boardCells[x, y]?.GetComponent<BoardCellView>()?.ResetTraversalAnimation();
+        }
+    }
+
+    public void StartPieceTraversalShake(Vector2Int gridPosition)
+    {
+        BoardPiece piece = GetPieceAt(gridPosition);
+        if (piece == null || piece.PieceType == PieceType.Entry || piece.PieceType == PieceType.Target)
+            return;
+
+        piece.GetComponent<BoardPieceView>()?.StartTraversalShake();
+    }
+
+    public void StopAllPieceTraversalShakes()
+    {
+        foreach (BoardPiece piece in GetAllPieces())
+            piece?.GetComponent<BoardPieceView>()?.StopTraversalShake();
+    }
+
     public BoardPiece FindEntryPiece()
     {
         for (int x = 0; x < Width; x++)

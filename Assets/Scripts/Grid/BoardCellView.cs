@@ -10,15 +10,24 @@ public class BoardCellView : MonoBehaviour
     [SerializeField] private Color hintColor = new Color(1f, 0.86f, 0.18f, 1f);
     [SerializeField] private float hintFlickerInterval = 0.15f;
 
+    [Header("Traversal Animation")]
+    [SerializeField] private Color traversalColor = new Color(0.282f, 0.949f, 0.255f, 1f);
+    [SerializeField] private float traversalColorDuration = 0.4f;
+
     private Color defaultColor = Color.white;
     private Coroutine hintRoutine;
+    private Coroutine traversalRoutine;
+    private Sprite restingSprite;
 
     private void Awake()
     {
         EnsureReferences();
 
         if (spriteRenderer != null)
+        {
             defaultColor = spriteRenderer.color;
+            restingSprite = spriteRenderer.sprite;
+        }
     }
 
     private void OnValidate()
@@ -38,7 +47,55 @@ public class BoardCellView : MonoBehaviour
             : defaultSprite;
 
         if (targetSprite != null)
+        {
             spriteRenderer.sprite = targetSprite;
+            restingSprite = targetSprite;
+        }
+    }
+
+    public void PlayTraversalAnimation()
+    {
+        EnsureReferences();
+
+        if (spriteRenderer == null)
+            return;
+
+        if (traversalRoutine != null)
+            StopCoroutine(traversalRoutine);
+
+        traversalRoutine = StartCoroutine(TraversalAnimationRoutine());
+    }
+
+    public void ResetTraversalAnimation()
+    {
+        if (traversalRoutine != null)
+        {
+            StopCoroutine(traversalRoutine);
+            traversalRoutine = null;
+        }
+
+        if (spriteRenderer != null && restingSprite != null)
+        {
+            spriteRenderer.sprite = restingSprite;
+            spriteRenderer.color = defaultColor;
+        }
+    }
+
+    private IEnumerator TraversalAnimationRoutine()
+    {
+        Color startColor = defaultColor;
+        float elapsed = 0f;
+
+        while (elapsed < traversalColorDuration)
+        {
+            elapsed += Time.deltaTime;
+            spriteRenderer.color = Color.Lerp(startColor, traversalColor,
+                Mathf.Clamp01(elapsed / Mathf.Max(0.01f, traversalColorDuration)));
+            yield return null;
+        }
+
+        spriteRenderer.color = traversalColor;
+        traversalRoutine = null;
     }
 
     public void FlickerHint(float duration)

@@ -154,6 +154,8 @@ MonoBehaviour:
   arriveDistance: 0.02
   portalPauseDuration: 0.12
   winPauseDuration: 0.5
+  winDisappearDelay: 1
+  appearDisappearSpinDegrees: 360
 --- !u!4 &56956249
 Transform:
   m_ObjectHideFlags: 0
@@ -5338,13 +5340,15 @@ MonoBehaviour:
   restartButton: {fileID: 1569004046}
   mainMenuButton: {fileID: 70934868}
   confettiContainer: {fileID: 0}
-  confettiPieceCount: 160
-  confettiDuration: 3.6
+  batSprite: {fileID: 21300000, guid: 081cda2147b384e46b709f4800050880, type: 3}
+  boneSprite: {fileID: 21300000, guid: a2390bc2d1634ec48be13969ca58a029, type: 3}
+  confettiBurstRange: {x: 25, y: 40}
+  confettiDuration: 4.6
   winScreenDelay: 1
-  confettiSizeRange: {x: 8, y: 18}
-  confettiHorizontalSpeedRange: {x: -170, y: 170}
-  confettiFallSpeedRange: {x: 180, y: 560}
-  confettiGravity: 170
+  confettiSizeRange: {x: 0.7, y: 1.2}
+  confettiSpeedRange: {x: 800, y: 1150}
+  confettiLifetimeRange: {x: 2.5, y: 4}
+  confettiGravityRange: {x: 350, y: 550}
 --- !u!1 &1902505192
 GameObject:
   m_ObjectHideFlags: 0
@@ -5742,13 +5746,15 @@ MonoBehaviour:
   restartButton: {fileID: 1569004046}
   mainMenuButton: {fileID: 70934868}
   confettiContainer: {fileID: 0}
-  confettiPieceCount: 160
-  confettiDuration: 3.6
+  batSprite: {fileID: 21300000, guid: 081cda2147b384e46b709f4800050880, type: 3}
+  boneSprite: {fileID: 21300000, guid: a2390bc2d1634ec48be13969ca58a029, type: 3}
+  confettiBurstRange: {x: 25, y: 40}
+  confettiDuration: 4.6
   winScreenDelay: 1
-  confettiSizeRange: {x: 8, y: 18}
-  confettiHorizontalSpeedRange: {x: -170, y: 170}
-  confettiFallSpeedRange: {x: 180, y: 560}
-  confettiGravity: 170
+  confettiSizeRange: {x: 0.7, y: 1.2}
+  confettiSpeedRange: {x: 800, y: 1150}
+  confettiLifetimeRange: {x: 2.5, y: 4}
+  confettiGravityRange: {x: 350, y: 550}
 --- !u!114 &2010437734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6313,14 +6319,15 @@ MonoBehaviour:
   popupMessageUI: {fileID: 1357321068}
   panelColor: {r: 0, g: 0, b: 0, a: 0.72}
   highlightPadding: 36
-  focusBoxColor: {r: 1, g: 0.86, b: 0.18, a: 0.75}
+  focusBoxColor: {r: 0.023529412, g: 0.972549, b: 0.047058824, a: 0.75}
   focusBoxLineThickness: 8
   focusBreathPadding: 12
   focusBreathSpeed: 0.55
-  handSize: {x: 96, y: 96}
+  handSprite: {fileID: 5762478977475107535, guid: 4dda8857b7d3e5947a80a2e0010ff66b, type: 3}
+  handSize: {x: 200, y: 400}
   handTravelDuration: 1.2
   handPauseDuration: 0.25
-  handColor: {r: 1, g: 0.88, b: 0.34, a: 1}
+  handColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &3100000100
 GameObject:
   m_ObjectHideFlags: 0

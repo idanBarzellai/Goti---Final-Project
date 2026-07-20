@@ -55,9 +55,6 @@ private void HandleBoardLoaded()
 
         lastResult = laserSimulationService.Simulate();
 
-        if (laserView != null)
-            laserView.Render(lastResult);
-
         DebugLogResult(lastResult);
 
         OnLaserFired?.Invoke(lastResult);
@@ -71,6 +68,8 @@ private void HandleBoardLoaded()
 
         if (laserView != null)
             laserView.Clear();
+
+        boardManager?.ResetCellTraversalAnimations();
     }
 
     private void DebugLogResult(LaserSimulationResult result)

@@ -14,13 +14,15 @@ public class GameWinPanelUI : BaseMenuUI
 
     [Header("Confetti")]
     [SerializeField] private RectTransform confettiContainer;
-    [SerializeField] private int confettiPieceCount = 160;
-    [SerializeField] private float confettiDuration = 3.6f;
+    [SerializeField] private Sprite batSprite;
+    [SerializeField] private Sprite boneSprite;
+    [SerializeField] private Vector2Int confettiBurstRange = new Vector2Int(25, 40);
+    [SerializeField] private float confettiDuration = 4.6f;
     [SerializeField] private float winScreenDelay = 1f;
-    [SerializeField] private Vector2 confettiSizeRange = new Vector2(8f, 18f);
-    [SerializeField] private Vector2 confettiHorizontalSpeedRange = new Vector2(-170f, 170f);
-    [SerializeField] private Vector2 confettiFallSpeedRange = new Vector2(180f, 560f);
-    [SerializeField] private float confettiGravity = 170f;
+    [SerializeField] private Vector2 confettiSizeRange = new Vector2(0.7f, 1.2f);
+    [SerializeField] private Vector2 confettiSpeedRange = new Vector2(800f, 1150f);
+    [SerializeField] private Vector2 confettiLifetimeRange = new Vector2(2.5f, 4f);
+    [SerializeField] private Vector2 confettiGravityRange = new Vector2(350f, 550f);
 
     private readonly List<GameObject> activeConfetti = new List<GameObject>();
     private Coroutine confettiRoutine;
@@ -28,6 +30,7 @@ public class GameWinPanelUI : BaseMenuUI
     private CanvasGroup winScreenCanvasGroup;
     private bool winStateShown;
     private bool showNextLevelButton;
+    private bool confettiPlayedForCurrentWin;
     private static readonly Color[] ConfettiPalette =
     {
         HexToColor(0x393D3F),
@@ -62,6 +65,7 @@ public class GameWinPanelUI : BaseMenuUI
 
     public void ShowFailed()
     {
+        confettiPlayedForCurrentWin = false;
         winStateShown = false;
         showNextLevelButton = false;
         StopRevealWinRoutine();
@@ -95,7 +99,8 @@ public class GameWinPanelUI : BaseMenuUI
             nextLevelButton.gameObject.SetActive(false);
         }
 
-        PlayConfetti();
+        if (!confettiPlayedForCurrentWin)
+            PlayConfettiNow();
         StopRevealWinRoutine();
         revealWinRoutine = StartCoroutine(RevealWinScreenAfterDelay());
     }
@@ -123,6 +128,7 @@ public class GameWinPanelUI : BaseMenuUI
 
     public override void Hide()
     {
+        confettiPlayedForCurrentWin = false;
         winStateShown = false;
         StopRevealWinRoutine();
         StopConfetti();
@@ -139,6 +145,12 @@ public class GameWinPanelUI : BaseMenuUI
             return;
 
         confettiRoutine = StartCoroutine(ConfettiRoutine());
+    }
+
+    public void PlayConfettiNow()
+    {
+        confettiPlayedForCurrentWin = true;
+        PlayConfetti();
     }
 
     private void StopConfetti()
@@ -189,7 +201,11 @@ public class GameWinPanelUI : BaseMenuUI
             nextLevelButton.gameObject.SetActive(showNextLevelButton);
 
         if (visible)
+        {
             transform.SetAsLastSibling();
+            if (confettiContainer != null)
+                confettiContainer.SetAsLastSibling();
+        }
     }
 
     private void EnsureWinScreenCanvasGroup()
@@ -226,7 +242,7 @@ public class GameWinPanelUI : BaseMenuUI
         float width = bounds.width > 0f ? bounds.width : Screen.width;
         float height = bounds.height > 0f ? bounds.height : Screen.height;
 
-        ConfettiPiece[] pieces = new ConfettiPiece[Mathf.Max(1, confettiPieceCount)];
+        ConfettiPiece[] pieces = new ConfettiPiece[Random.Range(confettiBurstRange.x, confettiBurstRange.y + 1)];
 
         for (int i = 0; i < pieces.Length; i++)
             pieces[i] = CreateConfettiPiece(width, height);
@@ -255,28 +271,40 @@ public class GameWinPanelUI : BaseMenuUI
         pieceRect.anchorMax = new Vector2(0.5f, 0.5f);
         pieceRect.pivot = new Vector2(0.5f, 0.5f);
 
-        float widthScale = Random.Range(confettiSizeRange.x, confettiSizeRange.y);
-        pieceRect.sizeDelta = new Vector2(widthScale * 0.55f, widthScale);
+        bool fromLeft = Random.value < 0.5f;
+        bool isBat = Random.value < 0.5f;
+        float size = Random.Range(confettiSizeRange.x, confettiSizeRange.y);
+        pieceRect.sizeDelta = (isBat ? new Vector2(880f, 880f) : new Vector2(720f, 720f)) * size;
         pieceRect.anchoredPosition = new Vector2(
-            Random.Range(-width * 0.55f, width * 0.55f),
-            Random.Range(height * 0.55f, height * 0.9f)
+            (fromLeft ? -1f : 1f) * width * 0.49f,
+            Random.Range(-height * 0.22f, height * 0.08f)
         );
         pieceRect.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
         Image image = pieceObject.GetComponent<Image>();
+        image.sprite = isBat ? batSprite : boneSprite;
+        image.preserveAspect = true;
         image.color = ConfettiPalette[Random.Range(0, ConfettiPalette.Length)];
         image.raycastTarget = false;
 
         activeConfetti.Add(pieceObject);
 
+        float angle = fromLeft ? Random.Range(55f, 75f) : Random.Range(105f, 125f);
+        float speed = Random.Range(confettiSpeedRange.x, confettiSpeedRange.y);
         return new ConfettiPiece
         {
             RectTransform = pieceRect,
-            Velocity = new Vector2(
-                Random.Range(confettiHorizontalSpeedRange.x, confettiHorizontalSpeedRange.y),
-                -Random.Range(confettiFallSpeedRange.x, confettiFallSpeedRange.y)
-            ),
-            RotationSpeed = Random.Range(-540f, 540f)
+            Image = image,
+            BaseColor = image.color,
+            Velocity = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * speed,
+            RotationSpeed = Random.Range(-250f, 250f),
+            Gravity = Random.Range(confettiGravityRange.x, confettiGravityRange.y),
+            Lifetime = Random.Range(confettiLifetimeRange.x, confettiLifetimeRange.y),
+            Delay = Random.value < 0.82f ? Random.Range(0f, 0.3f) : Random.Range(0.3f, 0.65f),
+            NoiseStrength = Random.Range(15f, 35f),
+            NoiseFrequency = Random.Range(0.4f, 0.8f),
+            NoiseSeed = Random.Range(0f, 100f),
+            IsBat = isBat
         };
     }
 
@@ -285,9 +313,21 @@ public class GameWinPanelUI : BaseMenuUI
         if (piece.RectTransform == null)
             return;
 
-        piece.Velocity += Vector2.down * confettiGravity * deltaTime;
-        piece.RectTransform.anchoredPosition += piece.Velocity * deltaTime;
-        piece.RectTransform.Rotate(0f, 0f, piece.RotationSpeed * deltaTime);
+        piece.Age += deltaTime;
+        if (piece.Age < piece.Delay) { piece.Image.enabled = false; return; }
+        piece.Image.enabled = true;
+        float lifeAge = piece.Age - piece.Delay;
+        if (lifeAge >= piece.Lifetime) { piece.Image.enabled = false; return; }
+
+        piece.Velocity += Vector2.down * piece.Gravity * deltaTime;
+        float noise = Mathf.PerlinNoise(piece.NoiseSeed, lifeAge * piece.NoiseFrequency) * 2f - 1f;
+        piece.RectTransform.anchoredPosition += (piece.Velocity + Vector2.right * noise * piece.NoiseStrength) * deltaTime;
+        float wobble = piece.IsBat ? Mathf.Sin((lifeAge + piece.NoiseSeed) * 5f) * 35f : 0f;
+        piece.RectTransform.Rotate(0f, 0f, (piece.RotationSpeed + wobble) * deltaTime);
+
+        float fadeStart = piece.Lifetime * 0.75f;
+        float alpha = lifeAge <= fadeStart ? 1f : 1f - Mathf.InverseLerp(fadeStart, piece.Lifetime, lifeAge);
+        Color color = piece.BaseColor; color.a *= alpha; piece.Image.color = color;
     }
 
     private static Color HexToColor(int hex)
@@ -303,7 +343,17 @@ public class GameWinPanelUI : BaseMenuUI
     private class ConfettiPiece
     {
         public RectTransform RectTransform;
+        public Image Image;
+        public Color BaseColor;
         public Vector2 Velocity;
         public float RotationSpeed;
+        public float Gravity;
+        public float Lifetime;
+        public float Delay;
+        public float Age;
+        public float NoiseStrength;
+        public float NoiseFrequency;
+        public float NoiseSeed;
+        public bool IsBat;
     }
 }

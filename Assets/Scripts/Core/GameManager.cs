@@ -182,6 +182,7 @@ if (hasUnusedInventoryPieces)
     // if (triesRemaining <= 0)
     //     return;
 laserCharacterWalker?.Clear();
+laserCharacterWalker?.ConfigureFromEntry(boardManager != null ? boardManager.FindEntryPiece() : null);
 
     LaserSimulationResult result = laserControlManager.FireLaser();
 
@@ -211,14 +212,28 @@ if (laserCharacterWalker == null || boardRoot == null)
     laserCharacterWalker.WalkPaths(
         paths,
         solved,
+        result.wasBlocked,
+        result.exitedBoard,
+        AnimateTraversedCell,
+        () => gameWinPanelUI?.PlayConfettiNow(),
         () =>
 {
     laserSequenceRunning = false;
     SetFireButtonInteractable(true);
+    boardManager?.StopAllPieceTraversalShakes();
 
     ResolveLaserResultAfterVisual(result, solved);
 }
     );
+}
+
+private void AnimateTraversedCell(Vector3 worldPosition)
+{
+    if (boardManager != null && boardManager.TryGetGridPositionFromWorld(worldPosition, out Vector2Int gridPosition))
+    {
+        boardManager.TryPlayCellTraversal(gridPosition);
+        boardManager.StartPieceTraversalShake(gridPosition);
+    }
 }
 
 
@@ -235,6 +250,9 @@ private void ResolveLaserResultAfterVisual(LaserSimulationResult result, bool so
         gameWinPanelUI?.ShowWin(); 
         return;
     }
+
+    if (result != null && result.didHitAnyTarget)
+        popupMessageUI?.ShowMessage("You need to go thorugh all pieces");
 
     // // triesRemaining--;
     // laserTriesUI?.SetTries(triesRemaining);
@@ -284,7 +302,6 @@ if (!result.hitPieces.Contains(piece))
         activeLevelManager.MarkCurrentLevelSolved();
 
     Debug.Log("LEVEL SOLVED");
-    AudioManager.Instance?.PlayWin();
     OnLevelSolved?.Invoke();
 }
 
