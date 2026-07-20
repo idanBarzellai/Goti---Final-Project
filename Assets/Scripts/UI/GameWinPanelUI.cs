@@ -16,13 +16,26 @@ public class GameWinPanelUI : BaseMenuUI
     [SerializeField] private RectTransform confettiContainer;
     [SerializeField] private Sprite batSprite;
     [SerializeField] private Sprite boneSprite;
-    [SerializeField] private Vector2Int confettiBurstRange = new Vector2Int(25, 40);
+    [SerializeField, Min(1)] private int confettiAmount = 200;
     [SerializeField] private float confettiDuration = 4.6f;
     [SerializeField] private float winScreenDelay = 1f;
+    [Tooltip("Minimum and maximum particle scale.")]
     [SerializeField] private Vector2 confettiSizeRange = new Vector2(0.7f, 1.2f);
+    [Tooltip("Minimum and maximum launch speed in canvas units per second.")]
     [SerializeField] private Vector2 confettiSpeedRange = new Vector2(800f, 1150f);
     [SerializeField] private Vector2 confettiLifetimeRange = new Vector2(2.5f, 4f);
     [SerializeField] private Vector2 confettiGravityRange = new Vector2(350f, 550f);
+    [Tooltip("Minimum and maximum emitter Y position as a fraction of screen height. 0 is center; -0.5 is bottom; 0.5 is top.")]
+    [SerializeField] private Vector2 emitterYRange = new Vector2(-0.22f, 0.08f);
+    [Tooltip("A random color from this palette is applied to every bat and bone.")]
+    [SerializeField] private Color[] confettiPalette =
+    {
+        new Color(0.224f, 0.239f, 0.247f, 1f),
+        new Color(0.992f, 0.992f, 1f, 1f),
+        new Color(0.776f, 0.773f, 0.725f, 1f),
+        new Color(0.353f, 1f, 0.082f, 1f),
+        new Color(0.784f, 0.976f, 0.808f, 1f)
+    };
 
     private readonly List<GameObject> activeConfetti = new List<GameObject>();
     private Coroutine confettiRoutine;
@@ -31,15 +44,6 @@ public class GameWinPanelUI : BaseMenuUI
     private bool winStateShown;
     private bool showNextLevelButton;
     private bool confettiPlayedForCurrentWin;
-    private static readonly Color[] ConfettiPalette =
-    {
-        HexToColor(0x393D3F),
-        HexToColor(0xFDFDFF),
-        HexToColor(0xC6C5B9),
-        HexToColor(0x5AFF15),
-        HexToColor(0xC8F9CE)
-    };
-
     protected override void Start()
     {
         base.Start();
@@ -242,7 +246,7 @@ public class GameWinPanelUI : BaseMenuUI
         float width = bounds.width > 0f ? bounds.width : Screen.width;
         float height = bounds.height > 0f ? bounds.height : Screen.height;
 
-        ConfettiPiece[] pieces = new ConfettiPiece[Random.Range(confettiBurstRange.x, confettiBurstRange.y + 1)];
+        ConfettiPiece[] pieces = new ConfettiPiece[Mathf.Max(1, confettiAmount)];
 
         for (int i = 0; i < pieces.Length; i++)
             pieces[i] = CreateConfettiPiece(width, height);
@@ -277,14 +281,16 @@ public class GameWinPanelUI : BaseMenuUI
         pieceRect.sizeDelta = (isBat ? new Vector2(880f, 880f) : new Vector2(720f, 720f)) * size;
         pieceRect.anchoredPosition = new Vector2(
             (fromLeft ? -1f : 1f) * width * 0.49f,
-            Random.Range(-height * 0.22f, height * 0.08f)
+            Random.Range(height * emitterYRange.x, height * emitterYRange.y)
         );
         pieceRect.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
         Image image = pieceObject.GetComponent<Image>();
         image.sprite = isBat ? batSprite : boneSprite;
         image.preserveAspect = true;
-        image.color = ConfettiPalette[Random.Range(0, ConfettiPalette.Length)];
+        image.color = confettiPalette != null && confettiPalette.Length > 0
+            ? confettiPalette[Random.Range(0, confettiPalette.Length)]
+            : Color.white;
         image.raycastTarget = false;
 
         activeConfetti.Add(pieceObject);
@@ -328,16 +334,6 @@ public class GameWinPanelUI : BaseMenuUI
         float fadeStart = piece.Lifetime * 0.75f;
         float alpha = lifeAge <= fadeStart ? 1f : 1f - Mathf.InverseLerp(fadeStart, piece.Lifetime, lifeAge);
         Color color = piece.BaseColor; color.a *= alpha; piece.Image.color = color;
-    }
-
-    private static Color HexToColor(int hex)
-    {
-        return new Color(
-            ((hex >> 16) & 0xFF) / 255f,
-            ((hex >> 8) & 0xFF) / 255f,
-            (hex & 0xFF) / 255f,
-            1f
-        );
     }
 
     private class ConfettiPiece

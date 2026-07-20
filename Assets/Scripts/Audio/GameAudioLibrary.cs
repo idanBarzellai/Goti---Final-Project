@@ -4,6 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameAudioLibrary", menuName = "LaserPuzzle/Game Audio Library")]
 public class GameAudioLibrary : ScriptableObject
 {
+    [Header("Master Volume")]
+    [Range(0f, 1f)] public float bgmVolume = 0.6f;
+    [Range(0f, 1f)] public float sfxVolume = 1f;
+
     [Header("BGM")]
     public AudioClip mainMenuBgm;
     public AudioClip gameplayBgm;
@@ -21,6 +25,8 @@ public class GameAudioLibrary : ScriptableObject
     public AudioClip rotatePiece;
     public List<AudioClip> rotatePieceOptions = new List<AudioClip>();
     public AudioClip returnPiece;
+    public List<AudioClip> bumpOptions = new List<AudioClip>();
+    public List<AudioClip> whooshOptions = new List<AudioClip>();
 
     public AudioClip GetButtonClickSound()
     {
@@ -46,6 +52,9 @@ public class GameAudioLibrary : ScriptableObject
     {
         return GetRandomClip(lose, loseOptions);
     }
+
+    public AudioClip GetBumpSound() => GetRandomClip(null, bumpOptions);
+    public AudioClip GetWhooshSound() => GetRandomClip(null, whooshOptions);
 
     private AudioClip GetRandomClip(AudioClip defaultClip, List<AudioClip> options)
     {

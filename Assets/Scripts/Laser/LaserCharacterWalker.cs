@@ -18,6 +18,10 @@ public class LaserCharacterWalker : MonoBehaviour
 
     [Header("Win Animation Placeholder")]
     [SerializeField] private float winPauseDuration = 0.5f;
+    [SerializeField] private float winScale = 2f;
+    [SerializeField] private float winScaleUpDuration = 0.2f;
+    [SerializeField] private float winArrivalDelay = 0f;
+    [SerializeField] private float winPostScaleDelay = 0.5f;
     [SerializeField] private float winDisappearDelay = 1f;
     [SerializeField] private float appearDisappearSpinDegrees = 360f;
 
@@ -45,7 +49,7 @@ public class LaserCharacterWalker : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void WalkPaths(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onReachedGoal, Action onComplete)
+    public void WalkPaths(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onBump, Action onReachedGoal, Action onComplete)
     {
         gameObject.SetActive(true);
         entryView?.SetEntryAway(true);
@@ -56,7 +60,7 @@ public class LaserCharacterWalker : MonoBehaviour
         if (walkRoutine != null)
             StopCoroutine(walkRoutine);
 
-        walkRoutine = StartCoroutine(WalkPathsRoutine(paths, shouldPlayWinAnimation, wasBlocked, exitedBoard, onCellReached, onReachedGoal, onComplete));
+        walkRoutine = StartCoroutine(WalkPathsRoutine(paths, shouldPlayWinAnimation, wasBlocked, exitedBoard, onCellReached, onBump, onReachedGoal, onComplete));
     }
 
     public void Clear()
@@ -72,7 +76,7 @@ public class LaserCharacterWalker : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private IEnumerator WalkPathsRoutine(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onReachedGoal, Action onComplete)
+    private IEnumerator WalkPathsRoutine(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onBump, Action onReachedGoal, Action onComplete)
     {
         if (paths == null || paths.Count == 0)
         {
@@ -123,7 +127,11 @@ public class LaserCharacterWalker : MonoBehaviour
                 bool blockedEnd = wasBlocked && pathIndex == paths.Count - 1 && i == path.Count - 1;
                 Vector3 destination = blockedEnd ? Vector3.Lerp(path[i - 1], path[i], 0.48f) : path[i];
                 yield return MoveTo(destination);
-                if (blockedEnd) yield return MoveTo(Vector3.Lerp(path[i - 1], path[i], 0.2f));
+                if (blockedEnd)
+                {
+                    onBump?.Invoke();
+                    yield return MoveTo(Vector3.Lerp(path[i - 1], path[i], 0.2f));
+                }
                 if (!blockedEnd)
                     onCellReached?.Invoke(path[i]);
             }
@@ -134,8 +142,15 @@ public class LaserCharacterWalker : MonoBehaviour
         if (shouldPlayWinAnimation)
         {
             onReachedGoal?.Invoke();
+            Sprite[] winFrames = animationLibrary != null ? animationLibrary.winFrames : null;
+            if (winFrames != null && winFrames.Length > 0 && winFrames[0] != null)
+                characterRenderer.sprite = winFrames[0];
+            if (winArrivalDelay > 0f)
+                yield return new WaitForSeconds(winArrivalDelay);
+            yield return ScaleOnlyTo(winScale, winScaleUpDuration);
+            yield return new WaitForSeconds(winPostScaleDelay);
             AudioManager.Instance?.PlayWin();
-            yield return PlayFrames(animationLibrary != null ? animationLibrary.winFrames : null);
+            yield return PlayFrames(winFrames, 1);
             yield return new WaitForSeconds(winDisappearDelay);
             yield return ScaleTo(0f, winPauseDuration);
         }
@@ -202,10 +217,14 @@ public class LaserCharacterWalker : MonoBehaviour
         entryView?.SetEntryAway(false);
     }
 
-    private IEnumerator PlayFrames(Sprite[] frames)
+    private IEnumerator PlayFrames(Sprite[] frames, int startIndex = 0)
     {
         if (frames == null) yield break;
-        foreach (Sprite frame in frames) { if (frame != null) characterRenderer.sprite = frame; yield return new WaitForSeconds(0.06f); }
+        for (int i = Mathf.Clamp(startIndex, 0, frames.Length); i < frames.Length; i++)
+        {
+            if (frames[i] != null) characterRenderer.sprite = frames[i];
+            yield return new WaitForSeconds(0.06f);
+        }
     }
 
     private IEnumerator ScaleTo(float target, float duration)
@@ -225,6 +244,20 @@ public class LaserCharacterWalker : MonoBehaviour
         }
         transform.localScale = end;
         transform.rotation = Quaternion.Euler(0f, 0f, endAngle);
+    }
+
+    private IEnumerator ScaleOnlyTo(float target, float duration)
+    {
+        Vector3 start = transform.localScale;
+        Vector3 end = Vector3.one * target;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            transform.localScale = Vector3.Lerp(start, end, Mathf.Clamp01(elapsed / Mathf.Max(0.01f, duration)));
+            yield return null;
+        }
+        transform.localScale = end;
     }
 
     private void StartTrail()

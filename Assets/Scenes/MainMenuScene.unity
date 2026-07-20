@@ -2692,6 +2692,11 @@ MonoBehaviour:
   chooseLevelButton: {fileID: 1975570055}
   backButton: {fileID: 1130815646}
   muteToggleButton: {fileID: 3100000005}
+  spriteLibrary: {fileID: 11400000, guid: 7b88e55afb782fd458636208b17fac2b, type: 2}
+  gotiSize: {x: 220, y: 220}
+  gotiMoveSpeed: 260
+  animationFrameDuration: 0.06
+  smileHoldDuration: 0.75
 --- !u!114 &1348192289
 MonoBehaviour:
   m_ObjectHideFlags: 0

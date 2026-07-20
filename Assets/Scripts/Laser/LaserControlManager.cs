@@ -69,7 +69,6 @@ private void HandleBoardLoaded()
         if (laserView != null)
             laserView.Clear();
 
-        boardManager?.ResetCellTraversalAnimations();
     }
 
     private void DebugLogResult(LaserSimulationResult result)

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf6f11e78f90894bba4f90f43c21e77, type: 3}
   m_Name: GameAudioLibrary
   m_EditorClassIdentifier: 
+  bgmVolume: 0.5
+  sfxVolume: 1
   mainMenuBgm: {fileID: 8300000, guid: b25b3afa14d21a64db27fa3e7b085189, type: 3}
   gameplayBgm: {fileID: 8300000, guid: fdc3e9ca563ea474f9a8775669e6b66d, type: 3}
   buttonClick: {fileID: 8300000, guid: fbb1697b6bddda946a9df5c278819bb7, type: 3}
@@ -44,3 +46,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 728955b9e6aebe74aad10ec524af91e4, type: 3}
   - {fileID: 8300000, guid: f84ab856b3d1f614c9664ab8fad26f20, type: 3}
   returnPiece: {fileID: 8300000, guid: 972463438ee7fb0438451ca53c9dfd9c, type: 3}
+  bumpOptions:
+  - {fileID: 8300000, guid: 6fe6c77c1562a5f42b23f0ed7426f1a2, type: 3}
+  - {fileID: 8300000, guid: b65808167fbbd714ba94383c10beedde, type: 3}
+  - {fileID: 8300000, guid: 54d3580d481d769439c9ad5e14559191, type: 3}
+  whooshOptions:
+  - {fileID: 8300000, guid: 4fadb5beea49e8445b999ecf8ec38a22, type: 3}
+  - {fileID: 8300000, guid: e1692f324a6c9cc46b4c900b1b91c26e, type: 3}
+  - {fileID: 8300000, guid: c9c28c5cec3225143aa5677678acb3bb, type: 3}

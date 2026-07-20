@@ -332,6 +332,15 @@ if (piece == null || !piece.CanMove)
         }
     }
 
+    public void FadeCellTraversalAnimations(float duration)
+    {
+        if (boardCells == null)
+            return;
+        for (int x = 0; x < Width; x++)
+            for (int y = 0; y < Height; y++)
+                boardCells[x, y]?.GetComponent<BoardCellView>()?.FadeTraversalColor(duration);
+    }
+
     public void StartPieceTraversalShake(Vector2Int gridPosition)
     {
         BoardPiece piece = GetPieceAt(gridPosition);

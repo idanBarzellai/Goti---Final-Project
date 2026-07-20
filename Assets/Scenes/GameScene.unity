@@ -154,6 +154,10 @@ MonoBehaviour:
   arriveDistance: 0.02
   portalPauseDuration: 0.12
   winPauseDuration: 0.5
+  winScale: 2
+  winScaleUpDuration: 0.2
+  winArrivalDelay: 0.5
+  winPostScaleDelay: 0.5
   winDisappearDelay: 1
   appearDisappearSpinDegrees: 360
 --- !u!4 &56956249
@@ -2300,7 +2304,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -5}
-  m_SizeDelta: {x: 313, y: 38}
+  m_SizeDelta: {x: 401.77, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &669415100
 MonoBehaviour:
@@ -3672,7 +3676,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 547}
-  m_SizeDelta: {x: 675.59, y: 100}
+  m_SizeDelta: {x: 922, y: 100}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1357321068
 MonoBehaviour:
@@ -3820,6 +3824,12 @@ MonoBehaviour:
   laserCharacterWalker: {fileID: 56956248}
   boardRoot: {fileID: 499237849}
   characterPathZOffset: -0.25
+  bumpShakeDuration: 0.16
+  bumpShakeStrength: 0.08
+  launchedMoonColor: {r: 0.7135713, g: 1, b: 0.7028302, a: 0.75}
+  moonVibrationStrength: 10
+  moonVibrationInterval: 0.01
+  previousPathFadeDuration: 3
 --- !u!4 &1448824991
 Transform:
   m_ObjectHideFlags: 0
@@ -5342,13 +5352,20 @@ MonoBehaviour:
   confettiContainer: {fileID: 0}
   batSprite: {fileID: 21300000, guid: 081cda2147b384e46b709f4800050880, type: 3}
   boneSprite: {fileID: 21300000, guid: a2390bc2d1634ec48be13969ca58a029, type: 3}
-  confettiBurstRange: {x: 25, y: 40}
+  confettiAmount: 50
   confettiDuration: 4.6
   winScreenDelay: 1
-  confettiSizeRange: {x: 0.7, y: 1.2}
-  confettiSpeedRange: {x: 800, y: 1150}
-  confettiLifetimeRange: {x: 2.5, y: 4}
+  confettiSizeRange: {x: 0.2, y: 0.8}
+  confettiSpeedRange: {x: 800, y: 1500}
+  confettiLifetimeRange: {x: 2.5, y: 5}
   confettiGravityRange: {x: 350, y: 550}
+  emitterYRange: {x: -0.4, y: 0.08}
+  confettiPalette:
+  - {r: 0.224, g: 0.239, b: 0.247, a: 1}
+  - {r: 0.992, g: 0.992, b: 1, a: 1}
+  - {r: 0.776, g: 0.773, b: 0.725, a: 1}
+  - {r: 0.353, g: 1, b: 0.082, a: 1}
+  - {r: 0.784, g: 0.976, b: 0.808, a: 1}
 --- !u!1 &1902505192
 GameObject:
   m_ObjectHideFlags: 0
@@ -5459,7 +5476,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -3}
-  m_SizeDelta: {x: 729.398, y: 106}
+  m_SizeDelta: {x: 937.963, y: 106}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1919289073
 MonoBehaviour:
@@ -5547,7 +5564,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 16.047058, y: -1.876781, z: 21.777832, w: 2.671379}
+  m_margin: {x: 2.6774597, y: -1.876781, z: 0.38662726, w: 2.671379}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5748,13 +5765,20 @@ MonoBehaviour:
   confettiContainer: {fileID: 0}
   batSprite: {fileID: 21300000, guid: 081cda2147b384e46b709f4800050880, type: 3}
   boneSprite: {fileID: 21300000, guid: a2390bc2d1634ec48be13969ca58a029, type: 3}
-  confettiBurstRange: {x: 25, y: 40}
+  confettiAmount: 200
   confettiDuration: 4.6
   winScreenDelay: 1
   confettiSizeRange: {x: 0.7, y: 1.2}
   confettiSpeedRange: {x: 800, y: 1150}
   confettiLifetimeRange: {x: 2.5, y: 4}
   confettiGravityRange: {x: 350, y: 550}
+  emitterYRange: {x: -0.22, y: 0.08}
+  confettiPalette:
+  - {r: 0.224, g: 0.239, b: 0.247, a: 1}
+  - {r: 0.992, g: 0.992, b: 1, a: 1}
+  - {r: 0.776, g: 0.773, b: 0.725, a: 1}
+  - {r: 0.353, g: 1, b: 0.082, a: 1}
+  - {r: 0.784, g: 0.976, b: 0.808, a: 1}
 --- !u!114 &2010437734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6324,7 +6348,7 @@ MonoBehaviour:
   focusBreathPadding: 12
   focusBreathSpeed: 0.55
   handSprite: {fileID: 5762478977475107535, guid: 4dda8857b7d3e5947a80a2e0010ff66b, type: 3}
-  handSize: {x: 200, y: 400}
+  handSize: {x: 100, y: 200}
   handTravelDuration: 1.2
   handPauseDuration: 0.25
   handColor: {r: 1, g: 1, b: 1, a: 1}

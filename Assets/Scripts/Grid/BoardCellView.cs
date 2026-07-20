@@ -83,7 +83,7 @@ public class BoardCellView : MonoBehaviour
 
     private IEnumerator TraversalAnimationRoutine()
     {
-        Color startColor = defaultColor;
+        Color startColor = spriteRenderer.color;
         float elapsed = 0f;
 
         while (elapsed < traversalColorDuration)
@@ -95,6 +95,30 @@ public class BoardCellView : MonoBehaviour
         }
 
         spriteRenderer.color = traversalColor;
+        traversalRoutine = null;
+    }
+
+    public void FadeTraversalColor(float duration)
+    {
+        if (spriteRenderer == null)
+            return;
+        if (traversalRoutine != null)
+            StopCoroutine(traversalRoutine);
+        traversalRoutine = StartCoroutine(FadeTraversalColorRoutine(duration));
+    }
+
+    private IEnumerator FadeTraversalColorRoutine(float duration)
+    {
+        Color startColor = spriteRenderer.color;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            spriteRenderer.color = Color.Lerp(startColor, defaultColor,
+                Mathf.Clamp01(elapsed / Mathf.Max(0.01f, duration)));
+            yield return null;
+        }
+        spriteRenderer.color = defaultColor;
         traversalRoutine = null;
     }
 

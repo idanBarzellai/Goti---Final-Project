@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -38,6 +39,22 @@ public class GameManager : MonoBehaviour
 [SerializeField] private float characterPathZOffset = -0.25f;
 
 private bool laserSequenceRunning;
+private Coroutine screenShakeRoutine;
+private Coroutine moonLaunchRoutine;
+private RectTransform moonRect;
+private Image moonImage;
+private Vector2 moonRestPosition;
+private Color moonRestColor;
+
+[Header("Bump Feedback")]
+[SerializeField] private float bumpShakeDuration = 0.16f;
+[SerializeField] private float bumpShakeStrength = 0.08f;
+
+[Header("Moon Launch Feedback")]
+[SerializeField] private Color launchedMoonColor = new Color(0.78f, 0.98f, 0.81f, 0.75f);
+[SerializeField] private float moonVibrationStrength = 2.5f;
+[SerializeField] private float moonVibrationInterval = 0.05f;
+[SerializeField] private float previousPathFadeDuration = 3f;
 
     private void Awake()
     {
@@ -52,6 +69,7 @@ private bool laserSequenceRunning;
 
     private void Start()
     {
+    ResolveMoonReference();
     EnsureHintButton();
 
             if (levelTimerManager != null)
@@ -178,6 +196,7 @@ if (hasUnusedInventoryPieces)
 
     AudioManager.Instance?.PlayFireLaser();
     OnFireLaserStarted?.Invoke();
+    StartMoonLaunchFeedback();
 
     // if (triesRemaining <= 0)
     //     return;
@@ -215,12 +234,15 @@ if (laserCharacterWalker == null || boardRoot == null)
         result.wasBlocked,
         result.exitedBoard,
         AnimateTraversedCell,
+        HandleGotiBump,
         () => gameWinPanelUI?.PlayConfettiNow(),
         () =>
 {
     laserSequenceRunning = false;
     SetFireButtonInteractable(true);
     boardManager?.StopAllPieceTraversalShakes();
+    if (!solved)
+        boardManager?.FadeCellTraversalAnimations(previousPathFadeDuration);
 
     ResolveLaserResultAfterVisual(result, solved);
 }
@@ -233,12 +255,41 @@ private void AnimateTraversedCell(Vector3 worldPosition)
     {
         boardManager.TryPlayCellTraversal(gridPosition);
         boardManager.StartPieceTraversalShake(gridPosition);
+        BoardPiece piece = boardManager.GetPieceAt(gridPosition);
+        if (piece != null && piece.PieceType != PieceType.Entry && piece.PieceType != PieceType.Target)
+            AudioManager.Instance?.PlayWhoosh();
     }
+}
+
+private void HandleGotiBump()
+{
+    AudioManager.Instance?.PlayBump();
+    if (screenShakeRoutine != null)
+        StopCoroutine(screenShakeRoutine);
+    screenShakeRoutine = StartCoroutine(ScreenShakeRoutine());
+}
+
+private IEnumerator ScreenShakeRoutine()
+{
+    Camera camera = Camera.main;
+    if (camera == null) yield break;
+    Transform cameraTransform = camera.transform;
+    Vector3 origin = cameraTransform.localPosition;
+    float elapsed = 0f;
+    while (elapsed < bumpShakeDuration)
+    {
+        elapsed += Time.unscaledDeltaTime;
+        cameraTransform.localPosition = origin + (Vector3)(UnityEngine.Random.insideUnitCircle * bumpShakeStrength);
+        yield return null;
+    }
+    cameraTransform.localPosition = origin;
+    screenShakeRoutine = null;
 }
 
 
 private void ResolveLaserResultAfterVisual(LaserSimulationResult result, bool solved)
 {
+    StopMoonLaunchFeedback();
     if (levelEnded)
         return;
 
@@ -303,6 +354,80 @@ if (!result.hitPieces.Contains(piece))
 
     Debug.Log("LEVEL SOLVED");
     OnLevelSolved?.Invoke();
+}
+
+private void ResolveMoonReference()
+{
+    GameObject skyCanvas = GameObject.Find("SkyCanvas");
+    Transform moon = null;
+    if (skyCanvas != null)
+    {
+        for (int i = 0; i < skyCanvas.transform.childCount; i++)
+        {
+            Transform child = skyCanvas.transform.GetChild(i);
+            if (child.name == "Moon" && child.gameObject.activeInHierarchy)
+            {
+                moon = child;
+                break;
+            }
+        }
+    }
+    if (moon == null) return;
+    Image sourceImage = moon.GetComponent<Image>();
+    if (sourceImage == null) return;
+
+    Transform existingVisual = moon.Find("LaunchShakeVisual");
+    if (existingVisual == null)
+    {
+        GameObject visualObject = new GameObject("LaunchShakeVisual", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        visualObject.transform.SetParent(moon, false);
+        moonRect = visualObject.GetComponent<RectTransform>();
+        moonRect.anchorMin = Vector2.zero;
+        moonRect.anchorMax = Vector2.one;
+        moonRect.offsetMin = Vector2.zero;
+        moonRect.offsetMax = Vector2.zero;
+        moonImage = visualObject.GetComponent<Image>();
+        moonImage.sprite = sourceImage.sprite;
+        moonImage.material = sourceImage.material;
+        moonImage.type = sourceImage.type;
+        moonImage.preserveAspect = sourceImage.preserveAspect;
+        moonImage.raycastTarget = false;
+        moonImage.color = sourceImage.color;
+        sourceImage.enabled = false;
+    }
+    else
+    {
+        moonRect = existingVisual as RectTransform;
+        moonImage = existingVisual.GetComponent<Image>();
+    }
+    if (moonRect != null) moonRestPosition = moonRect.anchoredPosition;
+    if (moonImage != null) moonRestColor = moonImage.color;
+}
+
+private void StartMoonLaunchFeedback()
+{
+    if (moonRect == null || moonImage == null) ResolveMoonReference();
+    if (moonRect == null) return;
+    if (moonLaunchRoutine != null) StopCoroutine(moonLaunchRoutine);
+    moonRestPosition = moonRect.anchoredPosition;
+    if (moonImage != null) { moonRestColor = moonImage.color; moonImage.color = launchedMoonColor; }
+    moonLaunchRoutine = StartCoroutine(MoonLaunchRoutine());
+}
+
+private IEnumerator MoonLaunchRoutine()
+{
+    while (true)
+    {
+        moonRect.anchoredPosition = moonRestPosition + UnityEngine.Random.insideUnitCircle * moonVibrationStrength;
+        yield return new WaitForSecondsRealtime(Mathf.Max(0.01f, moonVibrationInterval));
+    }
+}
+
+private void StopMoonLaunchFeedback()
+{
+    if (moonLaunchRoutine != null) { StopCoroutine(moonLaunchRoutine); moonLaunchRoutine = null; }
+    if (moonRect != null) moonRect.anchoredPosition = moonRestPosition;
+    if (moonImage != null) moonImage.color = moonRestColor;
 }
 
     private void HandleTimerFinished()

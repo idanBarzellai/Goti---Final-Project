@@ -14,10 +14,6 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
 
-    [Header("Volume")]
-    [SerializeField, Range(0f, 1f)] private float bgmVolume = 0.6f;
-    [SerializeField, Range(0f, 1f)] private float sfxVolume = 1f;
-
     private bool isMuted;
 
     public bool IsMuted => isMuted;
@@ -74,12 +70,12 @@ public class AudioManager : MonoBehaviour
 
         bgmSource.loop = true;
         bgmSource.playOnAwake = false;
-        bgmSource.volume = bgmVolume;
+        bgmSource.volume = BgmVolume;
         bgmSource.mute = isMuted;
 
         sfxSource.loop = false;
         sfxSource.playOnAwake = false;
-        sfxSource.volume = sfxVolume;
+        sfxSource.volume = 1f;
         sfxSource.mute = isMuted;
     }
 
@@ -120,7 +116,7 @@ public class AudioManager : MonoBehaviour
 
         bgmSource.clip = clip;
         bgmSource.loop = true;
-        bgmSource.volume = bgmVolume;
+        bgmSource.volume = BgmVolume;
         bgmSource.mute = isMuted;
         bgmSource.Play();
     }
@@ -132,13 +128,15 @@ public class AudioManager : MonoBehaviour
     public void PlayPlacePiece() => PlaySfx(audioLibrary != null ? audioLibrary.GetPlacePieceSound() : null);
     public void PlayRotatePiece() => PlaySfx(audioLibrary != null ? audioLibrary.GetRotatePieceSound() : null);
     public void PlayReturnPiece() => PlaySfx(audioLibrary?.returnPiece);
+    public void PlayBump() => PlaySfx(audioLibrary != null ? audioLibrary.GetBumpSound() : null);
+    public void PlayWhoosh() => PlaySfx(audioLibrary != null ? audioLibrary.GetWhooshSound() : null);
 
     public void PlaySfx(AudioClip clip)
     {
         if (isMuted || clip == null || sfxSource == null)
             return;
 
-        sfxSource.PlayOneShot(clip, sfxVolume);
+        sfxSource.PlayOneShot(clip, SfxVolume);
     }
 
     public void ToggleMuted()
@@ -166,5 +164,8 @@ public class AudioManager : MonoBehaviour
         if (sfxSource != null)
             sfxSource.mute = isMuted;
     }
+
+    private float BgmVolume => audioLibrary != null ? audioLibrary.bgmVolume : 0.6f;
+    private float SfxVolume => audioLibrary != null ? audioLibrary.sfxVolume : 1f;
 
 }
