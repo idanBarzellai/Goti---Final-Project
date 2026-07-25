@@ -107,6 +107,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 2011007744265576968}
   defaultSprite: {fileID: 7841750413799554831, guid: 66164eb5b9287e64592b899590cdf401, type: 3}
   cantBeRotatedSprite: {fileID: 21300000, guid: e67df4504f356064cae692df1487f956, type: 3}
+  occupiedColor: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 1}
   hintColor: {r: 1, g: 0.9471879, b: 0.6933962, a: 1}
   hintFlickerInterval: 0.15
   traversalColor: {r: 0.28235295, g: 0.9490196, b: 0.25490198, a: 1}

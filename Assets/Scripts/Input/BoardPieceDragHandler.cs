@@ -26,13 +26,23 @@ public class BoardPieceDragHandler : MonoBehaviour, IBeginDragHandler, IDragHand
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (boardPiece == null || !boardPiece.CanMove)
+        if (boardPiece == null)
             return;
+
+        if (!boardPiece.CanMove)
+        {
+            GameManager.Instance?.ShowPopupMessage(
+                boardPiece.CanRotate
+                    ? "This piece cannot be moved, only rotated"
+                    : "This piece cannot be moved or rotated");
+            return;
+        }
 
         dragStarted = true;
         movedDuringDrag = false;
         startWorldPosition = transform.position;
         startGridPosition = boardPiece.GridPosition;
+        boardManager?.SetPieceDragging(boardPiece, true);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -82,6 +92,7 @@ public class BoardPieceDragHandler : MonoBehaviour, IBeginDragHandler, IDragHand
             if (targetGridPosition == startGridPosition)
             {
                 transform.localPosition = boardManager.GridToLocalPosition(startGridPosition);
+                boardManager.SetPieceDragging(boardPiece, false);
                 return;
             }
 
@@ -92,6 +103,7 @@ public class BoardPieceDragHandler : MonoBehaviour, IBeginDragHandler, IDragHand
         }
 
         transform.localPosition = boardManager.GridToLocalPosition(startGridPosition);
+        boardManager.SetPieceDragging(boardPiece, false);
     }
 
     public void OnPointerClick(PointerEventData eventData)

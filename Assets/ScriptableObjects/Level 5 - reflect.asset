@@ -43,28 +43,13 @@ MonoBehaviour:
     portalPairId: 0
   solvedLevelConfig:
     pieces:
-    - pieceType: 1
-      gridPosition: {x: 1, y: 0}
-      direction: 1
-      canRotate: 0
-      portalPairId: 0
     - pieceType: 5
       gridPosition: {x: 4, y: 0}
       direction: 0
       canRotate: 0
       portalPairId: 0
     - pieceType: 5
-      gridPosition: {x: 4, y: 4}
-      direction: 1
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 5
       gridPosition: {x: 0, y: 4}
-      direction: 0
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 2
-      gridPosition: {x: 0, y: 0}
       direction: 0
       canRotate: 0
       portalPairId: 0

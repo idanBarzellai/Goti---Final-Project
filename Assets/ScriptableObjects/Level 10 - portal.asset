@@ -58,23 +58,8 @@ MonoBehaviour:
     portalPairId: 0
   solvedLevelConfig:
     pieces:
-    - pieceType: 1
-      gridPosition: {x: 1, y: 4}
-      direction: 2
-      canRotate: 0
-      portalPairId: 0
     - pieceType: 5
       gridPosition: {x: 1, y: 0}
-      direction: 2
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 5
-      gridPosition: {x: 0, y: 0}
-      direction: 2
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 6
-      gridPosition: {x: 0, y: 3}
       direction: 2
       canRotate: 0
       portalPairId: 0
@@ -85,16 +70,6 @@ MonoBehaviour:
       portalPairId: 0
     - pieceType: 7
       gridPosition: {x: 2, y: 3}
-      direction: 2
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 3
-      gridPosition: {x: 2, y: 2}
-      direction: 2
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 2
-      gridPosition: {x: 2, y: 4}
       direction: 2
       canRotate: 0
       portalPairId: 0

@@ -152,6 +152,8 @@ MonoBehaviour:
   trailRenderer: {fileID: 831177874}
   moveSpeed: 4
   arriveDistance: 0.02
+  enableRollingVibration: 1
+  rollingVibrationInterval: 0.35
   portalPauseDuration: 0.12
   winPauseDuration: 0.5
   winScale: 2
@@ -562,7 +564,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0.5
+  m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -984,6 +986,7 @@ GameObject:
   - component: {fileID: 338867793}
   - component: {fileID: 338867795}
   - component: {fileID: 338867794}
+  - component: {fileID: 3100000301}
   m_Layer: 5
   m_Name: Cloud
   m_TagString: Untagged
@@ -1208,21 +1211,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 10
   m_TargetDisplay: 0
---- !u!114 &2400000001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 394435532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ed7b9a0a76e4ad1951cd4bf3d4ce526, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TabletSafeCanvasLayout
-  referenceResolution: {x: 1080, y: 1920}
-  respectDeviceSafeArea: 1
-  fullScreenChildNames: []
 --- !u!224 &394435536
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2758,6 +2746,108 @@ Transform:
   m_Children: []
   m_Father: {fileID: 56956249}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &915128099
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1731529465}
+    m_Modifications:
+    - target: {fileID: 3615189114858848698, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_Name
+      value: InventoryPieceUI (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+--- !u!224 &915128100 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5543349214578946288, guid: c3be2202ce4371c42a4fcc395b94d192, type: 3}
+  m_PrefabInstance: {fileID: 915128099}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1003403857
 GameObject:
   m_ObjectHideFlags: 0
@@ -3691,8 +3781,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 547}
-  m_SizeDelta: {x: 922, y: 100}
+  m_AnchoredPosition: {x: 0, y: 545}
+  m_SizeDelta: {x: 860, y: 100}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1357321068
 MonoBehaviour:
@@ -3779,7 +3869,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c548d2e8457a3e247ab7d6416d8096ac, type: 3}
+  m_Sprite: {fileID: 4066796044813560423, guid: 4e18080f62c0ad84da033e1936aa7780, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3831,10 +3921,11 @@ MonoBehaviour:
   inventoryBarUI: {fileID: 1731529470}
   levelManager: {fileID: 0}
   levelTimerManager: {fileID: 1639475984}
-  gameWinPanelUI: {fileID: 2010437733}
+  gameWinPanelUI: {fileID: 1834796587}
   fireButton: {fileID: 263362750}
   fireButtonCanvasGroup: {fileID: 263362753}
   popupMessageUI: {fileID: 1357321068}
+  incompletePathMessageDuration: 3
   hintButton: {fileID: 2200000101}
   hintFlickerDuration: 3
   laserCharacterWalker: {fileID: 56956248}
@@ -4661,13 +4752,14 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 915128100}
   m_Father: {fileID: 1138689684}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 167}
-  m_SizeDelta: {x: 778, y: 330}
+  m_SizeDelta: {x: 0, y: 330}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1731529466
 MonoBehaviour:
@@ -4719,7 +4811,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
-  m_HorizontalFit: 0
+  m_HorizontalFit: 1
   m_VerticalFit: 0
 --- !u!114 &1731529469
 MonoBehaviour:
@@ -4734,14 +4826,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 100
-    m_Right: 100
-    m_Top: -61
+    m_Left: 50
+    m_Right: 50
+    m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
+  m_Spacing: 50
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -5492,7 +5584,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -3}
-  m_SizeDelta: {x: 937.963, y: 106}
+  m_SizeDelta: {x: 860, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1919289073
 MonoBehaviour:
@@ -5514,7 +5606,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: You must go through all pieces to win a level
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5ebe12e51a3032e46a6fa2fbe2d0c5b0, type: 2}
   m_sharedMaterial: {fileID: -195271025290474034, guid: 5ebe12e51a3032e46a6fa2fbe2d0c5b0, type: 2}
@@ -5523,8 +5615,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4280361249
+  m_fontColor: {r: 0.12941177, g: 0.12941177, b: 0.12941177, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5541,13 +5633,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -5580,7 +5672,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 2.6774597, y: -1.876781, z: 0.38662726, w: 2.671379}
+  m_margin: {x: 2.6774597, y: 20.735464, z: 0.38662726, w: 17.418472}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5731,7 +5823,6 @@ GameObject:
   - component: {fileID: 2010437732}
   - component: {fileID: 2010437735}
   - component: {fileID: 2010437734}
-  - component: {fileID: 2010437733}
   - component: {fileID: 2010437736}
   m_Layer: 5
   m_Name: WinPanel
@@ -5762,39 +5853,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 45}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2010437733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2010437731}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16181e68d24ab9c48a96a7dd4514dd13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameWinPanelUI
-  titleText: {fileID: 1244852689}
-  nextLevelButton: {fileID: 1811788463}
-  restartButton: {fileID: 1569004046}
-  mainMenuButton: {fileID: 70934868}
-  confettiContainer: {fileID: 0}
-  batSprite: {fileID: 21300000, guid: 081cda2147b384e46b709f4800050880, type: 3}
-  boneSprite: {fileID: 21300000, guid: a2390bc2d1634ec48be13969ca58a029, type: 3}
-  confettiAmount: 200
-  confettiDuration: 4.6
-  winScreenDelay: 1
-  confettiSizeRange: {x: 0.7, y: 1.2}
-  confettiSpeedRange: {x: 800, y: 1150}
-  confettiLifetimeRange: {x: 2.5, y: 4}
-  confettiGravityRange: {x: 350, y: 550}
-  emitterYRange: {x: -0.22, y: 0.08}
-  confettiPalette:
-  - {r: 0.224, g: 0.239, b: 0.247, a: 1}
-  - {r: 0.992, g: 0.992, b: 1, a: 1}
-  - {r: 0.776, g: 0.773, b: 0.725, a: 1}
-  - {r: 0.353, g: 1, b: 0.082, a: 1}
-  - {r: 0.784, g: 0.976, b: 0.808, a: 1}
 --- !u!114 &2010437734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5927,6 +5985,7 @@ GameObject:
   - component: {fileID: 2066967888}
   - component: {fileID: 2066967890}
   - component: {fileID: 2066967889}
+  - component: {fileID: 3100000302}
   m_Layer: 5
   m_Name: Cloud2
   m_TagString: Untagged
@@ -6361,13 +6420,37 @@ MonoBehaviour:
   highlightPadding: 36
   focusBoxColor: {r: 0.023529412, g: 0.972549, b: 0.047058824, a: 0.75}
   focusBoxLineThickness: 8
+  focusCornerRadius: 24
   focusBreathPadding: 12
   focusBreathSpeed: 0.55
-  handSprite: {fileID: 5762478977475107535, guid: 4dda8857b7d3e5947a80a2e0010ff66b, type: 3}
-  handSize: {x: 100, y: 200}
+  focusEdgeBlur: 32
+  handSprite: {fileID: -8364947040678758114, guid: 4c603412abd1d434291e96eeddc95be2, type: 3}
+  handSize: {x: 100, y: 150}
   handTravelDuration: 1.2
   handPauseDuration: 0.25
   handColor: {r: 1, g: 1, b: 1, a: 1}
+  handStartPositionOffset: {x: 100, y: 0}
+  handTargetPositionOffset: {x: 100, y: 0}
+  launchHandPositionOffset: {x: 100, y: -30}
+  rotateHandPositionOffset: {x: 100, y: -30}
+  tapHandBobDistance: 12
+  tapHandBobSpeed: 2
+--- !u!114 &2400000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394435532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ed7b9a0a76e4ad1951cd4bf3d4ce526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TabletSafeCanvasLayout
+  referenceResolution: {x: 1080, y: 1920}
+  respectDeviceSafeArea: 1
+  tabletAspectThreshold: 0.6
+  fullScreenChildNames: []
 --- !u!1 &3100000100
 GameObject:
   m_ObjectHideFlags: 0
@@ -6511,6 +6594,34 @@ MonoBehaviour:
   mutedText: MUTED
   unmutedColor: {r: 0.12, g: 0.38, b: 0.26, a: 0.95}
   mutedColor: {r: 0.45, g: 0.12, b: 0.12, a: 0.95}
+--- !u!114 &3100000301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338867792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a17c6f55892496eb642eb824d7183ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LoopingCloudUI
+  speed: 6
+  wrapPadding: 20
+--- !u!114 &3100000302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066967887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a17c6f55892496eb642eb824d7183ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LoopingCloudUI
+  speed: 6
+  wrapPadding: 20
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

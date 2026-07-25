@@ -17,6 +17,7 @@ public class PieceDataDrawer : PropertyDrawer
         SerializedProperty portalPairId = property.FindPropertyRelative("portalPairId");
 
         bool isInventoryPiece = property.propertyPath.Contains("inventoryPieces");
+        bool isHintPiece = property.propertyPath.Contains("solvedLevelConfig");
         PieceType currentType = (PieceType)pieceType.enumValueIndex;
 
 
@@ -36,14 +37,13 @@ public class PieceDataDrawer : PropertyDrawer
             if (!isInventoryPiece)
                 DrawProperty(ref y, position, gridPosition);
 
-            if (!isInventoryPiece)
+            if (!isInventoryPiece && !isHintPiece)
                 DrawProperty(ref y, position, direction);
 
-
-            if (!isInventoryPiece)
+            if (!isInventoryPiece && !isHintPiece)
                 DrawProperty(ref y, position, canRotate);
 
-            if (currentType == PieceType.Portal)
+            if (currentType == PieceType.Portal && !isHintPiece)
                 DrawProperty(ref y, position, portalPairId);
 
             EditorGUI.indentLevel--;
@@ -60,6 +60,7 @@ public class PieceDataDrawer : PropertyDrawer
         SerializedProperty pieceType = property.FindPropertyRelative("pieceType");
 
         bool isInventoryPiece = property.propertyPath.Contains("inventoryPieces");
+        bool isHintPiece = property.propertyPath.Contains("solvedLevelConfig");
         PieceType currentType = (PieceType)pieceType.enumValueIndex;
 
         int lines = 1; // foldout
@@ -68,13 +69,13 @@ public class PieceDataDrawer : PropertyDrawer
         if (!isInventoryPiece)
             lines++; // gridPosition
 
-        if (!isInventoryPiece)
+        if (!isInventoryPiece && !isHintPiece)
             lines++; // direction
 
-        if (!isInventoryPiece)
+        if (!isInventoryPiece && !isHintPiece)
             lines++; // canRotate
 
-        if (currentType == PieceType.Portal)
+        if (currentType == PieceType.Portal && !isHintPiece)
             lines++; // portalPairId
 
         return lines * (LineHeight + Spacing);

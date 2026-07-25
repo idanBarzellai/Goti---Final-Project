@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 47500789}
   - component: {fileID: 47500791}
   - component: {fileID: 47500790}
+  - component: {fileID: 3100000201}
   m_Layer: 5
   m_Name: clouds (1)
   m_TagString: Untagged
@@ -566,7 +567,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &170305910
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1521,6 +1522,7 @@ GameObject:
   - component: {fileID: 701954069}
   - component: {fileID: 701954071}
   - component: {fileID: 701954070}
+  - component: {fileID: 3100000202}
   m_Layer: 5
   m_Name: clouds
   m_TagString: Untagged
@@ -1812,6 +1814,7 @@ GameObject:
   - component: {fileID: 990707887}
   - component: {fileID: 990707889}
   - component: {fileID: 990707888}
+  - component: {fileID: 3100000203}
   m_Layer: 5
   m_Name: clouds (2)
   m_TagString: Untagged
@@ -2032,7 +2035,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0.5
+  m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -2062,23 +2065,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &2400000000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1024300643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ed7b9a0a76e4ad1951cd4bf3d4ce526, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TabletSafeCanvasLayout
-  referenceResolution: {x: 1080, y: 1920}
-  respectDeviceSafeArea: 1
-  fullScreenChildNames:
-  - BG (1)
-  - Image
 --- !u!224 &1024300647
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2236,7 +2222,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: c548d2e8457a3e247ab7d6416d8096ac, type: 3}
+  m_Sprite: {fileID: 4066796044813560423, guid: 4e18080f62c0ad84da033e1936aa7780, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2713,7 +2699,7 @@ MonoBehaviour:
   spriteLibrary: {fileID: 11400000, guid: 7b88e55afb782fd458636208b17fac2b, type: 2}
   gotiSize: {x: 220, y: 220}
   gotiMoveSpeed: 260
-  animationFrameDuration: 0.06
+  animationFrameDuration: 0.075
   smileHoldDuration: 0.75
 --- !u!114 &1348192289
 MonoBehaviour:
@@ -3578,15 +3564,15 @@ RectTransform:
   m_GameObject: {fileID: 2048760967}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.1049, y: 2.1049, z: 2.1049}
+  m_LocalScale: {x: 0.6716767, y: 0.6716767, z: 0.6716767}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1024300647}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -451.75}
-  m_SizeDelta: {x: 251.3645, y: 100}
+  m_AnchoredPosition: {x: 40, y: -79.58392}
+  m_SizeDelta: {x: 1772, y: 1181}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2048760969
 MonoBehaviour:
@@ -3608,7 +3594,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 70998e28bbcac8f4291d28fba6b5ee48, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 34dcdfbb0feb7834aa5a270e7783ba72, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3728,6 +3714,26 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6788432122807942161, guid: c5c5f2b28d91664448ae7a7dda27ebef, type: 3}
   m_PrefabInstance: {fileID: 2091526918}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2400000000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1024300643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ed7b9a0a76e4ad1951cd4bf3d4ce526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TabletSafeCanvasLayout
+  referenceResolution: {x: 1080, y: 1920}
+  respectDeviceSafeArea: 1
+  tabletAspectThreshold: 0.6
+  fullScreenChildNames:
+  - BG (1)
+  - Image
+  - LevelSelectPanel
+  - SoundToggleButton
 --- !u!1 &3100000000
 GameObject:
   m_ObjectHideFlags: 0
@@ -3871,6 +3877,48 @@ MonoBehaviour:
   mutedText: MUTED
   unmutedColor: {r: 0.12, g: 0.38, b: 0.26, a: 0.95}
   mutedColor: {r: 0.45, g: 0.12, b: 0.12, a: 0.95}
+--- !u!114 &3100000201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47500788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a17c6f55892496eb642eb824d7183ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LoopingCloudUI
+  speed: 6
+  wrapPadding: 10
+--- !u!114 &3100000202
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701954068}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a17c6f55892496eb642eb824d7183ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LoopingCloudUI
+  speed: 6
+  wrapPadding: 10
+--- !u!114 &3100000203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 990707886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a17c6f55892496eb642eb824d7183ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LoopingCloudUI
+  speed: 6
+  wrapPadding: 10
 --- !u!1001 &1162994206669224798
 PrefabInstance:
   m_ObjectHideFlags: 0

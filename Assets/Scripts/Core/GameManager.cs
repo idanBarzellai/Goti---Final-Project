@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Button fireButton;
     [SerializeField] private CanvasGroup fireButtonCanvasGroup;
 [SerializeField] private SimplePopupMessageUI popupMessageUI;
+[SerializeField, Min(0f)] private float incompletePathMessageDuration = 3f;
 
     [Header("Hints")]
     [SerializeField] private Button hintButton;
@@ -228,14 +229,31 @@ if (laserCharacterWalker == null || boardRoot == null)
     characterPathZOffset
 );
 
+    bool loseSoundPlayed = false;
     laserCharacterWalker.WalkPaths(
         paths,
         solved,
         result.wasBlocked,
         result.exitedBoard,
-        AnimateTraversedCell,
+        worldPosition =>
+        {
+            AnimateTraversedCell(worldPosition);
+
+            if (loseSoundPlayed || solved || result == null || !result.didHitAnyTarget || boardManager == null)
+                return;
+
+            if (boardManager.TryGetGridPositionFromWorld(worldPosition, out Vector2Int gridPosition))
+            {
+                BoardPiece reachedPiece = boardManager.GetPieceAt(gridPosition);
+                if (reachedPiece != null && reachedPiece.PieceType == PieceType.Target)
+                {
+                    loseSoundPlayed = true;
+                    AudioManager.Instance?.PlayLose();
+                }
+            }
+        },
         HandleGotiBump,
-        () => gameWinPanelUI?.PlayConfettiNow(),
+        () => gameWinPanelUI?.PlayWinAnimationConfetti(),
         () =>
 {
     laserSequenceRunning = false;
@@ -303,7 +321,9 @@ private void ResolveLaserResultAfterVisual(LaserSimulationResult result, bool so
     }
 
     if (result != null && result.didHitAnyTarget)
-        popupMessageUI?.ShowMessage("You need to go thorugh all pieces");
+        popupMessageUI?.ShowMessage(
+            "To finish a level you must go through all pieces",
+            incompletePathMessageDuration);
 
     // // triesRemaining--;
     // laserTriesUI?.SetTries(triesRemaining);

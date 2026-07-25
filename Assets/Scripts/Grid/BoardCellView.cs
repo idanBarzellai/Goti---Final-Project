@@ -7,6 +7,7 @@ public class BoardCellView : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Sprite defaultSprite;
     [SerializeField] private Sprite cantBeRotatedSprite;
+    [SerializeField] private Color occupiedColor = new Color(0.55f, 0.55f, 0.55f, 1f);
     [SerializeField] private Color hintColor = new Color(1f, 0.86f, 0.18f, 1f);
     [SerializeField] private float hintFlickerInterval = 0.15f;
 
@@ -35,7 +36,7 @@ public class BoardCellView : MonoBehaviour
         EnsureReferences();
     }
 
-    public void SetCantBeRotated(bool cantBeRotated)
+    public void SetPieceState(bool useOccupiedColor, bool cantBeRotated)
     {
         EnsureReferences();
 
@@ -51,6 +52,11 @@ public class BoardCellView : MonoBehaviour
             spriteRenderer.sprite = targetSprite;
             restingSprite = targetSprite;
         }
+
+        defaultColor = useOccupiedColor && !cantBeRotated
+            ? occupiedColor
+            : Color.white;
+        spriteRenderer.color = defaultColor;
     }
 
     public void PlayTraversalAnimation()

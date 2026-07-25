@@ -10,7 +10,6 @@ public class TutorialOverlayUI : MonoBehaviour
 {
     private const int MaxOverlayPanels = 25;
     private const int MaxHighlightBoxes = 2;
-    private const int LinesPerHighlightBox = 4;
 
     private enum Step
     {
@@ -39,8 +38,10 @@ public class TutorialOverlayUI : MonoBehaviour
     [SerializeField] private float highlightPadding = 36f;
     [SerializeField] private Color focusBoxColor = new Color(1f, 0.86f, 0.18f, 0.75f);
     [SerializeField] private float focusBoxLineThickness = 8f;
+    [SerializeField, Min(0f)] private float focusCornerRadius = 24f;
     [SerializeField] private float focusBreathPadding = 12f;
     [SerializeField] private float focusBreathSpeed = 0.55f;
+    [SerializeField, Min(0f)] private float focusEdgeBlur = 32f;
 
     [Header("Hand Cue")]
     [Tooltip("Replace this with the hand image you want to use in the tutorial.")]
@@ -49,9 +50,17 @@ public class TutorialOverlayUI : MonoBehaviour
     [SerializeField] private float handTravelDuration = 1.2f;
     [SerializeField] private float handPauseDuration = 0.25f;
     [SerializeField] private Color handColor = new Color(1f, 0.88f, 0.34f, 1f);
+    [SerializeField] private Vector2 handStartPositionOffset;
+    [SerializeField] private Vector2 handTargetPositionOffset;
+    [SerializeField] private Vector2 launchHandPositionOffset = new Vector2(0f, -80f);
+    [SerializeField] private Vector2 rotateHandPositionOffset = new Vector2(0f, -80f);
+    [SerializeField, Min(0f)] private float tapHandBobDistance = 12f;
+    [SerializeField, Min(0.01f)] private float tapHandBobSpeed = 2f;
 
     private readonly List<Image> panels = new List<Image>();
     private readonly List<Image> focusBoxLines = new List<Image>();
+    private readonly List<Image> focusEdgeFeathers = new List<Image>();
+    private readonly List<Sprite> generatedFeatherSprites = new List<Sprite>();
     private RectTransform overlayRoot;
     private RectTransform canvasRect;
     private RectTransform handRect;
@@ -62,6 +71,7 @@ public class TutorialOverlayUI : MonoBehaviour
     private bool pendingLaserSolved;
     private bool hasDragHintCell;
     private Vector2Int dragHintCell;
+    private BoardPiece rotateFocusPiece;
 
     private void Awake()
     {
@@ -85,6 +95,18 @@ public class TutorialOverlayUI : MonoBehaviour
     {
         Unsubscribe();
         StopHandCue();
+    }
+
+    private void OnDestroy()
+    {
+        foreach (Sprite sprite in generatedFeatherSprites)
+        {
+            if (sprite != null)
+            {
+                Destroy(sprite.texture);
+                Destroy(sprite);
+            }
+        }
     }
 
     private void Update()
@@ -195,12 +217,12 @@ public class TutorialOverlayUI : MonoBehaviour
         switch (currentStep)
         {
             case Step.EntryIntro:
-                ShowMessage("This is where GOTI starts");
+                ShowMessage("This is GOTI");
                 ShowOverlay(GetPieceRect(PieceType.Entry));
                 break;
 
             case Step.TargetIntro:
-                ShowMessage("This is the grave");
+                ShowMessage("This is his Grave");
                 ShowOverlay(GetPieceRect(PieceType.Target));
                 break;
 
@@ -211,7 +233,9 @@ public class TutorialOverlayUI : MonoBehaviour
 
             case Step.BankIntro:
                 ShowMessage("You must use all pieces in the bank");
-                ShowOverlay(GetRectTransformRect(inventoryBarUI != null ? inventoryBarUI.InventoryDropArea : null));
+                ShowOverlay(
+                    GetRectTransformRect(inventoryBarUI != null ? inventoryBarUI.InventoryDropArea : null),
+                    true);
                 break;
 
             case Step.DragPiece:
@@ -222,18 +246,21 @@ public class TutorialOverlayUI : MonoBehaviour
                 break;
 
             case Step.Fire:
-                ShowMessage("Try launching GOTI to find his way");
+                ShowMessage("Try launching GOTI to find his way to his Grave");
                 ShowOverlay(GetRectTransformRect(fireButtonRect));
+                StartTapHandCue(Step.Fire);
                 break;
 
             case Step.AllPieces:
-                ShowMessage("You must go through all pieces in order to finish the level");
+                ShowMessage("You must go through all pieces to finish a level");
                 ShowOverlay(GetBoardRect());
                 break;
 
             case Step.Rotate:
-                ShowMessage("Tapping on an piece to rotate it");
-                ShowOverlay(GetBoardRect());
+                rotateFocusPiece = FindRotateFocusPiece();
+                ShowMessage("Tap on a piece to rotate it");
+                ShowOverlay(GetRotateFocusRect());
+                StartTapHandCue(Step.Rotate);
                 break;
 
             case Step.Complete:
@@ -256,6 +283,7 @@ public class TutorialOverlayUI : MonoBehaviour
         if (!WasSkipPressed())
             return;
 
+        AudioManager.Instance?.PlayButtonClick();
         AdvanceSkippableStep();
     }
 
@@ -328,10 +356,13 @@ public class TutorialOverlayUI : MonoBehaviour
 
     private void HandleFireLaserStarted()
     {
-        popupMessageUI?.HideMessage();
-
         if (tutorialActive && currentStep == Step.Fire)
+        {
             HideOverlay();
+            return;
+        }
+
+        popupMessageUI?.HideMessage();
     }
 
     private void HandleLaserResolved(LaserSimulationResult result, bool solved)
@@ -350,7 +381,8 @@ public class TutorialOverlayUI : MonoBehaviour
 
     private void HandlePieceRotated(BoardPiece piece)
     {
-        if (tutorialActive && currentStep == Step.Rotate)
+        if (tutorialActive && currentStep == Step.Rotate &&
+            (rotateFocusPiece == null || piece == rotateFocusPiece))
             SetStep(Step.AllPieces);
     }
 
@@ -376,16 +408,173 @@ public class TutorialOverlayUI : MonoBehaviour
             panels.Add(panel);
         }
 
-        for (int i = 0; i < MaxHighlightBoxes * LinesPerHighlightBox; i++)
+        Sprite roundedFocusBorder = CreateRoundedBorderSprite();
+
+        for (int i = 0; i < MaxHighlightBoxes; i++)
         {
-            Image line = new GameObject($"TutorialFocusLine_{i + 1}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            line.transform.SetParent(overlayRoot, false);
-            line.color = focusBoxColor;
-            line.raycastTarget = false;
-            focusBoxLines.Add(line);
+            Image border = new GameObject($"TutorialFocusBorder_{i + 1}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            border.transform.SetParent(overlayRoot, false);
+            border.sprite = roundedFocusBorder;
+            border.type = Image.Type.Sliced;
+            border.color = focusBoxColor;
+            border.raycastTarget = false;
+            focusBoxLines.Add(border);
         }
 
+        CreateFocusEdgeFeathers();
         CreateHandCue();
+    }
+
+    private Sprite CreateRoundedBorderSprite()
+    {
+        float radius = Mathf.Max(focusCornerRadius, focusBoxLineThickness);
+        int padding = Mathf.CeilToInt(radius + focusBoxLineThickness + 2f);
+        int size = Mathf.Max(8, padding * 2);
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.name = "TutorialRoundedFocusBorder";
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        Color[] pixels = new Color[size * size];
+        Vector2 center = new Vector2(size * 0.5f, size * 0.5f);
+        Vector2 outerHalfSize = new Vector2(size * 0.5f - 1f, size * 0.5f - 1f);
+        Vector2 innerHalfSize = outerHalfSize - Vector2.one * focusBoxLineThickness;
+        float outerRadius = Mathf.Min(radius, Mathf.Min(outerHalfSize.x, outerHalfSize.y));
+        float innerRadius = Mathf.Max(0f, outerRadius - focusBoxLineThickness);
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                Vector2 point = new Vector2(x + 0.5f, y + 0.5f) - center;
+                float outerDistance = RoundedRectDistance(point, outerHalfSize, outerRadius);
+                float innerDistance = RoundedRectDistance(point, innerHalfSize, innerRadius);
+                float outerAlpha = 1f - Mathf.SmoothStep(-0.5f, 0.5f, outerDistance);
+                float innerAlpha = Mathf.SmoothStep(-0.5f, 0.5f, innerDistance);
+                pixels[y * size + x] = new Color(1f, 1f, 1f, outerAlpha * innerAlpha);
+            }
+        }
+
+        texture.SetPixels(pixels);
+        texture.Apply();
+
+        float border = padding;
+        Sprite sprite = Sprite.Create(
+            texture,
+            new Rect(0f, 0f, size, size),
+            new Vector2(0.5f, 0.5f),
+            100f,
+            0,
+            SpriteMeshType.FullRect,
+            new Vector4(border, border, border, border));
+        generatedFeatherSprites.Add(sprite);
+        return sprite;
+    }
+
+    private float RoundedRectDistance(Vector2 point, Vector2 halfSize, float radius)
+    {
+        Vector2 distance = new Vector2(Mathf.Abs(point.x), Mathf.Abs(point.y)) - halfSize + Vector2.one * radius;
+        return Mathf.Min(Mathf.Max(distance.x, distance.y), 0f) +
+               new Vector2(Mathf.Max(distance.x, 0f), Mathf.Max(distance.y, 0f)).magnitude -
+               radius;
+    }
+
+    private void CreateFocusEdgeFeathers()
+    {
+        Sprite horizontalFadeOut = CreateFeatherSprite(32, 1, false);
+        Sprite horizontalFadeIn = CreateFeatherSprite(32, 1, true);
+        Sprite verticalFadeOut = CreateFeatherSprite(1, 32, false);
+        Sprite verticalFadeIn = CreateFeatherSprite(1, 32, true);
+        Sprite topLeftCorner = CreateCornerFeatherSprite(true, true);
+        Sprite topRightCorner = CreateCornerFeatherSprite(false, true);
+        Sprite bottomLeftCorner = CreateCornerFeatherSprite(true, false);
+        Sprite bottomRightCorner = CreateCornerFeatherSprite(false, false);
+
+        for (int box = 0; box < MaxHighlightBoxes; box++)
+        {
+            Sprite[] sprites =
+            {
+                verticalFadeOut,
+                verticalFadeIn,
+                horizontalFadeOut,
+                horizontalFadeIn,
+                topLeftCorner,
+                topRightCorner,
+                bottomLeftCorner,
+                bottomRightCorner
+            };
+
+            foreach (Sprite sprite in sprites)
+            {
+                Image feather = new GameObject(
+                    $"TutorialFocusFeather_{focusEdgeFeathers.Count + 1}",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(Image)).GetComponent<Image>();
+                feather.transform.SetParent(overlayRoot, false);
+                feather.sprite = sprite;
+                feather.color = panelColor;
+                feather.raycastTarget = false;
+                focusEdgeFeathers.Add(feather);
+            }
+        }
+    }
+
+    private Sprite CreateFeatherSprite(int width, int height, bool reverse)
+    {
+        Texture2D texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        texture.name = "TutorialFocusFeather";
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+
+        int length = Mathf.Max(width, height);
+        Color[] pixels = new Color[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            float t = length > 1 ? i / (float)(length - 1) : 1f;
+            t = t * t * (3f - 2f * t);
+            pixels[i] = new Color(1f, 1f, 1f, reverse ? 1f - t : t);
+        }
+
+        texture.SetPixels(pixels);
+        texture.Apply();
+
+        Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f), 100f);
+        generatedFeatherSprites.Add(sprite);
+        return sprite;
+    }
+
+    private Sprite CreateCornerFeatherSprite(bool outerLeft, bool outerTop)
+    {
+        const int size = 32;
+        Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        texture.name = "TutorialFocusCornerFeather";
+        texture.wrapMode = TextureWrapMode.Clamp;
+        texture.filterMode = FilterMode.Bilinear;
+        Color[] pixels = new Color[size * size];
+
+        for (int y = 0; y < size; y++)
+        {
+            float v = y / (float)(size - 1);
+            float verticalAlpha = outerTop ? v : 1f - v;
+            verticalAlpha = verticalAlpha * verticalAlpha * (3f - 2f * verticalAlpha);
+
+            for (int x = 0; x < size; x++)
+            {
+                float u = x / (float)(size - 1);
+                float horizontalAlpha = outerLeft ? 1f - u : u;
+                horizontalAlpha = horizontalAlpha * horizontalAlpha * (3f - 2f * horizontalAlpha);
+                float alpha = Mathf.Max(horizontalAlpha, verticalAlpha);
+                pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+            }
+        }
+
+        texture.SetPixels(pixels);
+        texture.Apply();
+
+        Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f);
+        generatedFeatherSprites.Add(sprite);
+        return sprite;
     }
 
     private void CreateHandCue()
@@ -417,6 +606,32 @@ public class TutorialOverlayUI : MonoBehaviour
         handRoutine = StartCoroutine(HandCueRoutine());
     }
 
+    private void StartTapHandCue(Step step)
+    {
+        if (handRect == null)
+            return;
+
+        handRoutine = StartCoroutine(TapHandCueRoutine(step));
+    }
+
+    private IEnumerator TapHandCueRoutine(Step step)
+    {
+        handRect.gameObject.SetActive(true);
+
+        while (currentStep == step)
+        {
+            Rect targetRect = step == Step.Fire
+                ? GetRectTransformRect(fireButtonRect)
+                : GetRotateFocusRect();
+            Vector2 positionOffset = step == Step.Fire
+                ? launchHandPositionOffset
+                : rotateHandPositionOffset;
+            float bob = (Mathf.Sin(Time.unscaledTime * tapHandBobSpeed * Mathf.PI * 2f) + 1f) * 0.5f;
+            handRect.anchoredPosition = targetRect.center + positionOffset + Vector2.up * (bob * tapHandBobDistance);
+            yield return null;
+        }
+    }
+
     private IEnumerator HandCueRoutine()
     {
         handRect.gameObject.SetActive(true);
@@ -426,8 +641,8 @@ public class TutorialOverlayUI : MonoBehaviour
             Rect bankRect = GetRectTransformRect(inventoryBarUI != null ? inventoryBarUI.FirstAvailablePieceRect : null);
             Rect targetRect = GetTutorialTargetCellRect();
 
-            Vector2 start = bankRect.center;
-            Vector2 end = targetRect.center;
+            Vector2 start = bankRect.center + handStartPositionOffset;
+            Vector2 end = targetRect.center + handTargetPositionOffset;
             float time = 0f;
 
             while (time < handTravelDuration && currentStep == Step.DragPiece)
@@ -452,7 +667,10 @@ public class TutorialOverlayUI : MonoBehaviour
         }
 
         if (handRect != null)
+        {
+            handRect.localScale = Vector3.one;
             handRect.gameObject.SetActive(false);
+        }
     }
 
     private void RefreshHighlight()
@@ -469,8 +687,11 @@ public class TutorialOverlayUI : MonoBehaviour
 
             case Step.BoardIntro:
             case Step.AllPieces:
-            case Step.Rotate:
                 ShowOverlay(GetBoardRect(), true);
+                break;
+
+            case Step.Rotate:
+                ShowOverlay(GetRotateFocusRect(), true);
                 break;
 
             case Step.BankIntro:
@@ -505,11 +726,75 @@ public class TutorialOverlayUI : MonoBehaviour
         if (includePopup && popupMessageUI != null)
         {
             Rect popupRect = GetRectTransformRect(popupMessageUI.transform as RectTransform);
-            highlightRects.Add(ExpandAndClamp(popupRect, canvasBounds, highlightPadding));
+            Rect popupHighlight = ExpandAndClamp(popupRect, canvasBounds, highlightPadding);
+            Rect primaryHighlight = highlightRects[0];
+
+            // Keep the popup opening from covering the gameplay focus. Trim it on
+            // whichever side the popup occupies so both openings remain visible.
+            if (popupHighlight.Overlaps(primaryHighlight))
+            {
+                Vector2 offset = popupHighlight.center - primaryHighlight.center;
+
+                if (Mathf.Abs(offset.y) >= Mathf.Abs(offset.x))
+                {
+                    if (offset.y < 0f)
+                        popupHighlight.yMax = Mathf.Min(popupHighlight.yMax, primaryHighlight.yMin);
+                    else
+                        popupHighlight.yMin = Mathf.Max(popupHighlight.yMin, primaryHighlight.yMax);
+                }
+                else if (offset.x < 0f)
+                {
+                    popupHighlight.xMax = Mathf.Min(popupHighlight.xMax, primaryHighlight.xMin);
+                }
+                else
+                {
+                    popupHighlight.xMin = Mathf.Max(popupHighlight.xMin, primaryHighlight.xMax);
+                }
+            }
+
+            if (popupHighlight.width > 0.01f && popupHighlight.height > 0.01f)
+                highlightRects.Add(popupHighlight);
         }
 
         LayoutPanelsAroundHighlights(canvasBounds, highlightRects);
+        LayoutFocusEdgeFeathers(highlightRects);
         LayoutFocusBoxes(canvasBounds, highlightRects);
+    }
+
+    private void LayoutFocusEdgeFeathers(List<Rect> highlightRects)
+    {
+        int featherIndex = 0;
+        int boxCount = Mathf.Min(MaxHighlightBoxes, highlightRects.Count);
+
+        for (int i = 0; i < boxCount; i++)
+        {
+            Rect rect = highlightRects[i];
+            float horizontalBlur = Mathf.Min(focusEdgeBlur, rect.width * 0.5f);
+            float verticalBlur = Mathf.Min(focusEdgeBlur, rect.height * 0.5f);
+            float centerWidth = Mathf.Max(0f, rect.width - horizontalBlur * 2f);
+            float centerHeight = Mathf.Max(0f, rect.height - verticalBlur * 2f);
+
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMin + horizontalBlur, rect.yMax - verticalBlur, centerWidth, verticalBlur);
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMin + horizontalBlur, rect.yMin, centerWidth, verticalBlur);
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMax - horizontalBlur, rect.yMin + verticalBlur, horizontalBlur, centerHeight);
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMin, rect.yMin + verticalBlur, horizontalBlur, centerHeight);
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMin, rect.yMax - verticalBlur, horizontalBlur, verticalBlur);
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMax - horizontalBlur, rect.yMax - verticalBlur, horizontalBlur, verticalBlur);
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMin, rect.yMin, horizontalBlur, verticalBlur);
+            SetFeather(focusEdgeFeathers[featherIndex++], rect.xMax - horizontalBlur, rect.yMin, horizontalBlur, verticalBlur);
+        }
+
+        for (int i = featherIndex; i < focusEdgeFeathers.Count; i++)
+            focusEdgeFeathers[i].gameObject.SetActive(false);
+    }
+
+    private void SetFeather(Image feather, float x, float y, float width, float height)
+    {
+        bool visible = focusEdgeBlur > 0f && width > 0.01f && height > 0.01f;
+        feather.gameObject.SetActive(visible);
+
+        if (visible)
+            SetPanel(feather.rectTransform, x, y, width, height);
     }
 
     private void LayoutPanelsAroundHighlights(Rect canvasBounds, List<Rect> highlightRects)
@@ -560,23 +845,22 @@ public class TutorialOverlayUI : MonoBehaviour
         Color lineColor = focusBoxColor;
         lineColor.a = Mathf.Lerp(focusBoxColor.a * 0.55f, focusBoxColor.a, breath);
 
-        int lineIndex = 0;
+        int borderIndex = 0;
+        // The first rect is the interactive tutorial target. Additional rects,
+        // such as the message popup, stay visible but should not look actionable.
         int boxCount = Mathf.Min(1, highlightRects.Count);
 
         for (int i = 0; i < boxCount; i++)
         {
             Rect rect = ExpandAndClamp(highlightRects[i], canvasBounds, extraPadding);
 
-            if (lineIndex + LinesPerHighlightBox > focusBoxLines.Count)
+            if (borderIndex >= focusBoxLines.Count)
                 break;
 
-            SetFocusLine(focusBoxLines[lineIndex++], rect.xMin, rect.yMax - focusBoxLineThickness, rect.width, focusBoxLineThickness, lineColor);
-            SetFocusLine(focusBoxLines[lineIndex++], rect.xMin, rect.yMin, rect.width, focusBoxLineThickness, lineColor);
-            SetFocusLine(focusBoxLines[lineIndex++], rect.xMin, rect.yMin, focusBoxLineThickness, rect.height, lineColor);
-            SetFocusLine(focusBoxLines[lineIndex++], rect.xMax - focusBoxLineThickness, rect.yMin, focusBoxLineThickness, rect.height, lineColor);
+            SetFocusLine(focusBoxLines[borderIndex++], rect.xMin, rect.yMin, rect.width, rect.height, lineColor);
         }
 
-        for (int i = lineIndex; i < focusBoxLines.Count; i++)
+        for (int i = borderIndex; i < focusBoxLines.Count; i++)
             focusBoxLines[i].gameObject.SetActive(false);
     }
 
@@ -695,6 +979,38 @@ public class TutorialOverlayUI : MonoBehaviour
             return GetBoardRect();
 
         return GetCellRect(piece.GridPosition);
+    }
+
+    private Rect GetRotateFocusRect()
+    {
+        if (rotateFocusPiece == null)
+            rotateFocusPiece = FindRotateFocusPiece();
+
+        return rotateFocusPiece != null ? GetCellRect(rotateFocusPiece.GridPosition) : GetBoardRect();
+    }
+
+    private BoardPiece FindRotateFocusPiece()
+    {
+        if (pendingLaserResult != null && pendingLaserResult.hitPieces != null)
+        {
+            for (int i = pendingLaserResult.hitPieces.Count - 1; i >= 0; i--)
+            {
+                BoardPiece hitPiece = pendingLaserResult.hitPieces[i];
+                if (hitPiece != null && hitPiece.CanRotate)
+                    return hitPiece;
+            }
+        }
+
+        if (boardManager != null)
+        {
+            foreach (BoardPiece piece in boardManager.GetAllPieces())
+            {
+                if (piece != null && piece.CanRotate)
+                    return piece;
+            }
+        }
+
+        return null;
     }
 
     private BoardPiece FindPiece(PieceType pieceType)

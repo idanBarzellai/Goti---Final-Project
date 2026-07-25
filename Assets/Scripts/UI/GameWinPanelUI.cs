@@ -142,6 +142,9 @@ public class GameWinPanelUI : BaseMenuUI
 
     private void PlayConfetti()
     {
+        if (!gameObject.activeInHierarchy)
+            return;
+
         StopConfetti();
         EnsureConfettiContainer();
 
@@ -153,8 +156,27 @@ public class GameWinPanelUI : BaseMenuUI
 
     public void PlayConfettiNow()
     {
+        // The goal callback can arrive before ShowWin activates this panel.
+        // Leave the request unconsumed so ShowWin can play it once active.
+        if (!gameObject.activeInHierarchy)
+            return;
+
         confettiPlayedForCurrentWin = true;
         PlayConfetti();
+    }
+
+    public void PlayWinAnimationConfetti()
+    {
+        if (confettiPlayedForCurrentWin)
+            return;
+
+        if (!gameObject.activeSelf)
+        {
+            Show();
+            SetWinScreenVisible(false);
+        }
+
+        PlayConfettiNow();
     }
 
     private void StopConfetti()

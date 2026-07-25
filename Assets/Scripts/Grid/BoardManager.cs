@@ -96,13 +96,14 @@ SpawnPiece(pieceData, false, pieceData.canRotate, false);
     BoardPiece piece = Instantiate(piecePrefab, boardRoot);
     piece.transform.localPosition = GridToLocalPosition(pieceData.gridPosition);
     piece.name = $"{pieceData.pieceType}_{pieceData.gridPosition.x}_{pieceData.gridPosition.y}";
+    bool effectiveCanRotate = canRotate && pieceData.pieceType != PieceType.Portal;
 
    piece.Initialize(
     pieceData.pieceType,
     pieceData.gridPosition,
     pieceData.direction,
     canMove,
-    canRotate,
+    effectiveCanRotate,
     canReturnToInventory,
     this,
     pieceData.portalPairId
@@ -166,6 +167,22 @@ if (piece == null || !piece.CanMove)
 
         OnBoardChanged();
         return true;
+    }
+
+    public void SetPieceDragging(BoardPiece piece, bool isDragging)
+    {
+        if (piece == null || !IsInsideBounds(piece.GridPosition) || boardCells == null)
+            return;
+
+        if (!isDragging)
+        {
+            RefreshCellState(piece.GridPosition);
+            return;
+        }
+
+        GameObject cell = boardCells[piece.GridPosition.x, piece.GridPosition.y];
+        BoardCellView cellView = cell != null ? cell.GetComponent<BoardCellView>() : null;
+        cellView?.SetPieceState(false, false);
     }
 
     public bool TryRemovePieceToInventory(BoardPiece piece)
@@ -236,17 +253,6 @@ if (piece == null || !piece.CanMove)
             return false;
         }
 
-        HashSet<Vector2Int> placedPiecePositions = new HashSet<Vector2Int>();
-
-        if (levelData.placedPieces != null)
-        {
-            foreach (PieceData placedPiece in levelData.placedPieces)
-            {
-                if (placedPiece != null)
-                    placedPiecePositions.Add(placedPiece.gridPosition);
-            }
-        }
-
         List<Vector2Int> hintPositions = new List<Vector2Int>();
 
         foreach (PieceData solvedPiece in levelData.solvedLevelConfig.pieces)
@@ -259,7 +265,7 @@ if (piece == null || !piece.CanMove)
             if (!IsInsideBounds(hintPosition))
                 continue;
 
-            if (placedPiecePositions.Contains(hintPosition))
+            if (!IsCellEmpty(hintPosition))
                 continue;
 
             if (!hintPositions.Contains(hintPosition))
@@ -460,10 +466,13 @@ private void RefreshCellState(Vector2Int gridPosition)
     BoardPiece piece = boardPieces != null ? boardPieces[gridPosition.x, gridPosition.y] : null;
     bool hasFixedUnrotatablePiece =
         piece != null &&
-        !piece.CanMove &&
         !piece.CanRotate;
+    bool hasFixedRotatablePiece =
+        piece != null &&
+        !piece.CanMove &&
+        piece.CanRotate;
 
-    cellView.SetCantBeRotated(hasFixedUnrotatablePiece);
+    cellView.SetPieceState(hasFixedRotatablePiece, hasFixedUnrotatablePiece);
 }
 
     private void ClearBoard()

@@ -17,54 +17,69 @@ MonoBehaviour:
   placedPieces:
   - pieceType: 1
     gridPosition: {x: 0, y: 4}
+    direction: 2
+    canRotate: 1
+    portalPairId: 0
+  - pieceType: 6
+    gridPosition: {x: 1, y: 4}
+    direction: 1
+    canRotate: 1
+    portalPairId: 0
+  - pieceType: 3
+    gridPosition: {x: 3, y: 4}
+    direction: 0
+    canRotate: 0
+    portalPairId: 0
+  - pieceType: 2
+    gridPosition: {x: 4, y: 0}
+    direction: 0
+    canRotate: 0
+    portalPairId: 0
+  - pieceType: 5
+    gridPosition: {x: 3, y: 2}
+    direction: 0
+    canRotate: 1
+    portalPairId: 0
+  - pieceType: 5
+    gridPosition: {x: 3, y: 2}
     direction: 0
     canRotate: 1
     portalPairId: 0
   - pieceType: 3
-    gridPosition: {x: 4, y: 2}
-    direction: 0
-    canRotate: 0
-    portalPairId: 0
-  - pieceType: 6
-    gridPosition: {x: 3, y: 4}
-    direction: 1
-    canRotate: 0
-    portalPairId: 0
-  - pieceType: 2
-    gridPosition: {x: 4, y: 3}
+    gridPosition: {x: 2, y: 2}
     direction: 0
     canRotate: 0
     portalPairId: 0
   inventoryPieces:
+  - pieceType: 5
+    gridPosition: {x: 0, y: 0}
+    direction: 0
+    canRotate: 0
+    portalPairId: 0
   - pieceType: 4
+    gridPosition: {x: 0, y: 0}
+    direction: 0
+    canRotate: 0
+    portalPairId: 0
+  - pieceType: 5
     gridPosition: {x: 0, y: 0}
     direction: 0
     canRotate: 0
     portalPairId: 0
   solvedLevelConfig:
     pieces:
-    - pieceType: 1
-      gridPosition: {x: 0, y: 4}
-      direction: 1
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 2
-      gridPosition: {x: 4, y: 3}
+    - pieceType: 5
+      gridPosition: {x: 2, y: 4}
       direction: 0
       canRotate: 0
       portalPairId: 0
-    - pieceType: 3
-      gridPosition: {x: 4, y: 2}
+    - pieceType: 5
+      gridPosition: {x: 2, y: 3}
       direction: 0
       canRotate: 0
       portalPairId: 0
     - pieceType: 4
-      gridPosition: {x: 4, y: 4}
+      gridPosition: {x: 4, y: 3}
       direction: 0
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 6
-      gridPosition: {x: 3, y: 4}
-      direction: 1
       canRotate: 0
       portalPairId: 0

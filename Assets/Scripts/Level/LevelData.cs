@@ -4,7 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class SolvedLevelConfig
 {
-    [Tooltip("Board pieces in their solved grid positions and final directions.")]
+    [Tooltip("Hint positions for pieces that come from the inventory. Do not include pieces already placed on the board; direction and rotation are ignored.")]
     public List<PieceData> pieces = new List<PieceData>();
 }
 
@@ -23,6 +23,6 @@ public class LevelData : ScriptableObject
     [Header("Available in inventory tray")]
     public List<PieceData> inventoryPieces = new List<PieceData>();
 
-    [Header("Solved Level Config")]
+    [Header("Hint positions for inventory pieces")]
     public SolvedLevelConfig solvedLevelConfig = new SolvedLevelConfig();
 }

@@ -13,16 +13,16 @@ public class GameAudioLibrary : ScriptableObject
     public AudioClip gameplayBgm;
 
     [Header("General SFX")]
-    public AudioClip buttonClick;
     public List<AudioClip> buttonClickOptions = new List<AudioClip>();
+    [Tooltip("One available sound is chosen at random when GOTI reaches the grave.")]
+    public List<AudioClip> winArrivalOptions = new List<AudioClip>();
+    [Tooltip("Played together with the smile animation and confetti.")]
     public AudioClip win;
-    public AudioClip lose;
+    [Tooltip("Looped while GOTI rolls across the board.")]
+    public AudioClip roll;
     public List<AudioClip> loseOptions = new List<AudioClip>();
-    public AudioClip fireLaser;
     public List<AudioClip> fireLaserOptions = new List<AudioClip>();
-    public AudioClip placePiece;
     public List<AudioClip> placePieceOptions = new List<AudioClip>();
-    public AudioClip rotatePiece;
     public List<AudioClip> rotatePieceOptions = new List<AudioClip>();
     public AudioClip returnPiece;
     public List<AudioClip> bumpOptions = new List<AudioClip>();
@@ -30,38 +30,43 @@ public class GameAudioLibrary : ScriptableObject
 
     public AudioClip GetButtonClickSound()
     {
-        return GetRandomClip(buttonClick, buttonClickOptions);
+        return GetRandomClip(buttonClickOptions);
+    }
+
+    public AudioClip GetWinArrivalSound()
+    {
+        return GetRandomClip(winArrivalOptions);
     }
 
     public AudioClip GetPlacePieceSound()
     {
-        return GetRandomClip(placePiece, placePieceOptions);
+        return GetRandomClip(placePieceOptions);
     }
 
     public AudioClip GetRotatePieceSound()
     {
-        return GetRandomClip(rotatePiece, rotatePieceOptions);
+        return GetRandomClip(rotatePieceOptions);
     }
 
     public AudioClip GetFireLaserSound()
     {
-        return GetRandomClip(fireLaser, fireLaserOptions);
+        return GetRandomClip(fireLaserOptions);
     }
 
     public AudioClip GetLoseSound()
     {
-        return GetRandomClip(lose, loseOptions);
+        return GetRandomClip(loseOptions);
     }
 
-    public AudioClip GetBumpSound() => GetRandomClip(null, bumpOptions);
-    public AudioClip GetWhooshSound() => GetRandomClip(null, whooshOptions);
+    public AudioClip GetBumpSound() => GetRandomClip(bumpOptions);
+    public AudioClip GetWhooshSound() => GetRandomClip(whooshOptions);
 
-    private AudioClip GetRandomClip(AudioClip defaultClip, List<AudioClip> options)
+    private AudioClip GetRandomClip(List<AudioClip> options)
     {
         List<AudioClip> availableClips = new List<AudioClip>();
 
-        if (defaultClip != null)
-            availableClips.Add(defaultClip);
+        if (options == null)
+            return null;
 
         for (int i = 0; i < options.Count; i++)
         {

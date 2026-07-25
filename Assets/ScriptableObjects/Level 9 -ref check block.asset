@@ -69,42 +69,17 @@ MonoBehaviour:
       canRotate: 0
       portalPairId: 0
     - pieceType: 5
-      gridPosition: {x: 3, y: 2}
-      direction: 2
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 5
       gridPosition: {x: 1, y: 2}
       direction: 2
       canRotate: 0
       portalPairId: 0
-    - pieceType: 5
-      gridPosition: {x: 1, y: 1}
-      direction: 2
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 5
-      gridPosition: {x: 2, y: 1}
-      direction: 0
-      canRotate: 0
-      portalPairId: 0
     - pieceType: 6
       gridPosition: {x: 2, y: 3}
       direction: 0
       canRotate: 0
       portalPairId: 0
-    - pieceType: 6
+    - pieceType: 5
       gridPosition: {x: 2, y: 4}
       direction: 0
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 3
-      gridPosition: {x: 2, y: 3}
-      direction: 0
-      canRotate: 0
-      portalPairId: 0
-    - pieceType: 2
-      gridPosition: {x: 2, y: 4}
-      direction: 1
       canRotate: 0
       portalPairId: 0

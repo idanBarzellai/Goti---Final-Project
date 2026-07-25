@@ -13,6 +13,7 @@ public class AudioManager : MonoBehaviour
     [Header("Sources")]
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioSource rollSource;
 
     private bool isMuted;
 
@@ -68,6 +69,9 @@ public class AudioManager : MonoBehaviour
         if (sfxSource == null)
             sfxSource = gameObject.AddComponent<AudioSource>();
 
+        if (rollSource == null)
+            rollSource = gameObject.AddComponent<AudioSource>();
+
         bgmSource.loop = true;
         bgmSource.playOnAwake = false;
         bgmSource.volume = BgmVolume;
@@ -77,10 +81,16 @@ public class AudioManager : MonoBehaviour
         sfxSource.playOnAwake = false;
         sfxSource.volume = 1f;
         sfxSource.mute = isMuted;
+
+        rollSource.loop = true;
+        rollSource.playOnAwake = false;
+        rollSource.volume = SfxVolume;
+        rollSource.mute = isMuted;
     }
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        StopRoll();
         PlayBgmForScene(scene.name);
     }
 
@@ -122,6 +132,7 @@ public class AudioManager : MonoBehaviour
     }
 
     public void PlayButtonClick() => PlaySfx(audioLibrary != null ? audioLibrary.GetButtonClickSound() : null);
+    public void PlayWinArrival() => PlaySfx(audioLibrary != null ? audioLibrary.GetWinArrivalSound() : null);
     public void PlayWin() => PlaySfx(audioLibrary?.win);
     public void PlayLose() => PlaySfx(audioLibrary != null ? audioLibrary.GetLoseSound() : null);
     public void PlayFireLaser() => PlaySfx(audioLibrary != null ? audioLibrary.GetFireLaserSound() : null);
@@ -130,6 +141,29 @@ public class AudioManager : MonoBehaviour
     public void PlayReturnPiece() => PlaySfx(audioLibrary?.returnPiece);
     public void PlayBump() => PlaySfx(audioLibrary != null ? audioLibrary.GetBumpSound() : null);
     public void PlayWhoosh() => PlaySfx(audioLibrary != null ? audioLibrary.GetWhooshSound() : null);
+
+    public void StartRoll()
+    {
+        AudioClip clip = audioLibrary != null ? audioLibrary.roll : null;
+        if (clip == null || rollSource == null)
+            return;
+
+        if (rollSource.clip == clip && rollSource.isPlaying)
+            return;
+
+        rollSource.clip = clip;
+        rollSource.volume = SfxVolume;
+        rollSource.Play();
+    }
+
+    public void StopRoll()
+    {
+        if (rollSource == null)
+            return;
+
+        rollSource.Stop();
+        rollSource.clip = null;
+    }
 
     public void PlaySfx(AudioClip clip)
     {
@@ -163,6 +197,9 @@ public class AudioManager : MonoBehaviour
 
         if (sfxSource != null)
             sfxSource.mute = isMuted;
+
+        if (rollSource != null)
+            rollSource.mute = isMuted;
     }
 
     private float BgmVolume => audioLibrary != null ? audioLibrary.bgmVolume : 0.6f;

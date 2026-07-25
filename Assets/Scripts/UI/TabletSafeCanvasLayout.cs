@@ -13,6 +13,8 @@ public sealed class TabletSafeCanvasLayout : MonoBehaviour
     [Header("Design frame")]
     [SerializeField] private Vector2 referenceResolution = new(1080f, 1920f);
     [SerializeField] private bool respectDeviceSafeArea = true;
+    [Tooltip("Screens narrower than this keep the original phone layout unchanged.")]
+    [SerializeField, Range(0.5f, 0.8f)] private float tabletAspectThreshold = 0.6f;
 
     [Header("Children that should still fill the screen")]
     [Tooltip("Direct Canvas children with these names stay outside the portrait frame.")]
@@ -23,13 +25,20 @@ public sealed class TabletSafeCanvasLayout : MonoBehaviour
 
     private void Awake()
     {
+        canvasRect = transform as RectTransform;
+
+        // Keep the exact authored phone layout. Only wider portrait screens
+        // (tablets and tablet-like foldables) receive the extra content frame.
+        float portraitAspect = Screen.width / (float)Mathf.Max(1, Screen.height);
+        if (portraitAspect < tabletAspectThreshold)
+            return;
+
         CanvasScaler scaler = GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = referenceResolution;
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         scaler.matchWidthOrHeight = 0.5f;
 
-        canvasRect = transform as RectTransform;
         CreatePortraitFrame();
         MoveAuthoredContentIntoFrame();
     }

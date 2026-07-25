@@ -13,6 +13,10 @@ public class LaserCharacterWalker : MonoBehaviour
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float arriveDistance = 0.02f;
 
+    [Header("Mobile Rolling Haptics")]
+    [SerializeField] private bool enableRollingVibration = true;
+    [SerializeField, Min(0.1f)] private float rollingVibrationInterval = 0.35f;
+
     [Header("Portal")]
     [SerializeField] private float portalPauseDuration = 0.12f;
 
@@ -32,6 +36,7 @@ public class LaserCharacterWalker : MonoBehaviour
     private float nextMovementFrameTime;
     private Direction? currentMovementDirection;
     private Quaternion entryRotation = Quaternion.identity;
+    private float nextRollingVibrationTime;
 
     public void ConfigureFromEntry(BoardPiece entry)
     {
@@ -56,6 +61,7 @@ public class LaserCharacterWalker : MonoBehaviour
         transform.localScale = Vector3.one;
         transform.rotation = Quaternion.identity;
         currentMovementDirection = null;
+        nextRollingVibrationTime = 0f;
 
         if (walkRoutine != null)
             StopCoroutine(walkRoutine);
@@ -65,6 +71,8 @@ public class LaserCharacterWalker : MonoBehaviour
 
     public void Clear()
     {
+        AudioManager.Instance?.StopRoll();
+
         if (walkRoutine != null)
         {
             StopCoroutine(walkRoutine);
@@ -80,6 +88,7 @@ public class LaserCharacterWalker : MonoBehaviour
     {
         if (paths == null || paths.Count == 0)
         {
+            AudioManager.Instance?.StopRoll();
             StopTrail();
             walkRoutine = null;
             onComplete?.Invoke();
@@ -88,6 +97,7 @@ public class LaserCharacterWalker : MonoBehaviour
         }
 
         gameObject.SetActive(true);
+        AudioManager.Instance?.StartRoll();
 
         for (int pathIndex = 0; pathIndex < paths.Count; pathIndex++)
         {
@@ -100,6 +110,7 @@ public class LaserCharacterWalker : MonoBehaviour
 
             if (isAfterPortal)
             {
+                AudioManager.Instance?.StopRoll();
                 StopTrail();
 
                 if (characterRenderer != null)
@@ -112,6 +123,7 @@ public class LaserCharacterWalker : MonoBehaviour
                 if (characterRenderer != null)
                     characterRenderer.enabled = true;
 
+                AudioManager.Instance?.StartRoll();
                 yield return null;
             }
             else
@@ -141,7 +153,8 @@ public class LaserCharacterWalker : MonoBehaviour
 
         if (shouldPlayWinAnimation)
         {
-            onReachedGoal?.Invoke();
+            AudioManager.Instance?.StopRoll();
+            AudioManager.Instance?.PlayWinArrival();
             Sprite[] winFrames = animationLibrary != null ? animationLibrary.winFrames : null;
             if (winFrames != null && winFrames.Length > 0 && winFrames[0] != null)
                 characterRenderer.sprite = winFrames[0];
@@ -150,6 +163,7 @@ public class LaserCharacterWalker : MonoBehaviour
             yield return ScaleOnlyTo(winScale, winScaleUpDuration);
             yield return new WaitForSeconds(winPostScaleDelay);
             AudioManager.Instance?.PlayWin();
+            onReachedGoal?.Invoke();
             yield return PlayFrames(winFrames, 1);
             yield return new WaitForSeconds(winDisappearDelay);
             yield return ScaleTo(0f, winPauseDuration);
@@ -166,13 +180,16 @@ public class LaserCharacterWalker : MonoBehaviour
                 if (viewport.x < -0.1f || viewport.x > 1.1f || viewport.y < -0.1f || viewport.y > 1.1f) break;
                 yield return MoveTo(transform.position + direction * 0.5f);
             }
+            AudioManager.Instance?.StopRoll();
             yield return RespawnAtEntry(paths);
         }
         else
         {
+            AudioManager.Instance?.StopRoll();
             yield return RespawnAtEntry(paths);
         }
 
+        AudioManager.Instance?.StopRoll();
         walkRoutine = null;
         onComplete?.Invoke();
         gameObject.SetActive(false);
@@ -191,6 +208,8 @@ public class LaserCharacterWalker : MonoBehaviour
         }
         while (Vector3.Distance(transform.position, target) > arriveDistance)
         {
+            TryPlayRollingVibration();
+
             if (frames != null && frames.Length > 0 && Time.time >= nextMovementFrameTime)
             {
                 characterRenderer.sprite = frames[movementFrame++ % frames.Length];
@@ -206,6 +225,22 @@ public class LaserCharacterWalker : MonoBehaviour
         }
 
         transform.position = target;
+    }
+
+    private void TryPlayRollingVibration()
+    {
+        if (!enableRollingVibration ||
+            !Application.isMobilePlatform ||
+            Time.unscaledTime < nextRollingVibrationTime)
+        {
+            return;
+        }
+
+#if UNITY_ANDROID || UNITY_IOS
+        Handheld.Vibrate();
+#endif
+        nextRollingVibrationTime =
+            Time.unscaledTime + Mathf.Max(0.1f, rollingVibrationInterval);
     }
 
     private IEnumerator RespawnAtEntry(List<List<Vector3>> paths)

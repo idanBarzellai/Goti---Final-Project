@@ -16,7 +16,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private PieceSpriteLibrary spriteLibrary;
     [SerializeField] private Vector2 gotiSize = new Vector2(220f, 220f);
     [SerializeField] private float gotiMoveSpeed = 260f;
-    [SerializeField] private float animationFrameDuration = 0.06f;
+    [SerializeField] private float animationFrameDuration = 0.075f;
     [SerializeField] private float smileHoldDuration = 0.75f;
 
     private RectTransform backgroundGoti;
