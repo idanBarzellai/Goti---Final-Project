@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6788432122807942161}
   - component: {fileID: 2566888296676209969}
+  - component: {fileID: 3200000100}
   m_Layer: 5
   m_Name: LevelButton
   m_TagString: Untagged
@@ -53,8 +54,24 @@ MonoBehaviour:
   button: {fileID: 3084825400150574550}
   label: {fileID: 4073556754637052180}
   objectImage: {fileID: 6789831029246936188}
-  unlockedSprite: {fileID: 5506529802939369439, guid: 79789ad93645df841a93c39f216ef9d9, type: 3}
-  lockedSprite: {fileID: 6282650508643129284, guid: dcfe13dbdee3e7644a6e0baf13ba0e1a, type: 3}
+  unlockedSprite: {fileID: 2890452016612443042, guid: 74548c38d0301794aaebb78b1d2d6ad7, type: 3}
+  lockedSprite: {fileID: 8416243949045666254, guid: dd9b3c75002d4f642b7bdfe5400e508d, type: 3}
+--- !u!114 &3200000100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2959144245738413529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a68ea58d65a4f74b8dfe9b5f5a8d4d1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::UIBreathingMotion
+  speed: 0.2
+  height: 1
+  useUnscaledTime: 1
+  randomizeStartOffset: 0
 --- !u!1 &4888373953180684024
 GameObject:
   m_ObjectHideFlags: 0
@@ -83,15 +100,15 @@ RectTransform:
   m_GameObject: {fileID: 4888373953180684024}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.2746099, y: 1.2746099, z: 1.2746099}
+  m_LocalScale: {x: 1.06, y: 1.06, z: 1.06}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 6788432122807942161}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 20}
-  m_SizeDelta: {x: 178.061, y: 188.536}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 178.061, y: 188.53601}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2174961271247041139
 CanvasRenderer:
@@ -121,7 +138,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5506529802939369439, guid: 79789ad93645df841a93c39f216ef9d9, type: 3}
+  m_Sprite: {fileID: 1302723820812287101, guid: 17d6e051e88873048ac4c2a1c61de303, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -209,7 +226,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 6, y: 35.6}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 208.75, y: 234.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2274837722416304231

@@ -16,7 +16,7 @@ public class PieceSpriteLibrary : ScriptableObject
     public AnimationSet[] pieceAnimations;
     public Sprite rotatableEntryPointSprite;
     public Sprite fixedEntryPointSprite;
-    public Sprite[] rollUpFrames, rollDownFrames, rollLeftFrames, rollRightFrames, winFrames;
+    public Sprite[] rollUpFrames, rollDownFrames, rollLeftFrames, rollRightFrames, winFrames, loseFrames;
 
     public Sprite[] GetIdleFrames(PieceType type)
     {

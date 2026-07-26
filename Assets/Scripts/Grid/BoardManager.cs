@@ -25,6 +25,7 @@ public class BoardManager : MonoBehaviour
     public event Action OnBoardStateChanged;
     public event Action OnBoardLoaded;
     public event Action<BoardPiece> OnPiecePlacedFromInventory;
+    public event Action<BoardPiece> OnPieceReturnedToInventory;
     public event Action<BoardPiece> OnPieceRotated;
 
     public void LoadBoard(LevelData levelData)
@@ -140,6 +141,7 @@ private void SetupSpawnedPiece(BoardPiece piece)
 
         clickedPiece.RotateClockwise();
         AudioManager.Instance?.PlayRotatePiece();
+        HapticFeedback.Vibrate(HapticFeedback.RotateDurationMilliseconds, "Rotate");
         OnPieceRotated?.Invoke(clickedPiece);
         OnBoardChanged();
     }
@@ -198,6 +200,7 @@ if (piece == null || !piece.CanMove)
             RefreshCellState(pos);
         }
 
+        OnPieceReturnedToInventory?.Invoke(piece);
         Destroy(piece.gameObject);
         OnBoardChanged();
         return true;
@@ -232,6 +235,7 @@ if (piece == null || !piece.CanMove)
 };
 
     BoardPiece placedPiece = SpawnPiece(placedData, true, true, true);
+    HapticFeedback.Vibrate(HapticFeedback.PlaceDurationMilliseconds, "Place", 2);
     OnPiecePlacedFromInventory?.Invoke(placedPiece);
     OnBoardChanged();
     return true;
@@ -354,6 +358,15 @@ if (piece == null || !piece.CanMove)
             return;
 
         piece.GetComponent<BoardPieceView>()?.StartTraversalShake();
+    }
+
+    public void PlayTargetCompletionShake()
+    {
+        foreach (BoardPiece piece in GetAllPieces())
+        {
+            if (piece != null && piece.PieceType == PieceType.Target)
+                piece.GetComponent<BoardPieceView>()?.StartTraversalShake();
+        }
     }
 
     public void StopAllPieceTraversalShakes()

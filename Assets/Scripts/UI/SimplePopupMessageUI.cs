@@ -14,7 +14,23 @@ public class SimplePopupMessageUI : MonoBehaviour
 
     private void Awake()
     {
+        EnsurePopupSorting();
         HideImmediate();
+    }
+
+    private void EnsurePopupSorting()
+    {
+        Canvas parentCanvas = transform.parent != null
+            ? transform.parent.GetComponentInParent<Canvas>()
+            : null;
+        Canvas popupCanvas = GetComponent<Canvas>();
+
+        if (popupCanvas == null)
+            popupCanvas = gameObject.AddComponent<Canvas>();
+
+        popupCanvas.overrideSorting = true;
+        popupCanvas.sortingLayerID = parentCanvas != null ? parentCanvas.sortingLayerID : 0;
+        popupCanvas.sortingOrder = parentCanvas != null ? parentCanvas.sortingOrder + 100 : 100;
     }
 
     public void ShowMessage(string message)

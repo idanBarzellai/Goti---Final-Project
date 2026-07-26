@@ -16,6 +16,7 @@ public class LaserCharacterWalker : MonoBehaviour
     [Header("Mobile Rolling Haptics")]
     [SerializeField] private bool enableRollingVibration = true;
     [SerializeField, Min(0.1f)] private float rollingVibrationInterval = 0.35f;
+    [SerializeField, Range(1, 200)] private int rollingVibrationDurationMilliseconds = 50;
 
     [Header("Portal")]
     [SerializeField] private float portalPauseDuration = 0.12f;
@@ -30,6 +31,7 @@ public class LaserCharacterWalker : MonoBehaviour
     [SerializeField] private float appearDisappearSpinDegrees = 360f;
 
     private Coroutine walkRoutine;
+    private Coroutine loseAnimationRoutine;
     private PieceSpriteLibrary animationLibrary;
     private BoardPieceView entryView;
     private int movementFrame;
@@ -54,7 +56,7 @@ public class LaserCharacterWalker : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void WalkPaths(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onBump, Action onReachedGoal, Action onComplete)
+    public void WalkPaths(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool shouldPlayLoseAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onBump, Action onReachedGoal, Action onComplete)
     {
         gameObject.SetActive(true);
         entryView?.SetEntryAway(true);
@@ -66,12 +68,13 @@ public class LaserCharacterWalker : MonoBehaviour
         if (walkRoutine != null)
             StopCoroutine(walkRoutine);
 
-        walkRoutine = StartCoroutine(WalkPathsRoutine(paths, shouldPlayWinAnimation, wasBlocked, exitedBoard, onCellReached, onBump, onReachedGoal, onComplete));
+        walkRoutine = StartCoroutine(WalkPathsRoutine(paths, shouldPlayWinAnimation, shouldPlayLoseAnimation, wasBlocked, exitedBoard, onCellReached, onBump, onReachedGoal, onComplete));
     }
 
     public void Clear()
     {
         AudioManager.Instance?.StopRoll();
+        StopLoseAnimation();
 
         if (walkRoutine != null)
         {
@@ -84,7 +87,7 @@ public class LaserCharacterWalker : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private IEnumerator WalkPathsRoutine(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onBump, Action onReachedGoal, Action onComplete)
+    private IEnumerator WalkPathsRoutine(List<List<Vector3>> paths, bool shouldPlayWinAnimation, bool shouldPlayLoseAnimation, bool wasBlocked, bool exitedBoard, Action<Vector3> onCellReached, Action onBump, Action onReachedGoal, Action onComplete)
     {
         if (paths == null || paths.Count == 0)
         {
@@ -151,22 +154,55 @@ public class LaserCharacterWalker : MonoBehaviour
             StopTrail();
         }
 
-        if (shouldPlayWinAnimation)
+        if (shouldPlayWinAnimation || shouldPlayLoseAnimation)
         {
             AudioManager.Instance?.StopRoll();
-            AudioManager.Instance?.PlayWinArrival();
-            Sprite[] winFrames = animationLibrary != null ? animationLibrary.winFrames : null;
-            if (winFrames != null && winFrames.Length > 0 && winFrames[0] != null)
-                characterRenderer.sprite = winFrames[0];
+
+            if (shouldPlayWinAnimation)
+                AudioManager.Instance?.PlayWinArrival();
+
+            Sprite[] arrivalFrames = animationLibrary != null
+                ? (shouldPlayWinAnimation ? animationLibrary.winFrames : animationLibrary.loseFrames)
+                : null;
+
+            if (shouldPlayWinAnimation &&
+                arrivalFrames != null &&
+                arrivalFrames.Length > 0 &&
+                arrivalFrames[0] != null)
+            {
+                characterRenderer.sprite = arrivalFrames[0];
+            }
+            else if (shouldPlayLoseAnimation)
+            {
+                RestoreNormalCharacterSprite();
+            }
+
             if (winArrivalDelay > 0f)
                 yield return new WaitForSeconds(winArrivalDelay);
+
             yield return ScaleOnlyTo(winScale, winScaleUpDuration);
+
+            if (shouldPlayLoseAnimation && arrivalFrames != null && arrivalFrames.Length > 0)
+                loseAnimationRoutine = StartCoroutine(LoopFrames(arrivalFrames));
+
             yield return new WaitForSeconds(winPostScaleDelay);
-            AudioManager.Instance?.PlayWin();
-            onReachedGoal?.Invoke();
-            yield return PlayFrames(winFrames, 1);
+
+            if (shouldPlayWinAnimation)
+            {
+                AudioManager.Instance?.PlayWin();
+                onReachedGoal?.Invoke();
+                yield return PlayFrames(arrivalFrames, 1);
+            }
+
             yield return new WaitForSeconds(winDisappearDelay);
             yield return ScaleTo(0f, winPauseDuration);
+            StopLoseAnimation();
+
+            if (shouldPlayLoseAnimation)
+            {
+                RestoreNormalCharacterSprite();
+                yield return RespawnAtEntry(paths, true);
+            }
         }
         else if (exitedBoard && paths.Count > 0 && paths[paths.Count - 1].Count > 1)
         {
@@ -230,26 +266,47 @@ public class LaserCharacterWalker : MonoBehaviour
     private void TryPlayRollingVibration()
     {
         if (!enableRollingVibration ||
-            !Application.isMobilePlatform ||
             Time.unscaledTime < nextRollingVibrationTime)
         {
             return;
         }
 
-#if UNITY_ANDROID || UNITY_IOS
-        Handheld.Vibrate();
-#endif
+        HapticFeedback.Vibrate(rollingVibrationDurationMilliseconds, "Roll");
         nextRollingVibrationTime =
             Time.unscaledTime + Mathf.Max(0.1f, rollingVibrationInterval);
     }
 
-    private IEnumerator RespawnAtEntry(List<List<Vector3>> paths)
+    private IEnumerator RespawnAtEntry(List<List<Vector3>> paths, bool alreadyHidden = false)
     {
-        yield return ScaleTo(0f, winPauseDuration);
+        if (!alreadyHidden)
+            yield return ScaleTo(0f, winPauseDuration);
+
         if (paths.Count > 0 && paths[0] != null && paths[0].Count > 0) transform.position = paths[0][0];
         transform.rotation = entryRotation;
         yield return ScaleTo(1f, winPauseDuration);
         entryView?.SetEntryAway(false);
+    }
+
+    private void RestoreNormalCharacterSprite()
+    {
+        if (characterRenderer == null || animationLibrary == null)
+            return;
+
+        Sprite[] idleFrames = animationLibrary.GetIdleFrames(PieceType.Entry);
+        if (idleFrames != null)
+        {
+            for (int i = 0; i < idleFrames.Length; i++)
+            {
+                if (idleFrames[i] != null)
+                {
+                    characterRenderer.sprite = idleFrames[i];
+                    return;
+                }
+            }
+        }
+
+        if (animationLibrary.entrySprite != null)
+            characterRenderer.sprite = animationLibrary.entrySprite;
     }
 
     private IEnumerator PlayFrames(Sprite[] frames, int startIndex = 0)
@@ -260,6 +317,29 @@ public class LaserCharacterWalker : MonoBehaviour
             if (frames[i] != null) characterRenderer.sprite = frames[i];
             yield return new WaitForSeconds(0.06f);
         }
+    }
+
+    private IEnumerator LoopFrames(Sprite[] frames)
+    {
+        while (true)
+        {
+            for (int i = 0; i < frames.Length; i++)
+            {
+                if (frames[i] != null)
+                    characterRenderer.sprite = frames[i];
+
+                yield return new WaitForSeconds(0.06f);
+            }
+        }
+    }
+
+    private void StopLoseAnimation()
+    {
+        if (loseAnimationRoutine == null)
+            return;
+
+        StopCoroutine(loseAnimationRoutine);
+        loseAnimationRoutine = null;
     }
 
     private IEnumerator ScaleTo(float target, float duration)

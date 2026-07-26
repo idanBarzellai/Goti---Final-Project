@@ -63,12 +63,20 @@ public class BoardPieceView : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(3f, 8f));
             if (entryAway)
                 continue;
+
             foreach (Sprite frame in frames)
             {
-                if (frame != null) spriteRenderer.sprite = frame;
+                if (entryAway)
+                    break;
+
+                if (frame != null)
+                    spriteRenderer.sprite = frame;
+
                 yield return new WaitForSeconds(AnimationFrameDuration);
             }
-            spriteRenderer.sprite = frames[0];
+
+            if (!entryAway && frames[0] != null)
+                spriteRenderer.sprite = frames[0];
         }
     }
 
@@ -77,7 +85,44 @@ public class BoardPieceView : MonoBehaviour
         if (boardPiece == null || boardPiece.PieceType != PieceType.Entry || spriteLibrary == null) return;
         entryAway = away;
         Sprite pointSprite = boardPiece.CanRotate ? spriteLibrary.rotatableEntryPointSprite : spriteLibrary.fixedEntryPointSprite;
-        spriteRenderer.sprite = away ? pointSprite : spriteLibrary.GetIdleFrames(PieceType.Entry)?[0];
+
+        if (away)
+        {
+            if (pointSprite != null)
+            {
+                spriteRenderer.enabled = true;
+                if (shadowRenderer != null)
+                    shadowRenderer.enabled = true;
+                spriteRenderer.sprite = pointSprite;
+            }
+            else
+            {
+                spriteRenderer.enabled = false;
+                if (shadowRenderer != null)
+                    shadowRenderer.enabled = false;
+            }
+
+            return;
+        }
+
+        spriteRenderer.enabled = true;
+        if (shadowRenderer != null)
+            shadowRenderer.enabled = true;
+        Sprite[] idleFrames = spriteLibrary.GetIdleFrames(PieceType.Entry);
+        if (idleFrames != null)
+        {
+            for (int i = 0; i < idleFrames.Length; i++)
+            {
+                if (idleFrames[i] != null)
+                {
+                    spriteRenderer.sprite = idleFrames[i];
+                    return;
+                }
+            }
+        }
+
+        if (spriteLibrary.entrySprite != null)
+            spriteRenderer.sprite = spriteLibrary.entrySprite;
     }
 
     public Quaternion VisualWorldRotation => spriteRenderer != null ? spriteRenderer.transform.rotation : transform.rotation;
@@ -112,7 +157,6 @@ public class BoardPieceView : MonoBehaviour
             yield return new WaitForSeconds(0.045f);
         }
     }
-
 
 private void LateUpdate()
 {

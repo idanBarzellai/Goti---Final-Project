@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -230,14 +231,46 @@ if (laserCharacterWalker == null || boardRoot == null)
 );
 
     bool loseSoundPlayed = false;
+    HashSet<BoardPiece> traversedRequiredPieces = new HashSet<BoardPiece>();
+    int requiredPiecesBeforeTarget = 0;
+    foreach (BoardPiece piece in boardManager.GetAllPieces())
+    {
+        if (piece != null &&
+            IsRequiredHitPiece(piece) &&
+            piece.PieceType != PieceType.Target)
+        {
+            requiredPiecesBeforeTarget++;
+        }
+    }
+    bool targetCompletionShakePlayed = false;
+
     laserCharacterWalker.WalkPaths(
         paths,
         solved,
+        result.didHitAnyTarget && !solved,
         result.wasBlocked,
         result.exitedBoard,
         worldPosition =>
         {
             AnimateTraversedCell(worldPosition);
+
+            if (!targetCompletionShakePlayed &&
+                solved &&
+                boardManager.TryGetGridPositionFromWorld(worldPosition, out Vector2Int traversedGridPosition))
+            {
+                BoardPiece traversedPiece = boardManager.GetPieceAt(traversedGridPosition);
+                if (traversedPiece != null &&
+                    traversedPiece.PieceType != PieceType.Target &&
+                    IsRequiredHitPiece(traversedPiece))
+                {
+                    traversedRequiredPieces.Add(traversedPiece);
+                    if (traversedRequiredPieces.Count >= requiredPiecesBeforeTarget)
+                    {
+                        targetCompletionShakePlayed = true;
+                        boardManager.PlayTargetCompletionShake();
+                    }
+                }
+            }
 
             if (loseSoundPlayed || solved || result == null || !result.didHitAnyTarget || boardManager == null)
                 return;

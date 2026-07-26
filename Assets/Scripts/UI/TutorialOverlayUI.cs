@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -37,7 +38,9 @@ public class TutorialOverlayUI : MonoBehaviour
     [SerializeField] private Color panelColor = new Color(0f, 0f, 0f, 0.72f);
     [SerializeField] private float highlightPadding = 36f;
     [SerializeField] private Color focusBoxColor = new Color(1f, 0.86f, 0.18f, 0.75f);
-    [SerializeField] private float focusBoxLineThickness = 8f;
+    [SerializeField] private float focusBoxLineThickness = 12f;
+    [SerializeField] private Color focusBoxOutlineColor = new Color(0f, 0f, 0f, 0.95f);
+    [SerializeField, Min(0f)] private float focusBoxOutlineThickness = 4f;
     [SerializeField, Min(0f)] private float focusCornerRadius = 24f;
     [SerializeField] private float focusBreathPadding = 12f;
     [SerializeField] private float focusBreathSpeed = 0.55f;
@@ -58,12 +61,18 @@ public class TutorialOverlayUI : MonoBehaviour
     [SerializeField, Min(0.01f)] private float tapHandBobSpeed = 2f;
 
     private readonly List<Image> panels = new List<Image>();
+    private readonly List<Image> focusBoxOutlines = new List<Image>();
     private readonly List<Image> focusBoxLines = new List<Image>();
     private readonly List<Image> focusEdgeFeathers = new List<Image>();
     private readonly List<Sprite> generatedFeatherSprites = new List<Sprite>();
     private RectTransform overlayRoot;
     private RectTransform canvasRect;
     private RectTransform handRect;
+    private Transform pauseScreenRoot;
+    private Transform winScreenRoot;
+    private PauseMenuUI[] pauseMenus;
+    private GameWinPanelUI[] winMenus;
+    private bool modalWasActive;
     private Step currentStep = Step.Inactive;
     private Coroutine handRoutine;
     private bool tutorialActive;
@@ -114,6 +123,24 @@ public class TutorialOverlayUI : MonoBehaviour
         if (!tutorialActive)
             return;
 
+        bool modalActive = IsModalScreenActive();
+        if (modalActive)
+        {
+            if (overlayRoot != null)
+                overlayRoot.gameObject.SetActive(false);
+
+            ClearDragHintCell();
+            modalWasActive = true;
+            return;
+        }
+
+        if (modalWasActive)
+        {
+            modalWasActive = false;
+            if (currentStep == Step.DragPiece)
+                HighlightDragTargetCell();
+        }
+
         RefreshHighlight();
         HandleSkipInput();
     }
@@ -128,6 +155,15 @@ public class TutorialOverlayUI : MonoBehaviour
 
         if (canvas != null)
             canvasRect = canvas.transform as RectTransform;
+
+        if (canvasRect != null)
+        {
+            pauseScreenRoot = canvasRect.Find("PauseParent");
+            winScreenRoot = canvasRect.Find("WinParent");
+        }
+
+        pauseMenus = FindObjectsByType<PauseMenuUI>(FindObjectsInactive.Include);
+        winMenus = FindObjectsByType<GameWinPanelUI>(FindObjectsInactive.Include);
 
         if (boardManager == null)
             boardManager = FindAnyObjectByType<BoardManager>();
@@ -157,6 +193,7 @@ public class TutorialOverlayUI : MonoBehaviour
         {
             boardManager.OnBoardLoaded += HandleBoardLoaded;
             boardManager.OnPiecePlacedFromInventory += HandlePiecePlacedFromInventory;
+            boardManager.OnPieceReturnedToInventory += HandlePieceReturnedToInventory;
             boardManager.OnPieceRotated += HandlePieceRotated;
         }
 
@@ -173,6 +210,7 @@ public class TutorialOverlayUI : MonoBehaviour
         {
             boardManager.OnBoardLoaded -= HandleBoardLoaded;
             boardManager.OnPiecePlacedFromInventory -= HandlePiecePlacedFromInventory;
+            boardManager.OnPieceReturnedToInventory -= HandlePieceReturnedToInventory;
             boardManager.OnPieceRotated -= HandlePieceRotated;
         }
 
@@ -296,13 +334,32 @@ public class TutorialOverlayUI : MonoBehaviour
             Keyboard.current != null &&
             (Keyboard.current.tabKey.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame);
 
-        return clicked || tapped || keyboardSkip;
+        bool pointerSkip = clicked || tapped;
+        if (pointerSkip &&
+            EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+        {
+            pointerSkip = false;
+        }
+
+        return pointerSkip || keyboardSkip;
 #else
         bool clicked = Input.GetMouseButtonDown(0);
         bool tapped = Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began;
         bool keyboardSkip = Input.GetKeyDown(KeyCode.Tab) || Input.GetKeyDown(KeyCode.Space);
 
-        return clicked || tapped || keyboardSkip;
+        bool pointerSkip = clicked || tapped;
+        if (pointerSkip && EventSystem.current != null)
+        {
+            bool pointerOverUi = clicked && EventSystem.current.IsPointerOverGameObject();
+            if (tapped)
+                pointerOverUi |= EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId);
+
+            if (pointerOverUi)
+                pointerSkip = false;
+        }
+
+        return pointerSkip || keyboardSkip;
 #endif
     }
 
@@ -354,6 +411,22 @@ public class TutorialOverlayUI : MonoBehaviour
             SetStep(Step.Fire);
     }
 
+    private void HandlePieceReturnedToInventory(BoardPiece piece)
+    {
+        if (!tutorialActive)
+            return;
+
+        if (currentStep == Step.Fire ||
+            currentStep == Step.Rotate ||
+            currentStep == Step.AllPieces)
+        {
+            pendingLaserResult = null;
+            pendingLaserSolved = false;
+            rotateFocusPiece = null;
+            SetStep(Step.DragPiece);
+        }
+    }
+
     private void HandleFireLaserStarted()
     {
         if (tutorialActive && currentStep == Step.Fire)
@@ -393,25 +466,29 @@ public class TutorialOverlayUI : MonoBehaviour
 
         overlayRoot = new GameObject("TutorialPanels", typeof(RectTransform)).GetComponent<RectTransform>();
         overlayRoot.SetParent(canvasRect, false);
-        overlayRoot.SetAsLastSibling();
+        PlaceOverlayBehindModalScreens();
         overlayRoot.anchorMin = Vector2.zero;
         overlayRoot.anchorMax = Vector2.one;
         overlayRoot.offsetMin = Vector2.zero;
         overlayRoot.offsetMax = Vector2.zero;
 
-        for (int i = 0; i < MaxOverlayPanels; i++)
-        {
-            Image panel = new GameObject($"TutorialPanel_{i + 1}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            panel.transform.SetParent(overlayRoot, false);
-            panel.color = panelColor;
-            panel.raycastTarget = true;
-            panels.Add(panel);
-        }
-
-        Sprite roundedFocusBorder = CreateRoundedBorderSprite();
+        Sprite roundedFocusBorder = CreateRoundedBorderSprite(
+            focusBoxLineThickness,
+            "TutorialRoundedFocusBorder");
+        Sprite roundedOutlineBorder = CreateRoundedBorderSprite(
+            focusBoxLineThickness + focusBoxOutlineThickness * 2f,
+            "TutorialRoundedFocusOutline");
 
         for (int i = 0; i < MaxHighlightBoxes; i++)
         {
+            Image outline = new GameObject($"TutorialFocusOutline_{i + 1}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            outline.transform.SetParent(overlayRoot, false);
+            outline.sprite = roundedOutlineBorder;
+            outline.type = Image.Type.Sliced;
+            outline.color = focusBoxOutlineColor;
+            outline.raycastTarget = false;
+            focusBoxOutlines.Add(outline);
+
             Image border = new GameObject($"TutorialFocusBorder_{i + 1}", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             border.transform.SetParent(overlayRoot, false);
             border.sprite = roundedFocusBorder;
@@ -421,25 +498,24 @@ public class TutorialOverlayUI : MonoBehaviour
             focusBoxLines.Add(border);
         }
 
-        CreateFocusEdgeFeathers();
         CreateHandCue();
     }
 
-    private Sprite CreateRoundedBorderSprite()
+    private Sprite CreateRoundedBorderSprite(float lineThickness, string textureName)
     {
-        float radius = Mathf.Max(focusCornerRadius, focusBoxLineThickness);
-        int padding = Mathf.CeilToInt(radius + focusBoxLineThickness + 2f);
+        float radius = Mathf.Max(focusCornerRadius, lineThickness);
+        int padding = Mathf.CeilToInt(radius + lineThickness + 2f);
         int size = Mathf.Max(8, padding * 2);
         Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
-        texture.name = "TutorialRoundedFocusBorder";
+        texture.name = textureName;
         texture.wrapMode = TextureWrapMode.Clamp;
         texture.filterMode = FilterMode.Bilinear;
         Color[] pixels = new Color[size * size];
         Vector2 center = new Vector2(size * 0.5f, size * 0.5f);
         Vector2 outerHalfSize = new Vector2(size * 0.5f - 1f, size * 0.5f - 1f);
-        Vector2 innerHalfSize = outerHalfSize - Vector2.one * focusBoxLineThickness;
+        Vector2 innerHalfSize = outerHalfSize - Vector2.one * lineThickness;
         float outerRadius = Mathf.Min(radius, Mathf.Min(outerHalfSize.x, outerHalfSize.y));
-        float innerRadius = Mathf.Max(0f, outerRadius - focusBoxLineThickness);
+        float innerRadius = Mathf.Max(0f, outerRadius - lineThickness);
 
         for (int y = 0; y < size; y++)
         {
@@ -710,11 +786,11 @@ public class TutorialOverlayUI : MonoBehaviour
 
     private void ShowOverlay(Rect highlightRect, bool includePopup = false)
     {
-        if (overlayRoot == null || panels.Count == 0 || canvasRect == null)
+        if (overlayRoot == null || focusBoxLines.Count == 0 || canvasRect == null)
             return;
 
         overlayRoot.gameObject.SetActive(true);
-        overlayRoot.SetAsLastSibling();
+        PlaceOverlayBehindModalScreens();
         EnsurePopupVisibleAboveOverlay();
 
         Rect canvasBounds = canvasRect.rect;
@@ -723,42 +799,86 @@ public class TutorialOverlayUI : MonoBehaviour
             ExpandAndClamp(highlightRect, canvasBounds, highlightPadding)
         };
 
-        if (includePopup && popupMessageUI != null)
+        LayoutFocusBoxes(canvasBounds, highlightRects);
+    }
+
+    private void PlaceOverlayBehindModalScreens()
+    {
+        if (overlayRoot == null || canvasRect == null)
+            return;
+
+        int firstModalIndex = canvasRect.childCount;
+        Transform pauseParent = canvasRect.Find("PauseParent");
+        Transform winParent = canvasRect.Find("WinParent");
+
+        if (pauseParent != null)
         {
-            Rect popupRect = GetRectTransformRect(popupMessageUI.transform as RectTransform);
-            Rect popupHighlight = ExpandAndClamp(popupRect, canvasBounds, highlightPadding);
-            Rect primaryHighlight = highlightRects[0];
-
-            // Keep the popup opening from covering the gameplay focus. Trim it on
-            // whichever side the popup occupies so both openings remain visible.
-            if (popupHighlight.Overlaps(primaryHighlight))
-            {
-                Vector2 offset = popupHighlight.center - primaryHighlight.center;
-
-                if (Mathf.Abs(offset.y) >= Mathf.Abs(offset.x))
-                {
-                    if (offset.y < 0f)
-                        popupHighlight.yMax = Mathf.Min(popupHighlight.yMax, primaryHighlight.yMin);
-                    else
-                        popupHighlight.yMin = Mathf.Max(popupHighlight.yMin, primaryHighlight.yMax);
-                }
-                else if (offset.x < 0f)
-                {
-                    popupHighlight.xMax = Mathf.Min(popupHighlight.xMax, primaryHighlight.xMin);
-                }
-                else
-                {
-                    popupHighlight.xMin = Mathf.Max(popupHighlight.xMin, primaryHighlight.xMax);
-                }
-            }
-
-            if (popupHighlight.width > 0.01f && popupHighlight.height > 0.01f)
-                highlightRects.Add(popupHighlight);
+            EnsureModalCanvasAboveTutorial(pauseParent);
+            firstModalIndex = Mathf.Min(firstModalIndex, pauseParent.GetSiblingIndex());
         }
 
-        LayoutPanelsAroundHighlights(canvasBounds, highlightRects);
-        LayoutFocusEdgeFeathers(highlightRects);
-        LayoutFocusBoxes(canvasBounds, highlightRects);
+        if (winParent != null)
+        {
+            EnsureModalCanvasAboveTutorial(winParent);
+            firstModalIndex = Mathf.Min(firstModalIndex, winParent.GetSiblingIndex());
+        }
+
+        if (firstModalIndex < canvasRect.childCount &&
+            overlayRoot.GetSiblingIndex() > firstModalIndex)
+        {
+            overlayRoot.SetSiblingIndex(firstModalIndex);
+        }
+    }
+
+    private bool IsModalScreenActive()
+    {
+        if (pauseMenus == null || pauseMenus.Length == 0)
+        {
+            pauseMenus = FindObjectsByType<PauseMenuUI>(FindObjectsInactive.Include);
+        }
+
+        for (int i = 0; i < pauseMenus.Length; i++)
+        {
+            if (pauseMenus[i] != null && pauseMenus[i].gameObject.activeInHierarchy)
+                return true;
+        }
+
+        if (winMenus == null || winMenus.Length == 0)
+        {
+            winMenus = FindObjectsByType<GameWinPanelUI>(FindObjectsInactive.Include);
+        }
+
+        for (int i = 0; i < winMenus.Length; i++)
+        {
+            if (winMenus[i] != null && winMenus[i].gameObject.activeInHierarchy)
+                return true;
+        }
+
+        if (canvasRect != null)
+        {
+            if (pauseScreenRoot == null)
+                pauseScreenRoot = canvasRect.Find("PauseParent");
+
+            if (winScreenRoot == null)
+                winScreenRoot = canvasRect.Find("WinParent");
+        }
+
+        return (pauseScreenRoot != null && pauseScreenRoot.gameObject.activeInHierarchy) ||
+               (winScreenRoot != null && winScreenRoot.gameObject.activeInHierarchy);
+    }
+
+    private void EnsureModalCanvasAboveTutorial(Transform modalRoot)
+    {
+        Canvas modalCanvas = modalRoot.GetComponent<Canvas>();
+        if (modalCanvas == null)
+            modalCanvas = modalRoot.gameObject.AddComponent<Canvas>();
+
+        modalCanvas.overrideSorting = true;
+        modalCanvas.sortingLayerID = canvas != null ? canvas.sortingLayerID : 0;
+        modalCanvas.sortingOrder = canvas != null ? canvas.sortingOrder + 200 : 200;
+
+        if (modalRoot.GetComponent<GraphicRaycaster>() == null)
+            modalRoot.gameObject.AddComponent<GraphicRaycaster>();
     }
 
     private void LayoutFocusEdgeFeathers(List<Rect> highlightRects)
@@ -857,11 +977,22 @@ public class TutorialOverlayUI : MonoBehaviour
             if (borderIndex >= focusBoxLines.Count)
                 break;
 
+            Rect outlineRect = ExpandAndClamp(rect, canvasBounds, focusBoxOutlineThickness);
+            SetFocusLine(
+                focusBoxOutlines[borderIndex],
+                outlineRect.xMin,
+                outlineRect.yMin,
+                outlineRect.width,
+                outlineRect.height,
+                focusBoxOutlineColor);
             SetFocusLine(focusBoxLines[borderIndex++], rect.xMin, rect.yMin, rect.width, rect.height, lineColor);
         }
 
         for (int i = borderIndex; i < focusBoxLines.Count; i++)
+        {
+            focusBoxOutlines[i].gameObject.SetActive(false);
             focusBoxLines[i].gameObject.SetActive(false);
+        }
     }
 
     private void SetFocusLine(Image line, float x, float y, float width, float height, Color color)

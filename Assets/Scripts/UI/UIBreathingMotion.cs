@@ -42,6 +42,8 @@ public class UIBreathingMotion : MonoBehaviour
 
         float time = useUnscaledTime ? Time.unscaledTime : Time.time;
         float offsetY = Mathf.Sin((time * speed * Mathf.PI * 2f) + phaseOffset) * height;
-        rectTransform.anchoredPosition = startAnchoredPosition + new Vector2(0f, offsetY);
+        Vector2 position = rectTransform.anchoredPosition;
+        position.y = startAnchoredPosition.y + offsetY;
+        rectTransform.anchoredPosition = position;
     }
 }

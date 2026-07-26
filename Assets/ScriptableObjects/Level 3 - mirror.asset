@@ -36,7 +36,7 @@ MonoBehaviour:
     canRotate: 1
     portalPairId: 0
   - pieceType: 3
-    gridPosition: {x: 3, y: 1}
+    gridPosition: {x: 0, y: 3}
     direction: 0
     canRotate: 0
     portalPairId: 0

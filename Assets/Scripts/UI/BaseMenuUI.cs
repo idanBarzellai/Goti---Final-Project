@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class BaseMenuUI : MonoBehaviour
 {
@@ -14,6 +15,7 @@ private void ForceHiddenOnStart() => gameObject.SetActive(false);
     {
         Debug.Log("Showing menu: " + gameObject.name);
         gameObject.SetActive(true);
+        EnsureModalSorting();
 
         OnShown();
     }
@@ -40,6 +42,24 @@ private void ForceHiddenOnStart() => gameObject.SetActive(false);
     protected virtual void OnShown() { }
 
     protected virtual void OnHidden() { }
+
+    private void EnsureModalSorting()
+    {
+        Canvas parentCanvas = transform.parent != null
+            ? transform.parent.GetComponentInParent<Canvas>()
+            : null;
+        Canvas modalCanvas = GetComponent<Canvas>();
+
+        if (modalCanvas == null)
+            modalCanvas = gameObject.AddComponent<Canvas>();
+
+        modalCanvas.overrideSorting = true;
+        modalCanvas.sortingLayerID = parentCanvas != null ? parentCanvas.sortingLayerID : 0;
+        modalCanvas.sortingOrder = parentCanvas != null ? parentCanvas.sortingOrder + 200 : 200;
+
+        if (GetComponent<GraphicRaycaster>() == null)
+            gameObject.AddComponent<GraphicRaycaster>();
+    }
 
     protected void RestartLevel()
     {

@@ -154,6 +154,7 @@ MonoBehaviour:
   arriveDistance: 0.02
   enableRollingVibration: 1
   rollingVibrationInterval: 0.35
+  rollingVibrationDurationMilliseconds: 50
   portalPauseDuration: 0.12
   winPauseDuration: 0.5
   winScale: 2
@@ -878,7 +879,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -73.00003, y: -53.400024}
+  m_AnchoredPosition: {x: -20, y: -53.400024}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &317359910
@@ -1010,7 +1011,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 512, y: 757}
+  m_AnchoredPosition: {x: 512, y: 416}
   m_SizeDelta: {x: 119, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &338867794
@@ -1026,14 +1027,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f4158afb7e74b464684f9adcdfbbd092, type: 3}
+  m_Sprite: {fileID: 2010040708041431178, guid: 7dcc3c4b618a278499f0bd0ecb9eb043, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1223,7 +1224,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1357321067}
   - {fileID: 469442923}
   - {fileID: 2100000002}
   - {fileID: 1138689684}
@@ -1233,6 +1233,7 @@ RectTransform:
   - {fileID: 2031471829}
   - {fileID: 317359909}
   - {fileID: 2200000103}
+  - {fileID: 1357321067}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5458,22 +5459,32 @@ MonoBehaviour:
   restartButton: {fileID: 1569004046}
   mainMenuButton: {fileID: 70934868}
   confettiContainer: {fileID: 0}
-  batSprite: {fileID: 21300000, guid: 081cda2147b384e46b709f4800050880, type: 3}
-  boneSprite: {fileID: 21300000, guid: a2390bc2d1634ec48be13969ca58a029, type: 3}
+  batSprites:
+  - {fileID: 1302723820812287101, guid: 7b10b9c83c521d24da55e2d65d632a4b, type: 3}
+  - {fileID: -9106275301997704921, guid: 8f993b7b20f3d5d49a86dca8a2713c91, type: 3}
+  - {fileID: 2010040708041431178, guid: 115a388c773d0ab4c926cfab4d54f9e1, type: 3}
+  - {fileID: 6184930268403146671, guid: effa23f3ff7b9cf4d8bd8421bcfb2167, type: 3}
+  - {fileID: -3446166696569346806, guid: c0a7f3c2d6784fb40b7cebed93b2ece5, type: 3}
+  - {fileID: -942062848596079709, guid: 285566755a9f1334192d5489aaa9fefc, type: 3}
+  - {fileID: 2188971570663921493, guid: 341ce42c317cfcc4281f8e6be933fae7, type: 3}
+  boneSprites:
+  - {fileID: 1302723820812287101, guid: 9104788d051c3404eacb29d0e763e30d, type: 3}
+  - {fileID: 2010040708041431178, guid: 9a1cabcdd5da86a45aa919073d8d3cd3, type: 3}
+  - {fileID: -3446166696569346806, guid: b9ef042642327be43b060d204957f776, type: 3}
+  - {fileID: 2188971570663921493, guid: 7c694499646ad3e43b1b847a2f4f97f9, type: 3}
+  - {fileID: -4317077269579653727, guid: a8f127a2eba35724fa9a24a9ec39ede9, type: 3}
+  - {fileID: 7857067654574583642, guid: 3a926503be52a194691cf19bd2628512, type: 3}
+  - {fileID: 6038789957049131203, guid: cad3bcd9c2c38e54e951013b8130a670, type: 3}
+  - {fileID: -4555700889181094025, guid: 623ff07d4efe4934b9eccf4e03bc16d6, type: 3}
+  - {fileID: 1927767068033512208, guid: d7a918a103e75ef46b475acdf3af02e7, type: 3}
   confettiAmount: 50
   confettiDuration: 4.6
   winScreenDelay: 1
-  confettiSizeRange: {x: 0.2, y: 0.8}
-  confettiSpeedRange: {x: 800, y: 1500}
+  confettiSizeRange: {x: 0.1, y: 0.3}
+  confettiSpeedRange: {x: 750, y: 1000}
   confettiLifetimeRange: {x: 2.5, y: 5}
-  confettiGravityRange: {x: 350, y: 550}
+  confettiGravityRange: {x: 250, y: 400}
   emitterYRange: {x: -0.4, y: 0.08}
-  confettiPalette:
-  - {r: 0.224, g: 0.239, b: 0.247, a: 1}
-  - {r: 0.992, g: 0.992, b: 1, a: 1}
-  - {r: 0.776, g: 0.773, b: 0.725, a: 1}
-  - {r: 0.353, g: 1, b: 0.082, a: 1}
-  - {r: 0.784, g: 0.976, b: 0.808, a: 1}
 --- !u!1 &1902505192
 GameObject:
   m_ObjectHideFlags: 0
@@ -6009,7 +6020,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 177, y: 594}
+  m_AnchoredPosition: {x: 177, y: 252.99997}
   m_SizeDelta: {x: 119, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2066967889
@@ -6025,14 +6036,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f4158afb7e74b464684f9adcdfbbd092, type: 3}
+  m_Sprite: {fileID: -9106275301997704921, guid: 41278411dc9192043b7babea0fe2e80b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6365,7 +6376,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -202, y: -60}
+  m_AnchoredPosition: {x: -149, y: -60}
   m_SizeDelta: {x: 110, y: 110}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &2200000104
@@ -6416,14 +6427,16 @@ MonoBehaviour:
   gameManager: {fileID: 1448824990}
   fireButtonRect: {fileID: 263362749}
   popupMessageUI: {fileID: 1357321068}
-  panelColor: {r: 0, g: 0, b: 0, a: 0.72}
-  highlightPadding: 36
-  focusBoxColor: {r: 0.023529412, g: 0.972549, b: 0.047058824, a: 0.75}
-  focusBoxLineThickness: 8
-  focusCornerRadius: 24
-  focusBreathPadding: 12
-  focusBreathSpeed: 0.55
-  focusEdgeBlur: 32
+  panelColor: {r: 0, g: 0, b: 0, a: 1}
+  highlightPadding: 35
+  focusBoxColor: {r: 0.023529412, g: 0.972549, b: 0.047058824, a: 1}
+  focusBoxLineThickness: 15
+  focusBoxOutlineColor: {r: 0, g: 0, b: 0, a: 0.95}
+  focusBoxOutlineThickness: 0
+  focusCornerRadius: 0
+  focusBreathPadding: 20
+  focusBreathSpeed: 0.5
+  focusEdgeBlur: 0
   handSprite: {fileID: -8364947040678758114, guid: 4c603412abd1d434291e96eeddc95be2, type: 3}
   handSize: {x: 100, y: 150}
   handTravelDuration: 1.2

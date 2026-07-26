@@ -14,8 +14,8 @@ public class GameWinPanelUI : BaseMenuUI
 
     [Header("Confetti")]
     [SerializeField] private RectTransform confettiContainer;
-    [SerializeField] private Sprite batSprite;
-    [SerializeField] private Sprite boneSprite;
+    [SerializeField] private Sprite[] batSprites;
+    [SerializeField] private Sprite[] boneSprites;
     [SerializeField, Min(1)] private int confettiAmount = 200;
     [SerializeField] private float confettiDuration = 4.6f;
     [SerializeField] private float winScreenDelay = 1f;
@@ -27,15 +27,6 @@ public class GameWinPanelUI : BaseMenuUI
     [SerializeField] private Vector2 confettiGravityRange = new Vector2(350f, 550f);
     [Tooltip("Minimum and maximum emitter Y position as a fraction of screen height. 0 is center; -0.5 is bottom; 0.5 is top.")]
     [SerializeField] private Vector2 emitterYRange = new Vector2(-0.22f, 0.08f);
-    [Tooltip("A random color from this palette is applied to every bat and bone.")]
-    [SerializeField] private Color[] confettiPalette =
-    {
-        new Color(0.224f, 0.239f, 0.247f, 1f),
-        new Color(0.992f, 0.992f, 1f, 1f),
-        new Color(0.776f, 0.773f, 0.725f, 1f),
-        new Color(0.353f, 1f, 0.082f, 1f),
-        new Color(0.784f, 0.976f, 0.808f, 1f)
-    };
 
     private readonly List<GameObject> activeConfetti = new List<GameObject>();
     private Coroutine confettiRoutine;
@@ -298,7 +289,17 @@ public class GameWinPanelUI : BaseMenuUI
         pieceRect.pivot = new Vector2(0.5f, 0.5f);
 
         bool fromLeft = Random.value < 0.5f;
-        bool isBat = Random.value < 0.5f;
+        bool hasBats = HasValidSprite(batSprites);
+        bool hasBones = HasValidSprite(boneSprites);
+        bool isBat = hasBats && (!hasBones || Random.value < 0.5f);
+        Sprite selectedSprite = GetRandomSprite(isBat ? batSprites : boneSprites);
+
+        if (selectedSprite == null)
+        {
+            isBat = !isBat;
+            selectedSprite = GetRandomSprite(isBat ? batSprites : boneSprites);
+        }
+
         float size = Random.Range(confettiSizeRange.x, confettiSizeRange.y);
         pieceRect.sizeDelta = (isBat ? new Vector2(880f, 880f) : new Vector2(720f, 720f)) * size;
         pieceRect.anchoredPosition = new Vector2(
@@ -308,11 +309,9 @@ public class GameWinPanelUI : BaseMenuUI
         pieceRect.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
         Image image = pieceObject.GetComponent<Image>();
-        image.sprite = isBat ? batSprite : boneSprite;
+        image.sprite = selectedSprite;
         image.preserveAspect = true;
-        image.color = confettiPalette != null && confettiPalette.Length > 0
-            ? confettiPalette[Random.Range(0, confettiPalette.Length)]
-            : Color.white;
+        image.color = Color.white;
         image.raycastTarget = false;
 
         activeConfetti.Add(pieceObject);
@@ -323,7 +322,6 @@ public class GameWinPanelUI : BaseMenuUI
         {
             RectTransform = pieceRect,
             Image = image,
-            BaseColor = image.color,
             Velocity = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad)) * speed,
             RotationSpeed = Random.Range(-250f, 250f),
             Gravity = Random.Range(confettiGravityRange.x, confettiGravityRange.y),
@@ -334,6 +332,36 @@ public class GameWinPanelUI : BaseMenuUI
             NoiseSeed = Random.Range(0f, 100f),
             IsBat = isBat
         };
+    }
+
+    private static bool HasValidSprite(Sprite[] sprites)
+    {
+        if (sprites == null)
+            return false;
+
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (sprites[i] != null)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static Sprite GetRandomSprite(Sprite[] sprites)
+    {
+        if (sprites == null || sprites.Length == 0)
+            return null;
+
+        int startIndex = Random.Range(0, sprites.Length);
+        for (int offset = 0; offset < sprites.Length; offset++)
+        {
+            Sprite sprite = sprites[(startIndex + offset) % sprites.Length];
+            if (sprite != null)
+                return sprite;
+        }
+
+        return null;
     }
 
     private void UpdateConfettiPiece(ConfettiPiece piece, float deltaTime)
@@ -355,14 +383,13 @@ public class GameWinPanelUI : BaseMenuUI
 
         float fadeStart = piece.Lifetime * 0.75f;
         float alpha = lifeAge <= fadeStart ? 1f : 1f - Mathf.InverseLerp(fadeStart, piece.Lifetime, lifeAge);
-        Color color = piece.BaseColor; color.a *= alpha; piece.Image.color = color;
+        piece.Image.color = new Color(1f, 1f, 1f, alpha);
     }
 
     private class ConfettiPiece
     {
         public RectTransform RectTransform;
         public Image Image;
-        public Color BaseColor;
         public Vector2 Velocity;
         public float RotationSpeed;
         public float Gravity;

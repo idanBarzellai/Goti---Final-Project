@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PieceSpriteLibrary
   entrySprite: {fileID: -3739957133524300147, guid: 93d5aeb3ee214db4e9f7b8e436ce1d08, type: 3}
   targetSprite: {fileID: 381891196378272548, guid: 47d33f98de6167e4bbfc411482ec8788, type: 3}
-  blockSprite: {fileID: 5071291918654156233, guid: 540154190e03b60449f28838b23bd5d3, type: 3}
+  blockSprite: {fileID: 6974335847696908493, guid: 29610a201a8c7f842a755187258ec3c2, type: 3}
   mirrorSprite: {fileID: 6530796213635005688, guid: c4bdbb1fd19e0fa4692649f1f0c8c3fe, type: 3}
   reflectSprite: {fileID: -7532694471958117253, guid: 6c11293f2fad83441ba51c3ea24773ef, type: 3}
   checkpointSprite: {fileID: -6310744578121203094, guid: 70115dfcda6aac0429a8bf56c56e6038, type: 3}
@@ -30,19 +30,7 @@ MonoBehaviour:
     - {fileID: -1303488210474810115, guid: d50b7e21c3ad22446bfba6fb9fd5d986, type: 3}
     - {fileID: 8486031539342236817, guid: c54102da1e7fa944b8986d5f2a0f5b51, type: 3}
   - pieceType: 3
-    idleFrames:
-    - {fileID: 5071291918654156233, guid: 540154190e03b60449f28838b23bd5d3, type: 3}
-    - {fileID: -3653942990542329151, guid: 050c8fd58d2fbb7459738f2a591310a1, type: 3}
-    - {fileID: -2357585197186119946, guid: d8b8eb49777d7eb448bdec0f2e7bbe1e, type: 3}
-    - {fileID: 1276567443396884647, guid: dd1293d3dbb0ce34490909a5b3aabe9b, type: 3}
-    - {fileID: 3580173688852609419, guid: cb769d8c5b7599f44a1883dc15ae2aaf, type: 3}
-    - {fileID: -8575457457741136757, guid: 985f841d6f1352f4388ff25bb19cb26a, type: 3}
-    - {fileID: 3712959975029050028, guid: e8f253e0f7c9c4344965dfef686567fa, type: 3}
-    - {fileID: 2610272906669596529, guid: 75d06aa16a27cab4b83a85fdc060a10d, type: 3}
-    - {fileID: 4592829280322218233, guid: 9aef5e52b8f78134f896d14644ffc797, type: 3}
-    - {fileID: 2350809140199283501, guid: ed6c80dfb7ded7c4784c1aa82ee4a144, type: 3}
-    - {fileID: -6931204043351426788, guid: d4d0400debcabb2429ef3d9322d64107, type: 3}
-    - {fileID: 6011498311582355296, guid: 5008e39ef41788c48b9865a4eedf0c10, type: 3}
+    idleFrames: []
   - pieceType: 4
     idleFrames:
     - {fileID: 6530796213635005688, guid: c4bdbb1fd19e0fa4692649f1f0c8c3fe, type: 3}
@@ -151,6 +139,11 @@ MonoBehaviour:
   - {fileID: 4009355068965086491, guid: cce843c8507a83346901624b774ddcef, type: 3}
   - {fileID: -5776421600631150107, guid: 237cacad0150cb042a28b3702b8aefac, type: 3}
   - {fileID: 3410439384014351281, guid: 7cb8f456f3a21964490898151fd2dcaa, type: 3}
+  loseFrames:
+  - {fileID: 21300000, guid: bac2b874cf4288d4eb88e63c3ed00eb4, type: 3}
+  - {fileID: 21300000, guid: 4dd0707018516484e869d380550f2ac7, type: 3}
+  - {fileID: 21300000, guid: 0b996c4899d1ee744925a0dad7215b3c, type: 3}
+  - {fileID: 21300000, guid: 706660add489bbf47988ddd86625395c, type: 3}
   entryRotationOffset: 180
   targetRotationOffset: 0
   blockRotationOffset: 0
