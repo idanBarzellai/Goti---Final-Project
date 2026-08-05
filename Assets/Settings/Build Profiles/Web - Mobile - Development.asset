@@ -167,7 +167,7 @@ MonoBehaviour:
     - line: '|   loadStoreDebugModeEnabled: 0'
     - line: '|   visionOSBundleVersion: 1.0'
     - line: '|   tvOSBundleVersion: 1.0'
-    - line: '|   bundleVersion: 7'
+    - line: '|   bundleVersion: 10'
     - line: '|   preloadedAssets:'
     - line: '|   - {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100,
         type: 3}'
@@ -322,7 +322,7 @@ MonoBehaviour:
     - line: '|   - m_BuildTarget: '
     - line: '|     m_Icons:'
     - line: '|     - serializedVersion: 2'
-    - line: '|       m_Icon: {fileID: 2800000, guid: a4d64095c68178c468d57e080538bee1,
+    - line: '|       m_Icon: {fileID: 2800000, guid: 4f3b52d05fe828142a05c7a4c9e259b8,
         type: 3}'
     - line: '|       m_Width: 128'
     - line: '|       m_Height: 128'
@@ -784,7 +784,7 @@ MonoBehaviour:
     - line: '|   spritePackerPolicy: '
     - line: '|   webGLMemorySize: 32'
     - line: '|   webGLExceptionSupport: 1'
-    - line: '|   webGLNameFilesAsHashes: 0'
+    - line: '|   webGLNameFilesAsHashes: 1'
     - line: '|   webGLShowDiagnostics: 0'
     - line: '|   webGLDataCaching: 0'
     - line: '|   webGLDebugSymbols: 0'
@@ -797,7 +797,7 @@ MonoBehaviour:
     - line: '|   webGLWasmArithmeticExceptions: 0'
     - line: '|   webGLLinkerTarget: 1'
     - line: '|   webGLThreadsSupport: 0'
-    - line: '|   webGLDecompressionFallback: 0'
+    - line: '|   webGLDecompressionFallback: 1'
     - line: '|   webGLInitialMemorySize: 32'
     - line: '|   webGLMaximumMemorySize: 2048'
     - line: '|   webGLMemoryGrowthMode: 2'
@@ -805,10 +805,10 @@ MonoBehaviour:
     - line: '|   webGLMemoryGeometricGrowthStep: 0.2'
     - line: '|   webGLMemoryGeometricGrowthCap: 96'
     - line: '|   webGLPowerPreference: 2'
-    - line: '|   webGLWebAssemblyTable: 1'
-    - line: '|   webGLWebAssemblyBigInt: 1'
+    - line: '|   webGLWebAssemblyTable: 0'
+    - line: '|   webGLWebAssemblyBigInt: 0'
     - line: '|   webGLCloseOnQuit: 0'
-    - line: '|   webWasm2023: 1'
+    - line: '|   webWasm2023: 0'
     - line: '|   webEnableSubmoduleStrippingCompatibility: 0'
     - line: '|   scriptingDefineSymbols: {}'
     - line: '|   additionalCompilerArguments: {}'
@@ -937,7 +937,7 @@ MonoBehaviour:
     - rid: 2818975248638541926
       type: {class: WebGLPlatformSettings, ns: UnityEditor.WebGL, asm: UnityEditor.WebGL.Extensions}
       data:
-        m_Development: 1
+        m_Development: 0
         m_ConnectProfiler: 0
         m_BuildWithDeepProfilingSupport: 0
         m_AllowDebugging: 0

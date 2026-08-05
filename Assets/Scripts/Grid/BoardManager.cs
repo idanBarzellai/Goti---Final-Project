@@ -10,6 +10,8 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private BoardPiece piecePrefab;
     [SerializeField] private float cellSize = 0.9f;
     [SerializeField] private float cellSpacing = 0f;
+    [Tooltip("How close a drop must be to a cell center, relative to cell size.")]
+    [SerializeField, Range(0.45f, 0.75f)] private float dropSnapRadiusMultiplier = 0.62f;
 
     private BoardPiece[,] boardPieces;
     private GameObject[,] boardCells;
@@ -135,13 +137,15 @@ private void SetupSpawnedPiece(BoardPiece piece)
 
         if (!clickedPiece.CanRotate)
         {
+            if (clickedPiece.PieceType == PieceType.Portal)
+                return;
+
             GameManager.Instance?.ShowPopupMessage("Pieces with black background cannot be rotated");
             return;
         }
 
         clickedPiece.RotateClockwise();
         AudioManager.Instance?.PlayRotatePiece();
-        HapticFeedback.Vibrate(HapticFeedback.RotateDurationMilliseconds, "Rotate");
         OnPieceRotated?.Invoke(clickedPiece);
         OnBoardChanged();
     }
@@ -235,7 +239,6 @@ if (piece == null || !piece.CanMove)
 };
 
     BoardPiece placedPiece = SpawnPiece(placedData, true, true, true);
-    HapticFeedback.Vibrate(HapticFeedback.PlaceDurationMilliseconds, "Place", 2);
     OnPiecePlacedFromInventory?.Invoke(placedPiece);
     OnBoardChanged();
     return true;
@@ -448,7 +451,7 @@ if (piece == null || !piece.CanMove)
             new Vector2(snappedLocal.x, snappedLocal.y)
         );
 
-        float maxSnapDistance = cellSize * 0.45f;
+        float maxSnapDistance = cellSize * dropSnapRadiusMultiplier;
         return distance <= maxSnapDistance;
     }
 
@@ -456,6 +459,7 @@ if (piece == null || !piece.CanMove)
     {
         cellSize = Mathf.Max(0.01f, cellSize);
         cellSpacing = Mathf.Max(0f, cellSpacing);
+        dropSnapRadiusMultiplier = Mathf.Clamp(dropSnapRadiusMultiplier, 0.45f, 0.75f);
     }
 
     private void OnBoardChanged()
@@ -479,6 +483,7 @@ private void RefreshCellState(Vector2Int gridPosition)
     BoardPiece piece = boardPieces != null ? boardPieces[gridPosition.x, gridPosition.y] : null;
     bool hasFixedUnrotatablePiece =
         piece != null &&
+        !piece.CanMove &&
         !piece.CanRotate;
     bool hasFixedRotatablePiece =
         piece != null &&

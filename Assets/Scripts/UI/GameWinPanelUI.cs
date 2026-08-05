@@ -11,6 +11,7 @@ public class GameWinPanelUI : BaseMenuUI
     [SerializeField] private Button nextLevelButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button mainMenuButton;
+    [SerializeField] private Sprite infoIconSprite;
 
     [Header("Confetti")]
     [SerializeField] private RectTransform confettiContainer;
@@ -18,15 +19,15 @@ public class GameWinPanelUI : BaseMenuUI
     [SerializeField] private Sprite[] boneSprites;
     [SerializeField, Min(1)] private int confettiAmount = 200;
     [SerializeField] private float confettiDuration = 4.6f;
-    [SerializeField] private float winScreenDelay = 1f;
+    [SerializeField] private float winScreenDelay = 0.25f;
     [Tooltip("Minimum and maximum particle scale.")]
     [SerializeField] private Vector2 confettiSizeRange = new Vector2(0.7f, 1.2f);
     [Tooltip("Minimum and maximum launch speed in canvas units per second.")]
-    [SerializeField] private Vector2 confettiSpeedRange = new Vector2(800f, 1150f);
+    [SerializeField] private Vector2 confettiSpeedRange = new Vector2(1150f, 1450f);
     [SerializeField] private Vector2 confettiLifetimeRange = new Vector2(2.5f, 4f);
-    [SerializeField] private Vector2 confettiGravityRange = new Vector2(350f, 550f);
+    [SerializeField] private Vector2 confettiGravityRange = new Vector2(450f, 650f);
     [Tooltip("Minimum and maximum emitter Y position as a fraction of screen height. 0 is center; -0.5 is bottom; 0.5 is top.")]
-    [SerializeField] private Vector2 emitterYRange = new Vector2(-0.22f, 0.08f);
+    [SerializeField] private Vector2 emitterYRange = new Vector2(-0.12f, 0.16f);
 
     private readonly List<GameObject> activeConfetti = new List<GameObject>();
     private Coroutine confettiRoutine;
@@ -50,6 +51,7 @@ public class GameWinPanelUI : BaseMenuUI
 
         if (mainMenuButton != null)
             mainMenuButton.onClick.AddListener(GoToMainMenuFromPanel);
+
     }
 
     private void OnDestroy()
@@ -303,8 +305,8 @@ public class GameWinPanelUI : BaseMenuUI
         float size = Random.Range(confettiSizeRange.x, confettiSizeRange.y);
         pieceRect.sizeDelta = (isBat ? new Vector2(880f, 880f) : new Vector2(720f, 720f)) * size;
         pieceRect.anchoredPosition = new Vector2(
-            (fromLeft ? -1f : 1f) * width * 0.49f,
-            Random.Range(height * emitterYRange.x, height * emitterYRange.y)
+            (fromLeft ? -1f : 1f) * width * 0.48f,
+            -height * 0.5f - pieceRect.sizeDelta.y * 0.15f
         );
         pieceRect.localRotation = Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
@@ -316,7 +318,7 @@ public class GameWinPanelUI : BaseMenuUI
 
         activeConfetti.Add(pieceObject);
 
-        float angle = fromLeft ? Random.Range(55f, 75f) : Random.Range(105f, 125f);
+        float angle = fromLeft ? Random.Range(62f, 76f) : Random.Range(104f, 118f);
         float speed = Random.Range(confettiSpeedRange.x, confettiSpeedRange.y);
         return new ConfettiPiece
         {

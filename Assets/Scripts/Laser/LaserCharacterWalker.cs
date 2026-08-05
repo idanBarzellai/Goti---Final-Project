@@ -13,11 +13,6 @@ public class LaserCharacterWalker : MonoBehaviour
     [SerializeField] private float moveSpeed = 4f;
     [SerializeField] private float arriveDistance = 0.02f;
 
-    [Header("Mobile Rolling Haptics")]
-    [SerializeField] private bool enableRollingVibration = true;
-    [SerializeField, Min(0.1f)] private float rollingVibrationInterval = 0.35f;
-    [SerializeField, Range(1, 200)] private int rollingVibrationDurationMilliseconds = 50;
-
     [Header("Portal")]
     [SerializeField] private float portalPauseDuration = 0.12f;
 
@@ -38,7 +33,6 @@ public class LaserCharacterWalker : MonoBehaviour
     private float nextMovementFrameTime;
     private Direction? currentMovementDirection;
     private Quaternion entryRotation = Quaternion.identity;
-    private float nextRollingVibrationTime;
 
     public void ConfigureFromEntry(BoardPiece entry)
     {
@@ -63,7 +57,6 @@ public class LaserCharacterWalker : MonoBehaviour
         transform.localScale = Vector3.one;
         transform.rotation = Quaternion.identity;
         currentMovementDirection = null;
-        nextRollingVibrationTime = 0f;
 
         if (walkRoutine != null)
             StopCoroutine(walkRoutine);
@@ -244,8 +237,6 @@ public class LaserCharacterWalker : MonoBehaviour
         }
         while (Vector3.Distance(transform.position, target) > arriveDistance)
         {
-            TryPlayRollingVibration();
-
             if (frames != null && frames.Length > 0 && Time.time >= nextMovementFrameTime)
             {
                 characterRenderer.sprite = frames[movementFrame++ % frames.Length];
@@ -261,19 +252,6 @@ public class LaserCharacterWalker : MonoBehaviour
         }
 
         transform.position = target;
-    }
-
-    private void TryPlayRollingVibration()
-    {
-        if (!enableRollingVibration ||
-            Time.unscaledTime < nextRollingVibrationTime)
-        {
-            return;
-        }
-
-        HapticFeedback.Vibrate(rollingVibrationDurationMilliseconds, "Roll");
-        nextRollingVibrationTime =
-            Time.unscaledTime + Mathf.Max(0.1f, rollingVibrationInterval);
     }
 
     private IEnumerator RespawnAtEntry(List<List<Vector3>> paths, bool alreadyHidden = false)

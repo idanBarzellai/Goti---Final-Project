@@ -11,6 +11,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button chooseLevelButton;
     [SerializeField] private Button backButton;
     [SerializeField] private AudioMuteToggleButtonUI muteToggleButton;
+    [SerializeField] private Sprite infoIconSprite;
 
     [Header("Background GOTI")]
     [SerializeField] private PieceSpriteLibrary spriteLibrary;
@@ -215,4 +216,5 @@ public class MainMenuUI : MonoBehaviour
 
         muteToggleButton = AudioMuteToggleButtonUI.CreateDefault(mainMenuPanel.transform, "MuteToggleButton");
     }
+
 }

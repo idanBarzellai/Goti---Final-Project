@@ -8,6 +8,7 @@ public class PauseMenuUI : BaseMenuUI
     [SerializeField] private Button restartButton;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private AudioMuteToggleButtonUI muteToggleButton;
+    [SerializeField] private Sprite infoIconSprite;
 
     private bool listenersRegistered;
 
@@ -85,4 +86,5 @@ public class PauseMenuUI : BaseMenuUI
 
         muteToggleButton = AudioMuteToggleButtonUI.CreateDefault(transform, "MuteToggleButton");
     }
+
 }
